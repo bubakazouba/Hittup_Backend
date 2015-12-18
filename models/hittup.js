@@ -3,7 +3,8 @@ var mongoose  = require('mongoose');
 var Schema  = mongoose.Schema;
 
 var HittupSchema   = new Schema({
-    name: String
+    FullName: String,
+    Hittup_Header: String
 });
 
 module.exports = mongoose.model('Hittup', HittupSchema);
