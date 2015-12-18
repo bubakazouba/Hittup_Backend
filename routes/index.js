@@ -28,15 +28,20 @@ router.get('/', function(req, res, next) {
 
 router.get('/hittup', function(req, res){
 
-	mongoDatabase.collection('Hittups').insert({
-     item: "ABC1",
-     details: {
-        model: "14Q3",
-        manufacturer: "XYZ Company"
-     },
-     stock: [ { size: "S", qty: 25 }, { size: "M", qty: 50 } ],
-     category: "clothing"
-   });
-	});
+	if(mongoDatabase){
+		mongoDatabase.collection('Hittups').insert({
+	    	item: "ABC1",
+	    	details: {
+	      		model: "14Q3",
+	        	manufacturer: "XYZ Company"
+	     	},
+	     	stock: [ { size: "S", qty: 25 }, { size: "M", qty: 50 } ],
+	     	category: "clothing"
+		});
+		return res.send("Lol yayt");
+	} else {
+		res.send("Lol wut");
+	}
+});
 
 module.exports = router;
