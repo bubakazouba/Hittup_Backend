@@ -1,8 +1,9 @@
 # Hittup-Backend
 
 
-## Running Locally
+# Running Locally
 
+```
 npm install
 npm start
 ```
