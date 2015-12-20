@@ -11,6 +11,7 @@ var HittupSchema   = new Schema({
 		firstName: String,
 		lastName: String,
 	},
+	isPrivate: Boolean,
 	duration: Number,
 	dateCreated: Number,
 	location: [Number, Number],
