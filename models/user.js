@@ -16,6 +16,7 @@ var UserSchema   = new Schema({
 		latitude: Number,
 		city: String,
 		state: String,
-	}
+	},
+	fb_friends: [{type: Schema.Types.ObjectId, ref: 'User'}],
 });
 module.exports = mongoose.model('User', UserSchema);
