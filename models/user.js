@@ -8,10 +8,10 @@ var UserSchema   = new Schema({
     firstName: String,
     lastName: String,
     location: {
-		coordinates {
+		coordinates: {
 		    type: [Number],  // [<longitude>, <latitude>]
 		    index: '2dsphere'      // create the geospatial index
-		}
+		},
 		longitude: Number,
 		latitude: Number,
 		city: String,
