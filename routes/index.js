@@ -44,4 +44,18 @@ router.get('/hittup', function(req, res){
 	}
 });
 
+
+router.get('/GetFriendsList', function(req, res){
+    if(mongoDatabase){
+        mongoDatabase.collection('Users').find().toArray(function(err, json){
+            console.log(json);
+            res.send(json);
+            if(err){
+                console.log('Error while getting general info: err');
+                return res.send(err);
+            }
+        });
+    }
+});
+
 module.exports = router;
