@@ -7,6 +7,7 @@ var mongoClient = require('mongodb').MongoClient,
     cons = require('consolidate');
 var mongoDatabase;
 var Hittup = require('../models/hittup');
+var User = require('../models/user');
 
 // Body Parser
 // var bodyParser = require('body-parser');
@@ -23,7 +24,7 @@ mongoClient.connect("mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981
         return(err);
       }
       else{
-      	console.log("success");
+      	// console.log("success");
       	mongoDatabase = db;
       	console.log("connected to db: " + db);
 
@@ -32,26 +33,49 @@ mongoClient.connect("mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981
 
 /* GET home page. */ 
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Hittup Rest API' });
+	res.render('index', { title: 'Hittup Rest API' });
 });
 
-router.get('/hittup', function(req, res){
+// /GetHittups (Get) ARTHUR
+// request:
+// {	“uid”:<uid>,
+// ”location”:<location> }
+// location is coordinates
 
+router.get('/GetHittups', function(req, res){
 	if(mongoDatabase){
-		mongoDatabase.collection('Hittups').insert({
-	    	item: "ABC1",
-	    	details: {
-	      		model: "14Q3",
-	        	manufacturer: "XYZ Company"
+		var uid = req.query.uid;
+		var latitude = parseFloat(req.query.latitude);
+		var longitude = parseFloat(req.query.longitude);
+		// Hittup.ensureIndex({ "location": "2d" });
+
+		console.log([latitude, longitude])
+		Hittup.find(
+			{ loc:
+				{ coordinates: {
+			        $near: [latitude, longitude],
+			        $maxDistance: 5000
+			      }
+			   	}	
 	     	},
-	     	stock: [ { size: "S", qty: 25 }, { size: "M", qty: 50 } ],
-	     	category: "clothing"
-		});
-		return res.send("Lol yayt");
+		// .toArray(
+
+	     // Hittup.runCommand({geoNear:"coordinates",near:[latitude,longitude], maxDistance:10/69},
+
+	     	function (err, result) {
+				if (err) {
+					res.send("Error Find: " + err);
+				} else {
+					res.send(result);
+					// res.send("")
+				}
+			});
+		// return res.send("Lol yayt");
 	} else {
-		res.send("Lol wut");
+		res.send("MongoDB not Connected");
 	}
 });
+
 
 
 // Post
@@ -62,14 +86,23 @@ router.post('/posthittup', function (req, res, next) {
 
 		hittup.title = body.title;
 		hittup.isPrivate = (body.isPrivate === "true");
-		hittup.save();
-		// mongoDatabase.collection('Hittups').insert(hittup);
-		return res.send("Lol yayt");
-	} else {
-		res.send("Lol wut");
-	}
+		hittup.owner = body.uid;
+		hittup.usersInvited = body.usersInvited;
+		console.log( [parseFloat(body.location[0]), parseFloat(body.location[1])] );
+		hittup.loc.coordinates = [parseFloat(body.location[0]), parseFloat(body.location[1])];
+		hittup.duration = body.duration;
+		hittup.save(function (err) {
+			if (err) {
+				console.log(err);
+				res.send("Save Error: " + err);
+			} else {
+				res.send("Successful save!")
+			}
+		});
 
-	res.send("Lol wut");
+	} else {
+		res.send("MongoDB not Connected");
+	}
 });
 
 

@@ -10,11 +10,8 @@ var HittupSchema   = new Schema({
 	isPrivate: Boolean,
 	duration: Number,
 	dateCreated: Number,
-	location: {
-		coordinates: {
-		    type: [Number],  // [<longitude>, <latitude>]
-		    index: '2dsphere'      // create the geospatial index
-		}
+	loc: {
+		coordinates: { type: [Number], index: '2d' }
 	},
 	city: String,
 	usersInvited: [{type: Schema.Types.ObjectId, ref: 'User'}],
