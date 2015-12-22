@@ -10,12 +10,6 @@ var users = require('./routes/users');
 var mongoose   = require('mongoose');
 
 
-//connect to database tutorial
-mongoose.connect('mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981/hittup'); // connect to our database
-//reference to hittup model
-var Hittup = require('./models/hittup');
-
-
 var app = express();
 
 // view engine setup

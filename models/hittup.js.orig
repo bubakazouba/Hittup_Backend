@@ -1,6 +1,26 @@
 // app/models/hittup.js
 var mongoose  = require('mongoose');
 var Schema  = mongoose.Schema;
+<<<<<<< HEAD
+var User = require('../models/user');
+
+var HittupSchema   = new Schema({
+
+	title: String,
+	owner: {type: Schema.Types.ObjectId, ref: 'User'},
+	isPrivate: Boolean,
+	duration: Number,
+	dateCreated: Number,
+	location: {
+		coordinates: {
+		    type: [Number],  // [<longitude>, <latitude>]
+		    index: '2dsphere'      // create the geospatial index
+		}
+	},
+	city: String,
+	usersInvited: [{type: Schema.Types.ObjectId, ref: 'User'}],
+	usersJoined: [{type: Schema.Types.ObjectId, ref: 'User'}]
+=======
 var User = require('./user');
 
 var HittupSchema   = new Schema({
@@ -10,16 +30,16 @@ var HittupSchema   = new Schema({
     isPrivate: Boolean,
     duration: Number,
     dateCreated: Number,
-    loc: {
+    location: {
         coordinates: {
             type: [Number],  // [<longitude>, <latitude>]
             index: '2dsphere'      // create the geospatial index
-        },
-		city: String,
-		state: String
+        }
     },
+    city: String,
     usersInvited: [{type: Schema.Types.ObjectId, ref: 'User'}],
     usersJoined: [{type: Schema.Types.ObjectId, ref: 'User'}]
+>>>>>>> feature_UpdateUserLocation
 
 });
 
