@@ -8,10 +8,15 @@ var UserSchema   = new Schema({
     firstName: String,
     lastName: String,
     location: {
-			longitude: double,
-			latitude: double,
-			city: String,
-			state: String,
-		}
+		coordinates: {
+		    type: [Number],  // [<longitude>, <latitude>]
+		    index: '2dsphere'      // create the geospatial index
+		},
+		longitude: Number,
+		latitude: Number,
+		city: String,
+		state: String,
+	},
+	fb_friends: [{type: Schema.Types.ObjectId, ref: 'User'}],
 });
 module.exports = mongoose.model('User', UserSchema);

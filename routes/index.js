@@ -5,8 +5,17 @@ var mongoClient = require('mongodb').MongoClient,
     ObjectID = require('mongodb').ObjectID,
     Server = require('mongodb').Server,
     cons = require('consolidate');
-
 var mongoDatabase;
+var Hittup = require('../models/hittup');
+
+// Body Parser
+// var bodyParser = require('body-parser');
+// var multer = require('multer'); // v1.0.5
+// var upload = multer(); // for parsing multipart/form-data
+
+// router.use(bodyParser.json()); // for parsing application/json
+// router.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
 
 mongoClient.connect("mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981/hittup", function(err, db) {
       if (err) {
@@ -43,5 +52,25 @@ router.get('/hittup', function(req, res){
 		res.send("Lol wut");
 	}
 });
+
+
+// Post
+router.post('/posthittup', function (req, res, next) {
+	if(mongoDatabase){
+		var hittup = Hittup();
+		var body = req.body;
+
+		hittup.title = body.title;
+		hittup.isPrivate = (body.isPrivate === "true");
+		hittup.save();
+		// mongoDatabase.collection('Hittups').insert(hittup);
+		return res.send("Lol yayt");
+	} else {
+		res.send("Lol wut");
+	}
+
+	res.send("Lol wut");
+});
+
 
 module.exports = router;
