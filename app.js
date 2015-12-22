@@ -8,7 +8,10 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var mongoose   = require('mongoose');
+// var mongoClient = require('mongodb').MongoClient;
 
+//connect to database tutorial
+mongoose.connect('mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981/hittup'); // connect to our database
 
 var app = express();
 

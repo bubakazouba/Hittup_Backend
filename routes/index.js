@@ -1,15 +1,14 @@
 var http = require('http');
 var express = require('express');
 var router = express.Router();
-var User = require('../models/user');
 var mongoClient = require('mongodb').MongoClient,
-    ObjectID = require('mongodb').ObjectID,
+	ObjectID = require('mongodb').ObjectID,
     Server = require('mongodb').Server,
     cons = require('consolidate');
 var mongoDatabase;
 var reverseGeoPath = '/geocoding/v1/reverse?key=uZ3qgc5oMFTTLZo6MILAjgRJpKQArDtO&callback=renderReverse&location=';
 var Hittup = require('../models/hittup');
-
+var User = require('../models/user');
 
 mongoClient.connect("mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981/hittup", function(err, db) {
     if (err) {
@@ -17,10 +16,10 @@ mongoClient.connect("mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981
         return(err);
       }
       else{
-      	// console.log("success");
-      	mongoDatabase = db;
-      	console.log("connected to db: " + db);
-	}
+        // console.log("success");
+        mongoDatabase = db;
+        console.log("connected to db: " + db);
+  }
 });
 
 /* GET home page. */ 
