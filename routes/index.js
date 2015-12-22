@@ -28,7 +28,18 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Hittup Rest API' });
 });
 
-
+router.get('/GetFriendsList', function(req, res){
+    if(mongoDatabase){
+        mongoDatabase.collection('Users').find().toArray(function(err, json){
+            console.log(json);
+            res.send(json);
+            if(err){
+                console.log('Error while getting general info: err');
+                return res.send(err);
+            }
+        });
+    }
+});
 
 // router.post('/AddUser', function (req, res, next) {
 // 	// console.log(req);

@@ -7,19 +7,8 @@ var mongoClient = require('mongodb').MongoClient,
     Server = require('mongodb').Server,
     cons = require('consolidate');
 var mongoDatabase;
-<<<<<<< HEAD
-var Hittup = require('../models/hittup');
-
-// Body Parser
-// var bodyParser = require('body-parser');
-// var multer = require('multer'); // v1.0.5
-// var upload = multer(); // for parsing multipart/form-data
-
-// router.use(bodyParser.json()); // for parsing application/json
-// router.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-=======
 var reverseGeoPath = '/geocoding/v1/reverse?key=uZ3qgc5oMFTTLZo6MILAjgRJpKQArDtO&callback=renderReverse&location=';
->>>>>>> feature_UpdateUserLocation
+var Hittup = require('../models/hittup');
 
 
 mongoClient.connect("mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981/hittup", function(err, db) {
@@ -39,6 +28,9 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Hittup Rest API' });
 });
 
+
+
+<<<<<<< HEAD
 // router.post('/AddUser', function (req, res, next) {
 // 	// console.log(req);
 
@@ -106,28 +98,20 @@ router.post('/UpdateUserLocation', function(req, res, next) {
     request.end();
 })
 
-<<<<<<< HEAD
-
-// Post
-router.post('/posthittup', function (req, res, next) {
-	if(mongoDatabase){
-		var hittup = Hittup();
-		var body = req.body;
-
-		hittup.title = body.title;
-		hittup.isPrivate = (body.isPrivate === "true");
-		hittup.save();
-		// mongoDatabase.collection('Hittups').insert(hittup);
-		return res.send("Lol yayt");
-	} else {
-		res.send("Lol wut");
-	}
-
-	res.send("Lol wut");
-});
-
-
 module.exports = router;
 =======
+router.get('/GetFriendsList', function(req, res){
+    if(mongoDatabase){
+        mongoDatabase.collection('Users').find().toArray(function(err, json){
+            console.log(json);
+            res.send(json);
+            if(err){
+                console.log('Error while getting general info: err');
+                return res.send(err);
+            }
+        });
+    }
+});
+
 module.exports = router;
->>>>>>> feature_UpdateUserLocation
+>>>>>>> feature_GetFriendsList_GetInvitations
