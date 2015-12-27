@@ -107,31 +107,23 @@ router.post('/posthittup', function (req, res, next) {
 	}
 });
 
-// router.post('/AddUser', function (req, res, next) {
-// 	// console.log(req);
-
-//     collection = mongoDatabase.collection("Hittups");
-
-//     collection.find({"fbid":req.body.fbid}).toArray(function(err,docs){
-//         if (docs.length==0){ //if user doesn't exist
-//             mongoDatabase.collection('Hittups').insert(req.body);
-//         }
-//         else { //user already exists
-//             var user=docs[0]
-//             res.send({
-//                         "userStatus":"returning",
-//                         "uid": ,
-
-//                     })
-//         }
-//     })
-// 	res.send("Lol yayt");
-// });
+router.post('/AddUser', function (req, res, next) {
+    collection = mongoDatabase.collection("Users");
+    console.log(req.body.fbid);
+    collection.find({"fbid":req.body.fbid}).toArray(function(err,docs){
+        if (docs.length==0){ //if user doesn't exist
+            mongoDatabase.collection('Users').insert(req.body);
+            res.send({"success":"true"});
+        }
+        else { //user already exists
+            var user=docs[0]
+            user["userStatus"]="returning"
+            res.send(user);
+        }
+    });
+});
 
 router.post('/UpdateUserLocation', function(req, res, next) {
-    var collection = mongoDatabase.collection('Users');
-
-    var user = User();
     var uid = req.body.uid;
     var loc = req.body.location;
 
