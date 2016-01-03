@@ -3,9 +3,6 @@ var path = require('path');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var mongoose   = require('mongoose');
-
-mongoose.connect('mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981/hittup');
 
 
 app.use(bodyParser.json());
