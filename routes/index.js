@@ -136,6 +136,7 @@ router.post('/PostHittup', function (req, res, next) {
     hittup.isPrivate = (body.isPrivate == "true");
     hittup.owner = body.owner;
     hittup.duration = parseInt(body.duration);
+    hittup.dateCreated = Math.floor(Date.now()/1000);
     if(body.hasOwnProperty("usersJoined")){
         hittup.usersJoined = body.usersJoined;
     }
