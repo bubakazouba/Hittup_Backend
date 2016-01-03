@@ -73,15 +73,27 @@ var geoReverseLocation = function(loc,callback){
     request.end();
 }
 
-router.get('/GetFriendsList', function(req, res){
+function getFBFriends(uid, callback){
+    collection = mongoDatabase.collection("Users");
+    collection.find({"_id":ObjectID(uid)}).toArray(function(err,docs){
+        if (docs.length==0){
+            callback("user doesn't exist");
+        }
+        else {
+            callback(null, docs[0].fbFriends);
+        }
+    });
+}
+
+router.post('/GetFriendsList', function(req, res){
     if(mongoDatabase){
-        mongoDatabase.collection('Users').find().toArray(function(err, json){
-            console.log(json);
-            res.send(json);
+        getFBFriends(req.body.uid, function(err, fbFriends){
             if(err){
-                console.log('Error while getting general info: err');
-                return res.send(err);
+                console.log(err);
+                res.send({"error": err});
+                return;
             }
+            res.send(fbFriends);
         });
     }
 });
@@ -152,6 +164,7 @@ router.post('/PostHittup', function (req, res, next) {
         });
     });
 }); 
+
 
 // router.post('/AddUser', function (req, res, next) {
 // 	// console.log(req);
