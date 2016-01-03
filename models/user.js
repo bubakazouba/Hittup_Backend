@@ -14,6 +14,11 @@ var UserSchema   = new Schema({
         city: String,
         state: String
     },
-    fb_friends: [{type: Schema.Types.ObjectId, ref: 'User'}],
-});
+    fb_friends: [{
+        uid: String,
+        fbid: String,
+        firstName: String,
+        lastName: String
+    }],
+}, {collection: 'Users'});
 module.exports = mongoose.model('User', UserSchema);
