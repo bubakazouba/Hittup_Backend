@@ -37,6 +37,12 @@ POST format:
 }
 ```
 
+returns:
+
+```
+{"city":location.city,"success":"true"}
+```
+
 ### /GetFriendsList
 POST format:
 
@@ -46,3 +52,11 @@ POST format:
 }
 ```
 
+response:
+
+```
+{"fb_friends":
+[ {"firstName":"<firstname>", "lastName": "<lastname>", "uid": "<uid>", "fbid": fbid, "city": "<city>"}, {}..]
+}
+
+```

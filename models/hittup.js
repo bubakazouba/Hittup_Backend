@@ -40,6 +40,6 @@ var HittupSchema   = new Schema({
         lastName: String
     }]
 
-});
+}, {collection: 'Hittup'});
 
 module.exports = mongoose.model('Hittup', HittupSchema);

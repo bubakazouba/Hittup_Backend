@@ -20,5 +20,5 @@ var UserSchema   = new Schema({
         firstName: String,
         lastName: String
     }],
-});
+}, {collection: 'Users'});
 module.exports = mongoose.model('User', UserSchema);
