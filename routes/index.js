@@ -3,8 +3,7 @@ var express = require('express');
 var router = express.Router();
 var mongoClient = require('mongodb').MongoClient,
 	ObjectID = require('mongodb').ObjectID,
-    Server = require('mongodb').Server,
-    cons = require('consolidate');
+    Server = require('mongodb').Server;
 var mongoDatabase;
 var reverseGeoPath = '/geocoding/v1/reverse?key=uZ3qgc5oMFTTLZo6MILAjgRJpKQArDtO&callback=renderReverse&location=';
 var Hittup = require('../models/hittup');
@@ -16,7 +15,6 @@ mongoClient.connect("mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981
         return(err);
       }
       else{
-        // console.log("success");
         mongoDatabase = db;
         console.log("connected to db: " + db);
   }
@@ -130,11 +128,10 @@ router.post('/posthittup', function (req, res, next) {
 
 router.post('/UpdateUserLocation', function(req, res, next) {
     var collection = mongoDatabase.collection('Users');
+    console.log('im here')
 
-    var user = User();
     var uid = req.body.uid;
     var loc = req.body.location;
-
     options = {
         hostname: 'www.mapquestapi.com',
         path: reverseGeoPath+loc.lat+","+loc.lon,
@@ -152,6 +149,7 @@ router.post('/UpdateUserLocation', function(req, res, next) {
             var responseLocation=data.results[0].locations[0];
             var location={"City":-1,"State":-1}
             //parsing JSON returned, example: http://tinyurl.com/q2mmnsa
+            console.log(data);
             for(var prop in responseLocation){
                 if(Object.keys(location).indexOf(responseLocation[prop])!=-1){
                     location[responseLocation[prop]]=responseLocation[prop.substr(0,prop.length-4)]
@@ -163,7 +161,6 @@ router.post('/UpdateUserLocation', function(req, res, next) {
             delete location.City;
             delete location.State;
             location.coordinates=[loc.lon,loc.lat]
-            console.log(location);
             mongoDatabase.collection('Users').update(
                 {_id: ObjectID(req.body.uid)},
                 { $set: {location: location}}    );
