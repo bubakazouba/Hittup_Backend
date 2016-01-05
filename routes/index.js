@@ -167,25 +167,48 @@ router.post('/PostHittup', function (req, res, next) {
 
 
 // router.post('/AddUser', function (req, res, next) {
-// 	// console.log(req);
-
-//     collection = mongoDatabase.collection("Hittups");
-
-//     collection.find({"fbid":req.body.fbid}).toArray(function(err,docs){
+//     userCollection = mongoDatabase.collection("Users");
+//     userCollection.find({"fbid":req.body.fbid}).toArray(function(err,docs){
 //         if (docs.length==0){ //if user doesn't exist
-//             mongoDatabase.collection('Hittups').insert(req.body);
+//             userCollection.insert({"fbid":req.body.fbid, "fbToken": req.body.fbToken}, function (err,user){
+//                 if(err){
+//                     res.send({"success":"false","error":err.message})
+//                     return;
+//                 }
+//                 res.send({"success":"true", "uid": user.ops[0]._id.toString()});
+//             });
 //         }
-//         else { //user already exists
-//             var user=docs[0]
-//             res.send({
-//                         "userStatus":"returning",
-//                         "uid": ,
-
-//                     })
-//         }
-//     })
-// 	res.send("Lol yayt");
+//     });
 // });
+
+router.post('/AddUser', function (req, res, next) {
+  User.findOne({ fbid: req.body.fbid }, function (err, user) {
+      if(err){
+        return res.send({"success":"false", "error": err.message})
+      }
+      if(user != null){
+        res.send({
+            "uid": user.id,
+            "userStatus": "returning",
+            "fbFriends": user.fbFriends,
+            "success": "true"
+        });
+      }
+      else {
+        user = new User();
+        user.fbid = req.body.fbid;
+        user.fbToken = req.body.fbToken;
+
+        user.save(function (err,insertedUser){
+            if(err){
+                res.send({"success":"false","error":err.message})
+                return;
+            }
+            res.send({"success":"true", "uid": insertedUser.id});
+        });
+      }
+  });
+});
 
 router.post('/UpdateUserLocation', function(req, res, next) {
     var collection = mongoDatabase.collection('Users');

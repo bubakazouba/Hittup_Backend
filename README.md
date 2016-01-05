@@ -60,3 +60,35 @@ response:
 }
 
 ```
+
+
+### /AddUser
+POST format:
+
+```
+{
+	"fbid": "<fbid>"
+	"fbToken": "<fbToken>"
+}
+```
+
+response:
+
+if user doesn't exist:
+
+```
+{
+	"userStatus": "new",
+	"uid": "<uid>"
+}
+```
+
+if user already exists:
+
+```
+{
+	"userStatus": "returning",
+	"uid": "<uid>",
+	"fbFriends": [{"uid": "<uid>", "fbid": <fbid>, "firstname": <firstname>, "lastname": <lastname>, "city": "<city>", "state": "<state>"}]
+}
+```
