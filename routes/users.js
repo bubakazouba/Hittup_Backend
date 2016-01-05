@@ -61,11 +61,24 @@ router.post('/AddUser', function (req, res, next) {
         return res.send({"success":"false", "error": err.message})
       }
       if(user != null){
-        res.send({
-            "uid": user.id,
-            "userStatus": "returning",
-            "fbFriends": user.fbFriends,
-            "success": "true"
+
+        user.fbToken = req.body.fbToken;
+        user.save(function (err,insertedUser){
+            if(err){
+                res.send({
+                    "uid": user.id,
+                    "userStatus": "returning",
+                    "success": "false",
+                    "error": err.message});
+                });
+                return;
+            } 
+            res.send({
+                "uid": user.id,
+                "userStatus": "returning: Updated fbToken",
+                "fbFriends": user.fbFriends,
+                "success": "true"
+            });
         });
       }
       else {
