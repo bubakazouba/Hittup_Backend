@@ -6,6 +6,12 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var hittups = require('./routes/hittups');
 
+// Connect to MongoDB
+var mongodb = require('./db');
+mongodb.connect('mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981/hittup', function() {
+    console.log('Connected to MongoDB.');
+});
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 

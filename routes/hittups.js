@@ -1,8 +1,10 @@
 var http = require('http');
 var express = require('express');
 var router = express.Router();
-var mongoDatabase = require('../db');
+var mongodb = require('../db');
+var ObjectID = require('mongodb').ObjectID;
 var geolocation = require('../geolocation');
+var mongoose = require('mongoose');
 
 var Hittup = require('../models/hittup');
 var User = require('../models/user');
@@ -31,7 +33,7 @@ function getAvailableHittups(uid, hittups){
 }
 
 router.post('/GetHittups', function(req, res){
-    if(mongoDatabase){
+    if(mongodb.db()){
         var body = req.body;
         var uid = body.uid;
         var coordinates = body.coordinates;

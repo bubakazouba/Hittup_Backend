@@ -1,7 +1,8 @@
 var http = require('http');
 var express = require('express');
 var router = express.Router();
-var mongoDatabase = require('../db');
+var mongodb = require('../db');
+var ObjectID = require('mongodb').ObjectID;
 
 var Hittup = require('../models/hittup');
 var User = require('../models/user');
@@ -10,6 +11,5 @@ var User = require('../models/user');
 router.get('/', function(req, res, next) {
 	res.send("Hello Hittup! (On Aashir Server)");
 });
-
 
 module.exports = router;

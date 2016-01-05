@@ -1,7 +1,8 @@
 var http = require('http');
 var express = require('express');
 var router = express.Router();
-var mongoDatabase = require('../db');
+var mongodb = require('../db');
+var ObjectID = require('mongodb').ObjectID
 var geolocation = require('../geolocation');
 
 var Hittup = require('../models/hittup');
@@ -14,7 +15,7 @@ router.get('/', function(req, res, next) {
 });
 
 function getFBFriends(uid, callback){
-    collection = mongoDatabase.collection("Users");
+    collection = mongodb.db().collection("users");
     collection.find({"_id":ObjectID(uid)}).toArray(function(err,docs){
         if (docs.length==0){
             callback("user doesn't exist");
@@ -26,7 +27,7 @@ function getFBFriends(uid, callback){
 }
 
 router.post('/GetFriendsList', function(req, res){
-    if(mongoDatabase){
+    if(mongodb.db()){
         getFBFriends(req.body.uid, function(err, fbFriends){
             if(err){
                 res.send({"error": err});
@@ -34,6 +35,8 @@ router.post('/GetFriendsList', function(req, res){
             }
             res.send(fbFriends);
         });
+    } else {
+        res.send("DB Not Connected")
     }
 });
 
@@ -82,13 +85,13 @@ router.post('/AddUser', function (req, res, next) {
 });
 
 router.post('/UpdateUserLocation', function(req, res, next) {
-    var collection = mongoDatabase.collection('Users');
+    // var collection = mongodb.db().collection('users');
 
     var uid = req.body.uid;
     var loc = req.body.coordinates;
 
     geolocation.geoReverseLocation(loc,function(location){
-        mongoDatabase.collection('Users').update(
+        mongodb.db().collection('users').update(
             {_id: ObjectID(req.body.uid)},
             { $set: {location: location}}    );
         res.send({"city":location.city,"success":"true"});
