@@ -69,7 +69,7 @@ router.post('/AddUser', function (req, res, next) {
                     "uid": user.id,
                     "userStatus": "returning",
                     "success": "false",
-                    "error": err.message});
+                    "error": err.message
                 });
                 return;
             } 
