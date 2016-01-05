@@ -9,7 +9,7 @@ var User = require('../models/user');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.send('Hello /Users!');
+  res.send('Hello /Users!!');
 });
 
 var geoReverseLocation = function(loc,callback){

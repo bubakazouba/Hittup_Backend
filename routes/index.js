@@ -8,7 +8,7 @@ var User = require('../models/user');
 
 /* GET home page. */ 
 router.get('/', function(req, res, next) {
-	res.send("Hello Hittup!");
+	res.send("Hello Hittup! (On Aashir Server)");
 });
 
 
