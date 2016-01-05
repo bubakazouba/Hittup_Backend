@@ -19,13 +19,11 @@ var HittupSchema   = new Schema({
     isPrivate: Boolean,
     duration: Number,
     dateCreated: Number,
-    loc: {
-        coordinates: {
-            type: [Number],  // [<longitude>, <latitude>]
-            index: '2d'      // create the geospatial index
-        },
-        city: String,
-        state: String
+    loc: { 
+    	type: { type: String },
+    	 coordinates: [ ] ,// [<longitude>, <latitude>]
+    	 city: String,
+    	 state: String,
     },
     usersInvited: [{
         uid: String,
@@ -42,4 +40,5 @@ var HittupSchema   = new Schema({
 
 }, {collection: 'Hittup'});
 
+HittupSchema.index({ loc: '2dsphere' });
 module.exports = mongoose.model('Hittup', HittupSchema);

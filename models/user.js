@@ -6,19 +6,18 @@ var UserSchema   = new Schema({
     fbid: String,
     firstName: String,
     lastName: String,
-    location: {
-        coordinates: {
-            type: [Number],  // [<longitude>, <latitude>]
-            index: '2dsphere'      // create the geospatial index
-        },
-        city: String,
-        state: String
+    loc: { 
+        type: { type: String },
+         coordinates: [ ] ,// [<longitude>, <latitude>]
+         city: String,
+         state: String,
     },
-    fb_friends: [{
+    fbFriends: [{
         uid: String,
         fbid: String,
         firstName: String,
         lastName: String
     }],
 }, {collection: 'Users'});
+UserSchema.index({ loc: '2dsphere' });
 module.exports = mongoose.model('User', UserSchema);

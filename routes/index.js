@@ -85,11 +85,26 @@ function getFBFriends(uid, callback){
     });
 }
 
+function getAvailableHittups(uid, hittups){
+    var availableHittups = []
+    for (var i = hittups.length - 1; i >= 0; i--) {//TODO: include that in the query
+        if(hittups[i].isPrivate=="true"){
+            for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
+                if(uid == hittups[i].usersInvited[j].uid){
+                    availableHittups.push(hittups[i]);
+                }
+            }
+        }
+        else {
+            availableHittups.push(hittups[i]);
+        }
+    }
+    return availableHittups;
+}
 router.post('/GetFriendsList', function(req, res){
     if(mongoDatabase){
         getFBFriends(req.body.uid, function(err, fbFriends){
             if(err){
-                console.log(err);
                 res.send({"error": err});
                 return;
             }
@@ -104,58 +119,74 @@ router.post('/GetFriendsList', function(req, res){
 // ”location”:<location> }
 // location is coordinates
 
-router.get('/GetHittups', function(req, res){
-	if(mongoDatabase){
-		var uid = req.query.uid;
-		var latitude = parseFloat(req.query.latitude);
-		var longitude = parseFloat(req.query.longitude);
-		// Hittup.ensureIndex({ "location": "2d" });
+router.post('/GetHittups', function(req, res){
+    if(mongoDatabase){
+        var body = req.body;
+        var uid = body.uid;
+        var coordinates = body.coordinates;
+        var longitude = parseFloat(coordinates[0]);
+        var latitude = parseFloat(coordinates[1]);
+        var timeInterval = 24*60*60; //TODO: better name for this variable
+        if(body.hasOwnProperty("timeInterval")){
+            timeInterval = body.timeInterval
+        }
 
-		console.log([latitude, longitude])
-		Hittup.find(
-			{ loc:
-				{ coordinates: {
-			        $near: [latitude, longitude],
-			        $maxDistance: 5000
-			      }
-			   	}	
-	     	},
-		// .toArray(
+        if(body.hasOwnProperty("maxDistance")){
+            var maxDistance = parseFloat(body.maxDistance);
+            var query = Hittup.find({
+                loc: {
+                    $nearSphere: [longitude, latitude],
+                    $maxDistance: maxDistance //in kilometers
+                }
+            });
 
-	     // Hittup.runCommand({geoNear:"coordinates",near:[latitude,longitude], maxDistance:10/69},
-
-	     	function (err, result) {
-				if (err) {
-					res.send("Error Find: " + err);
-				} else {
-					res.send(result);
-					// res.send("")
-				}
-			});
-		// return res.send("Lol yayt");
-	} else {
-		res.send("MongoDB not Connected");
-	}
+            query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
+            query.exec(function (err, results) {
+                if (err) {
+                    return res.send("Error Find: " + err.message);
+                }
+                res.send(getAvailableHittups(uid, results));
+            });
+        }
+        else {
+            //TODO use promises, async callback here has no use
+            geoReverseLocation(coordinates, function(location){
+                var query = Hittup.find({"loc.city": location.city, "loc.state": location.state});
+                query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
+                query.exec(function (err,results) {
+                    if(err){
+                        return res.send(err);
+                    }
+                    res.send(getAvailableHittups(uid, results));
+                });
+            });
+        }//end else if user didn't specify maxDistance
+    } else {
+        res.send("MongoDB not Connected");
+    }
 });
 
 // Post
 router.post('/PostHittup', function (req, res, next) {
-
-    var hittup = new Hittup();
     var body = req.body;
-
-    hittup.title = body.title;
-    hittup.isPrivate = (body.isPrivate == "true");
-    hittup.owner = body.owner;
-    hittup.duration = parseInt(body.duration);
-    hittup.dateCreated = Math.floor(Date.now()/1000);
+    var hittup = new Hittup({
+        title: body.title,
+        isPrivate: (body.isPrivate.toLowerCase() == "true"),
+        owner: body.owner,
+        duration: parseInt(body.duration),
+        dateCreated: Math.floor(Date.now()/1000),
+        loc: {
+            type: "Point",
+            coordinates: [parseFloat(body.coordinates[0]), parseFloat(body.coordinates[1])]
+        }
+    });
+    
     if(body.hasOwnProperty("usersInvited")){
-        hittup.usersJoined = body.usersInvited;
+        hittup.usersInvited = body.usersInvited;
     }
-
-    hittup.loc.coordinates = [parseFloat(body.coordinates[0]), parseFloat(body.coordinates[1])];
     geoReverseLocation(hittup.loc.coordinates, function(location){
-        hittup.loc = location;
+        hittup.loc.city = location.city;
+        hittup.loc.state = location.state;
         hittup.save(function (err) {
             if (err) {
                 return res.send("Save Error: " + err.message);

@@ -27,6 +27,23 @@ POST format:
 }
 ```
 
+### /GETHittups
+POST format:
+
+```
+{ 
+	"uid": "<uid>",
+	"maxDistance": "<distance in km>", 
+	"coordinates": ["<long>","<lat>"],
+	"timeInterval": "<time in seconds>"
+}
+```
+`maxDistance` is optional, default behaviour would be looking for hittups in the same city.
+`timeInterval` is optional, default is 24\*60\*60.
+
+
+```
+
 ### /UpdateUserLocation
 POST format:
 
