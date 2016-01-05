@@ -2,6 +2,7 @@ var http = require('http');
 var express = require('express');
 var router = express.Router();
 var mongoDatabase = require('../db');
+var geolocation = require('../geolocation');
 
 var Hittup = require('../models/hittup');
 var User = require('../models/user');
@@ -43,7 +44,7 @@ router.post('/GetHittups', function(req, res){
         }
         else {
             //TODO use promises, async callback here has no use
-            geoReverseLocation(coordinates, function(location){
+            geolocation.geoReverseLocation(coordinates, function(location){
                 var query = Hittup.find({"loc.city": location.city, "loc.state": location.state});
                 query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
                 query.exec(function (err,results) {
