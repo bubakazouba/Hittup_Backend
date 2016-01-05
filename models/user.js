@@ -6,6 +6,7 @@ var UserSchema   = new Schema({
     fbid: String,
     firstName: String,
     lastName: String,
+    fbToken: String,
     loc: { 
         type: { type: String },
          coordinates: [ ] ,// [<longitude>, <latitude>]
