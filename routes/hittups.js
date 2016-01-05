@@ -13,6 +13,23 @@ router.get('/', function(req, res, next) {
   res.send('Hello /Hittups!');
 });
 
+function getAvailableHittups(uid, hittups){
+    var availableHittups = []
+    for (var i = hittups.length - 1; i >= 0; i--) {//TODO: include that in the query
+        if(hittups[i].isPrivate=="true"){
+            for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
+                if(uid == hittups[i].usersInvited[j].uid){
+                    availableHittups.push(hittups[i]);
+                }
+            }
+        }
+        else {
+            availableHittups.push(hittups[i]);
+        }
+    }
+    return availableHittups;
+}
+
 router.post('/GetHittups', function(req, res){
     if(mongoDatabase){
         var body = req.body;
