@@ -13,7 +13,7 @@ Your app should now be running on [localhost:3000](http://localhost:3000/).
 
 # Routes
 
-### /PostHittup
+### Hittups/PostHittup
 POST format:
 
 ```
@@ -27,7 +27,7 @@ POST format:
 }
 ```
 
-### /GETHittups
+### Hittups/GETHittups
 POST format:
 
 ```
@@ -44,7 +44,7 @@ POST format:
 
 ```
 
-### /UpdateUserLocation
+### Users/UpdateUserLocation
 POST format:
 
 ```
@@ -60,7 +60,7 @@ returns:
 {"city":location.city,"success":"true"}
 ```
 
-### /GetFriendsList
+### Users/GetFriendsList
 POST format:
 
 ```
@@ -79,7 +79,7 @@ response:
 ```
 
 
-### /AddUser
+### Users/AddUser
 POST format:
 
 ```

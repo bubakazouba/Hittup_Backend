@@ -20,7 +20,7 @@ function getAvailableHittups(uid, hittups){
             for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
                 if(uid == hittups[i].usersInvited[j].uid){
                     availableHittups.push(hittups[i]);
-                }
+                }c
             }
         }
         else {
@@ -95,7 +95,7 @@ router.post('/PostHittup', function (req, res, next) {
     if(body.hasOwnProperty("usersInvited")){
         hittup.usersInvited = body.usersInvited;
     }
-    geoReverseLocation(hittup.loc.coordinates, function(location){
+    geolocation.geoReverseLocation(hittup.loc.coordinates, function(location){
         hittup.loc.city = location.city;
         hittup.loc.state = location.state;
         hittup.save(function (err) {
