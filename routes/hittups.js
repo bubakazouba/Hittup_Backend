@@ -1,9 +1,9 @@
 var http = require('http');
 var express = require('express');
 var router = express.Router();
-var mongodb = require('../db');
+var mongodb = require('../modules/db');
 var ObjectID = require('mongodb').ObjectID;
-var geolocation = require('../geolocation');
+var geolocation = require('../modules/geolocation');
 var mongoose = require('mongoose');
 
 var Hittup = require('../models/hittup');

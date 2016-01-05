@@ -1,7 +1,7 @@
 var http = require('http');
 var express = require('express');
 var router = express.Router();
-var mongodb = require('../db');
+var mongodb = require('../modules/db');
 var ObjectID = require('mongodb').ObjectID;
 
 var Hittup = require('../models/hittup');
