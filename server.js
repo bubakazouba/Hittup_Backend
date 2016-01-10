@@ -5,6 +5,8 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var hittups = require('./routes/hittups');
+var events = require('./routes/events');
+
 
 // Connect to MongoDB
 var mongodb = require('./modules/db');
@@ -18,6 +20,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(routes);
 app.use('/users', users);
 app.use('/hittups', hittups);
+app.use('/events', events);
+
 
 PORT = 8080;
 

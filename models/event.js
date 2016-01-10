@@ -18,6 +18,7 @@ var EventSchema   = new Schema({
     	 city: String,
     	 state: String,
     },
+    category: String,
     isPrivate: Boolean,
     usersInvited: [{
         uid: String,

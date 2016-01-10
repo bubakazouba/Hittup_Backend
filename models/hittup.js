@@ -38,7 +38,7 @@ var HittupSchema   = new Schema({
         lastName: String
     }]
 
-}, {collection: 'Hittup'});
+}, {collection: 'Hittups'});
 
 HittupSchema.index({ loc: '2dsphere' });
 module.exports = mongoose.model('Hittup', HittupSchema);
