@@ -22,7 +22,7 @@ function getAvailableHittups(uid, hittups){
             for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
                 if(uid == hittups[i].usersInvited[j].uid){
                     availableHittups.push(hittups[i]);
-                }c
+                }
             }
         }
         else {
@@ -102,9 +102,9 @@ router.post('/PostHittup', function (req, res, next) {
         hittup.loc.state = location.state;
         hittup.save(function (err) {
             if (err) {
-                return res.send("Save Error: " + err.message);
+                return res.send({"success":"false","error":err.message});
             } 
-            res.send("Successful save!")
+            res.send({"success":"true"})
         });
     });
 }); 
