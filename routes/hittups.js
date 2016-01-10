@@ -32,6 +32,8 @@ function getAvailableHittups(uid, hittups){
     return availableHittups;
 }
 
+
+
 router.post('/GetHittups', function(req, res){
     if(mongodb.db()){
         var body = req.body;
@@ -108,6 +110,64 @@ router.post('/PostHittup', function (req, res, next) {
         });
     });
 }); 
+
+router.post('/GetInvitations', function(req, res){
+    var body = req.body;
+    var timeInterval = 24*60*60; //TODO: better name for this variable
+    if(body.hasOwnProperty("timeInterval")){
+        timeInterval = body.timeInterval
+    }
+
+//.....
+/*for (var i = results.length - 1; i >= 0; i--) {
+        usersInvited = results[i]
+        bool found  = false;
+        for (var j = usersInvited.length - 1; j >= 0; j--) {
+            if(usersInvited[j]==the one u r looking for)
+                found = true
+        };
+        if(found){
+            result.push(hittup.title);
+        }
+    }
+    res.send(result);*/
+//.......
+
+    var uid = req.body.uid;
+    console.log(req.body.uid);
+    if(mongodb.db){
+        mongodb.db().collection('hittups').find({
+          usersInvited: {
+            $elemMatch: {
+              uid: req.body.uid
+            }
+          }
+        }).toArray(function(err, json){
+                    console.log(json);
+
+            /*var results=[];
+            for(var i = json.length -1; i>=0;i--){
+                usersInvited = json[i]["usersInvited"];
+                var found = false;
+                for (var j = usersInvited.length - 1; j >= 0; j--) {
+                    console.log(usersInvited[j].uid);
+                   if(usersInvited[j].uid == uid){
+                    found=true;
+                    console.log("true");
+                   }
+                   if(found){
+                    results.push(json[i]);
+                   }
+                };
+            }*/
+            res.send(json);
+            if(err){
+                console.log('Error while getting general info: err');
+                return res.send(err);
+            }
+        });
+    }
+});
 
 
 module.exports = router;
