@@ -13,8 +13,8 @@ Your app should now be running on [localhost:3000](http://localhost:3000/).
 
 # Routes
 
-### Hittups/PostHittup
-POST format:
+## Hittups/PostHittup
+### POST format:
 
 ```
 {
@@ -22,30 +22,68 @@ POST format:
 	"duration": "<seconds>",
 	"title": "<title>",
 	"isPrivate": "<bool>",
-	"owner": {"uid": "<uid>", "fbid": <fbid>, "firstName": "<firstname>", "lastName": "<lastname>"},
-	"usersInvited": [{"uid": "<uid>", "fbid": <fbid>, "firstname": <firstname>, "lastname": <lastname>}],
+	"owneruid": "<uid>",
+	"usersInviteduids": ["<uid>","<uid>",...]
 }
 ```
 
-### Hittups/GETHittups
-POST format:
+### response format:
+```
+{"success":"true"}
+```
+or
+
+```
+{"success":"false", "error":"<error message>"}
+```
+
+## Hittups/GetHittups
+### POST format:
 
 ```
 { 
 	"uid": "<uid>",
 	"maxDistance": "<distance in km>", 
 	"coordinates": ["<long>","<lat>"],
-	"timeInterval": "<time in seconds>"
+	"timeInterval": "<seconds>"
 }
 ```
 `maxDistance` is optional, default behaviour would be looking for hittups in the same city.
 `timeInterval` is optional, default is 24\*60\*60.
 
-
+### response format:
+```
+[
+  {
+    "_id": "5691d8dd1451737d532e9a2b",
+    "title": "<title>",
+	"isPrivate": "<bool>",
+    "duration": "<seconds>",
+    "dateCreated": "<seconds>",
+    "__v": 0,
+    "usersJoined": [
+       "firstName": "<firstName>",
+    	"lastName": "<lastName>",
+    	},
+    	...
+    ],
+    "usersInvited": [ {
+    	"firstName": "<firstName>",
+    	"lastName": "<lastName>",
+    	},
+    	...
+    ],
+    "loc": {
+      "state": "<state>",
+      "city": "<city>",
+      "type": "Point",
+      "coordinates": ["<long>", "<lat>"]
+    }
+  }
 ```
 
-### Users/UpdateUserLocation
-POST format:
+## Users/UpdateUserLocation
+### POST format:
 
 ```
 {
@@ -54,14 +92,14 @@ POST format:
 }
 ```
 
-returns:
+### response format:
 
 ```
 {"city":location.city,"success":"true"}
 ```
 
-### Users/GetFriendsList
-POST format:
+## Users/GetFriendsList
+### POST format:
 
 ```
 {
@@ -69,7 +107,7 @@ POST format:
 }
 ```
 
-response:
+### response format:
 
 ```
 {"fb_friends":
@@ -79,8 +117,8 @@ response:
 ```
 
 
-### Users/AddUser
-POST format:
+## Users/AddUser
+### POST format:
 
 ```
 {
@@ -89,7 +127,7 @@ POST format:
 }
 ```
 
-response:
+### response format:
 
 if user doesn't exist:
 

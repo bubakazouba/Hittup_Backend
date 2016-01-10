@@ -6,8 +6,8 @@ var ObjectID = require('mongodb').ObjectID;
 var geolocation = require('../modules/geolocation');
 var mongoose = require('mongoose');
 
-var Hittup = require('../models/hittup');
-var User = require('../models/user');
+var Hittup = require('../models/hittups');
+var User = require('../models/users');
 
 
 /* GET users listing. */
@@ -22,7 +22,7 @@ function getAvailableHittups(uid, hittups){
             for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
                 if(uid == hittups[i].usersInvited[j].uid){
                     availableHittups.push(hittups[i]);
-                }c
+                }
             }
         }
         else {
@@ -52,11 +52,14 @@ router.post('/GetHittups', function(req, res){
                     $maxDistance: maxDistance //in kilometers
                 }
             });
-
+            query.populate({
+                path: 'owner usersInvited usersJoined',
+                select: 'firstName lastName'
+            });
             query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
             query.exec(function (err, results) {
                 if (err) {
-                    return res.send("Error Find: " + err.message);
+                    return res.send({"success": "false", "error":err.message});
                 }
                 res.send(getAvailableHittups(uid, results));
             });
@@ -66,6 +69,10 @@ router.post('/GetHittups', function(req, res){
             geolocation.geoReverseLocation(coordinates, function(location){
                 var query = Hittup.find({"loc.city": location.city, "loc.state": location.state});
                 query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
+                query.populate({
+                    path: 'owner usersInvited usersJoined',
+                    select: 'firstName lastName'
+                });
                 query.exec(function (err,results) {
                     if(err){
                         return res.send(err);
@@ -83,9 +90,9 @@ router.post('/GetHittups', function(req, res){
 router.post('/PostHittup', function (req, res, next) {
     var body = req.body;
     var hittup = new Hittup({
+        owner: ObjectID(body.uid),
         title: body.title,
-        isPrivate: (body.isPrivate.toLowerCase() == "true"),
-        owner: body.owner,
+        isPrivate: ( body.isPrivate.toLowerCase() == "true" ),
         duration: parseInt(body.duration),
         dateCreated: Math.floor(Date.now()/1000),
         loc: {
@@ -93,18 +100,22 @@ router.post('/PostHittup', function (req, res, next) {
             coordinates: [parseFloat(body.coordinates[0]), parseFloat(body.coordinates[1])]
         }
     });
-    
-    if(body.hasOwnProperty("usersInvited")){
-        hittup.usersInvited = body.usersInvited;
+    if(body.hasOwnProperty("usersInviteduids")){
+        usersInvitedReferences = []
+        for (var i = body.usersInviteduids.length - 1; i >= 0; i--) {
+            usersInvitedReferences.push(ObjectID(body.usersInviteduids[i]));
+        }
+        hittup.usersInvited = usersInvitedReferences
     }
     geolocation.geoReverseLocation(hittup.loc.coordinates, function(location){
         hittup.loc.city = location.city;
         hittup.loc.state = location.state;
         hittup.save(function (err) {
             if (err) {
-                return res.send("Save Error: " + err.message);
+                console.log("Save Error: " + err.message);
+                return res.send({"success":"false", "error": err.message});
             } 
-            res.send("Successful save!")
+            res.send({"success": "true"})
         });
     });
 }); 
