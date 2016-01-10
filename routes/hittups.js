@@ -109,5 +109,35 @@ router.post('/PostHittup', function (req, res, next) {
     });
 }); 
 
+router.post('/GetInvitations', function(req, res){
+    var body = req.body;
+    var timeInterval = 24*60*60; //TODO: better name for this variable
+    if(body.hasOwnProperty("timeInterval")){
+        timeInterval = body.timeInterval
+    }
+
+
+    var uid = req.body.uid;
+    console.log(req.body.uid);
+    if(mongodb.db){
+        mongodb.db().collection('hittups').find({
+          usersInvited: {
+            $elemMatch: {
+              uid: req.body.uid
+            }
+          }
+        }).toArray(function(err, json){
+                    console.log(json);
+
+          
+            res.send(json);
+            if(err){
+                console.log('Error while getting general info: err');
+                return res.send(err);
+            }
+        });
+    }
+});
+
 
 module.exports = router;
