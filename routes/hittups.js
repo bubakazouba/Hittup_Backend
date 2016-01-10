@@ -22,7 +22,7 @@ function getAvailableHittups(uid, hittups){
             for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
                 if(uid == hittups[i].usersInvited[j].uid){
                     availableHittups.push(hittups[i]);
-                }c
+                }
             }
         }
         else {
@@ -31,8 +31,6 @@ function getAvailableHittups(uid, hittups){
     }
     return availableHittups;
 }
-
-
 
 router.post('/GetHittups', function(req, res){
     if(mongodb.db()){
@@ -118,20 +116,6 @@ router.post('/GetInvitations', function(req, res){
         timeInterval = body.timeInterval
     }
 
-//.....
-/*for (var i = results.length - 1; i >= 0; i--) {
-        usersInvited = results[i]
-        bool found  = false;
-        for (var j = usersInvited.length - 1; j >= 0; j--) {
-            if(usersInvited[j]==the one u r looking for)
-                found = true
-        };
-        if(found){
-            result.push(hittup.title);
-        }
-    }
-    res.send(result);*/
-//.......
 
     var uid = req.body.uid;
     console.log(req.body.uid);
@@ -145,21 +129,7 @@ router.post('/GetInvitations', function(req, res){
         }).toArray(function(err, json){
                     console.log(json);
 
-            /*var results=[];
-            for(var i = json.length -1; i>=0;i--){
-                usersInvited = json[i]["usersInvited"];
-                var found = false;
-                for (var j = usersInvited.length - 1; j >= 0; j--) {
-                    console.log(usersInvited[j].uid);
-                   if(usersInvited[j].uid == uid){
-                    found=true;
-                    console.log("true");
-                   }
-                   if(found){
-                    results.push(json[i]);
-                   }
-                };
-            }*/
+          
             res.send(json);
             if(err){
                 console.log('Error while getting general info: err');

@@ -18,7 +18,16 @@ router.get('/', function(req, res, next) {
 function getAvailableEvents(uid, events){
     var availableEvent = []
     for (var i = events.length - 1; i >= 0; i--) {//TODO: include that in the query
-           availableEvents.push(events[i]);
+        if(events[i].isPrivate=="true"){
+            for (var j = events[i].usersInvited.length - 1; j >= 0; j--) {
+                if(uid == events[i].usersInvited[j].uid){
+                    availableEvents.push(events[i]);
+                }
+            }
+        }
+        else {
+            availableEvents.push(events[i]);
+        }
         }
     }
     return availableEvents;
