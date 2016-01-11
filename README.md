@@ -13,6 +13,15 @@ Your app should now be running on [localhost:3000](http://localhost:3000/).
 
 # Routes
 
+### Hittups/GetInvitations
+POST format:
+
+```
+{
+	"uid": "<uid>"
+}
+```
+
 ### Hittups/PostHittup
 POST format:
 
