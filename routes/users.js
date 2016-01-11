@@ -4,9 +4,7 @@ var router = express.Router();
 var mongodb = require('../modules/db');
 var ObjectID = require('mongodb').ObjectID
 var geolocation = require('../modules/geolocation');
-
-var Hittup = require('../models/hittups');
-var User = require('../models/users');
+var User = require('../models/Users');
 
 
 /* GET users listing. */
@@ -89,8 +87,6 @@ router.post('/AddUser', function (req, res, next) {
 });
 
 router.post('/UpdateUserLocation', function(req, res, next) {
-    // var collection = mongodb.db().collection('users');
-
     var uid = req.body.uid;
     var loc = req.body.coordinates;
 

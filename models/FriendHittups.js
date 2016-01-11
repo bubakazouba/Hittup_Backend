@@ -1,4 +1,3 @@
-// app/models/hittup.js
 var mongoose  = require('mongoose');
 var Schema  = mongoose.Schema;
 
@@ -6,20 +5,20 @@ var Schema  = mongoose.Schema;
 //TODO: fix duplicating the `user` type
     
 var HittupSchema   = new Schema({
-	title: String,
+    title: String,
     isPrivate: Boolean,
     duration: Number,
     dateCreated: Number,
     owner: { type: Schema.ObjectId, ref: 'Users' },
     loc: { 
-     type: { type: String },
+      type: { type: String },
       coordinates: [ ] ,// [<longitude>, <latitude>]
       city: String,
       state: String,
     },
     usersInvited: [{ type: Schema.ObjectId, ref: 'Users' }],
     usersJoined: [{ type: Schema.ObjectId, ref: 'Users' }]
-}, {collection: 'Hittups'});
+}, {collection: 'FriendHittups'});
 
 HittupSchema.index({ loc: '2dsphere' });
-module.exports = mongoose.model('Hittups', HittupSchema);
+module.exports = mongoose.model('FriendHittups', HittupSchema);
