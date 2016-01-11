@@ -13,7 +13,7 @@ var UserSchema   = new Schema({
          city: String,
          state: String,
     },
-    // fbFriends:[{ type: Schema.ObjectId, ref: 'User' }]
+    // fbFriends:[{ type: Schema.ObjectId, ref: 'Users' }]
     fbFriends: [{
         uid: String,
         fbid: String,

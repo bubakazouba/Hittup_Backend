@@ -15,7 +15,7 @@ router.get('/', function(req, res, next) {
 });
 
 function getFBFriends(uid, callback){
-    collection = mongodb.db().collection("users");
+    collection = mongodb.db().collection("Users");
     collection.find({"_id":ObjectID(uid)}).toArray(function(err,docs){
         if (docs.length==0){
             callback("user doesn't exist");
@@ -39,21 +39,6 @@ router.post('/GetFriendsList', function(req, res){
         res.send("DB Not Connected")
     }
 });
-
-// router.post('/AddUser', function (req, res, next) {
-//     userCollection = mongoDatabase.collection("Users");
-//     userCollection.find({"fbid":req.body.fbid}).toArray(function(err,docs){
-//         if (docs.length==0){ //if user doesn't exist
-//             userCollection.insert({"fbid":req.body.fbid, "fbToken": req.body.fbToken}, function (err,user){
-//                 if(err){
-//                     res.send({"success":"false","error":err.message})
-//                     return;
-//                 }
-//                 res.send({"success":"true", "uid": user.ops[0]._id.toString()});
-//             });
-//         }
-//     });
-// });
 
 router.post('/AddUser', function (req, res, next) {
   User.findOne({ fbid: req.body.fbid }, function (err, user) {
@@ -85,6 +70,12 @@ router.post('/AddUser', function (req, res, next) {
         user = new User();
         user.fbid = req.body.fbid;
         user.fbToken = req.body.fbToken;
+        user.loc= {
+            type: "Point",
+            coordinates: [-10, -10] //mongoose doesnt like empty coordinates cuz it's being indexed
+                                    //so i just added a point in the middle of the sea
+                                    //TODO: fix that
+        }
 
         user.save(function (err,insertedUser){
             if(err){
@@ -104,7 +95,7 @@ router.post('/UpdateUserLocation', function(req, res, next) {
     var loc = req.body.coordinates;
 
     geolocation.geoReverseLocation(loc,function(location){
-        mongodb.db().collection('users').update(
+        mongodb.db().collection('Users').update(
             {_id: ObjectID(req.body.uid)},
             { $set: {location: location}}    );
         res.send({"city":location.city,"success":"true"});

@@ -131,19 +131,16 @@ router.post('/GetInvitations', function(req, res){
     var uid = req.body.uid;
     console.log(req.body.uid);
     if(mongodb.db){
-        mongodb.db().collection('hittups').find({
+        mongodb.db().collection('Hittups').find({
           usersInvited: {
             $elemMatch: {
               uid: req.body.uid
             }
           }
         }).toArray(function(err, json){
-                    console.log(json);
-
-          
             res.send(json);
             if(err){
-                console.log('Error while getting general info: err');
+                console.log('Error while getting general info: ' + err.message);
                 return res.send(err);
             }
         });
