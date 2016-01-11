@@ -21,6 +21,40 @@ POST format:
 	"uid": "<uid>"
 }
 ```
+Response format:
+```
+{
+    "owner": {
+        firstName: "<firstName>",
+        lastName: "<lastName>"
+    },
+    "title": "<title>",
+    "isPrivate": "<boolean>",
+    "duration": "<duration>",
+    "dateCreated": "<dateCreated>",
+    "usersJoined": [
+       {
+            firstName: "<firstName>",
+            lastName: "<lastName>"
+        }
+        ],
+    "usersInvited": [
+        {
+            firstName: "<firstName>",
+            lastName: "<lastName>"
+        }
+    ],
+    "loc": {
+        "state": "<state>",
+        "city": "<city>",
+        "type": "<Point>",
+        "coordinates": [
+            "<longitude>",
+            "<latitude>"
+        ]
+    }
+}
+```
 
 ### Hittups/PostHittup
 POST format:
