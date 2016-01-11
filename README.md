@@ -8,10 +8,19 @@ npm install
 npm start
 ```
 
-Your app should now be running on [localhost:3000](http://localhost:3000/).
+Your app should now be running on [localhost:8080](http://localhost:8080/).
 
 
 # Routes
+
+### Hittups/GetInvitations
+POST format:
+
+```
+{
+	"uid": "<uid>"
+}
+```
 
 ## Hittups/PostHittup
 ### POST format:
