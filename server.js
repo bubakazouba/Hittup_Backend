@@ -4,7 +4,9 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var hittups = require('./routes/hittups');
+var hittups = require('./routes/FriendHittups');
+var events = require('./routes/EventHittups');
+
 
 // Connect to MongoDB
 var mongodb = require('./modules/db');
@@ -16,8 +18,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(routes);
-app.use('/users', users);
-app.use('/hittups', hittups);
+app.use('/Users', users);
+app.use('/FriendHittups', hittups);
+app.use('/EventHittups', events);
+
 
 PORT = 8080;
 

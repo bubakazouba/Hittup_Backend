@@ -13,6 +13,7 @@ var UserSchema   = new Schema({
          city: String,
          state: String,
     },
+    // fbFriends:[{ type: Schema.ObjectId, ref: 'Users' }]
     fbFriends: [{
         uid: String,
         fbid: String,
@@ -20,5 +21,6 @@ var UserSchema   = new Schema({
         lastName: String
     }],
 }, {collection: 'Users'});
+
 UserSchema.index({ loc: '2dsphere' });
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('Users', UserSchema);

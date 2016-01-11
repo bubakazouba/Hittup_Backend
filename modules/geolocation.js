@@ -23,19 +23,20 @@ exports.geoReverseLocation = function(loc,callback){
             data=data.substr(data.indexOf('(')+1,data.length-data.indexOf('(')-2); //removing the "renderReverse(...)" around JSON string
             data=JSON.parse(data);
             var responseLocation=data.results[0].locations[0];
-            var location={"City":-1,"State":-1}
+            var location={"City":-1,"State":-1};
             //parsing JSON returned, example: http://tinyurl.com/q2mmnsa
             for(var prop in responseLocation){
                 if(Object.keys(location).indexOf(responseLocation[prop])!=-1){
-                    location[responseLocation[prop]]=responseLocation[prop.substr(0,prop.length-4)]
+                    location[responseLocation[prop]]=responseLocation[prop.substr(0,prop.length-4)];
                 }
             }
             //confirming with DB scheme
             location.city=location.City;
             location.state=location.State;
+            console.log(location);
             delete location.City;
             delete location.State;
-            location.coordinates=[loc[0],loc[1]]
+            location.coordinates=[loc[0],loc[1]];
             callback(location);
         })
     }); //end http.request
