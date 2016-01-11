@@ -55,6 +55,7 @@ router.post('/GetInvitations', function(req, res){
                     console.log(json);
             res.send(json);
             if(err){
+                Logger.log(err.message,req.connection.remoteAddress, null, "/GetInvitations");
                 console.log('Error while getting general info: err'+err.message);
                 return res.send({"success":"false", "error": err.message});
             }

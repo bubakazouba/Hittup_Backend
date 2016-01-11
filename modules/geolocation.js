@@ -19,6 +19,10 @@ exports.geoReverseLocation = function(loc,callback){
         reverseGeoResponse.on('data',function(chunk){
             data+=chunk
         });//end .on(data)
+
+        reverseGeoResponse.on('error', function(error){
+            callback(error);
+        });
         reverseGeoResponse.on('end',function(){
             data=data.substr(data.indexOf('(')+1,data.length-data.indexOf('(')-2); //removing the "renderReverse(...)" around JSON string
             data=JSON.parse(data);
@@ -37,7 +41,7 @@ exports.geoReverseLocation = function(loc,callback){
             delete location.City;
             delete location.State;
             location.coordinates=[loc[0],loc[1]];
-            callback(location);
+            callback(null,location);
         })
     }); //end http.request
     request.end();

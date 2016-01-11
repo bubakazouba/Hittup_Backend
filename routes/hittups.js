@@ -5,17 +5,15 @@ var mongodb = require('../modules/db');
 var ObjectID = require('mongodb').ObjectID;
 var geolocation = require('../modules/geolocation');
 var mongoose = require('mongoose');
-
 var Hittup = require('../models/hittup');
 var User = require('../models/user');
 var HittupHelper = require('../modules/HittupHelper');
-
+var Logger = require('../modules/Logger');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('Hello /Hittups!');
 });
-
 
 router.post('/GetHittups', function(req, res){
     HittupHelper.get(Hittup,req,res);
@@ -44,6 +42,7 @@ router.post('/PostHittup', function (req, res, next) {
         hittup.loc.state = location.state;
         hittup.save(function (err) {
             if (err) {
+                Logger.log(err.message,req.connection.remoteAddress, null, "/PostHittup");
                 return res.send("Save Error: " + err.message);
             } 
             res.send("Successful save!")
@@ -58,11 +57,10 @@ router.post('/GetInvitations', function(req, res){
         timeInterval = body.timeInterval
     }
 
-
     var uid = req.body.uid;
     console.log(req.body.uid);
     if(mongodb.db){
-        mongodb.db().collection('hittups').find({
+        mongodb.db().collection('Hittups').find({
           usersInvited: {
             $elemMatch: {
               uid: req.body.uid
@@ -74,6 +72,7 @@ router.post('/GetInvitations', function(req, res){
           
             res.send(json);
             if(err){
+                Logger.log(err.message,req.connection.remoteAddress, null, "/GetInvitations");
                 console.log('Error while getting general info: err');
                 return res.send(err);
             }

@@ -6,6 +6,18 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var hittups = require('./routes/hittups');
 var events = require('./routes/events');
+var winston = require('winston');
+
+require('winston-papertrail').Papertrail;
+
+var paperTrailLogger = new winston.Logger({
+    transports: [
+    new winston.transports.Papertrail({
+        host: 'logs3.papertrailapp.com',
+        port: 11470
+    })
+    ]
+});
 
 
 // Connect to MongoDB

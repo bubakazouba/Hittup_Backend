@@ -59,7 +59,10 @@ function get(Schema, req, res){
         else {
         	console.log("61");
             //TODO use promises, async callback here has no use
-            geolocation.geoReverseLocation(coordinates, function(location){
+            geolocation.geoReverseLocation(coordinates, function(err,location){
+                if(err){
+                    Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+                }
                 var query = Schema.find({"loc.city": location.city, "loc.state": location.state});
                 console.log( location);
                 console.log("bruh");
