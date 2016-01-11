@@ -5,80 +5,80 @@ var mongodb = require('../modules/db');
 var ObjectID = require('mongodb').ObjectID;
 var geolocation = require('../modules/geolocation');
 var mongoose = require('mongoose');
-var Hittup = require('../models/hittup');
-var Event = require('../models/event');
 
 
-function getAvailableOccasions(uid,occasions){
-    var availableOccasions = []
-    for (var i = occasions.length - 1; i >= 0; i--) {//TODO: include that in the query
-        if(occasions[i].isPrivate=="true"){
-            for (var j = occasions[i].usersInvited.length - 1; j >= 0; j--) {
-                if(uid == occasions[i].usersInvited[j].uid){
-                    availableOccasions.push(occasions[i]);
+function getAvailableHittups(uid,hittups){
+    var availableHittups = [];
+    for (var i = hittups.length - 1; i >= 0; i--) {//TODO: include that in the query
+        if(hittups[i].isPrivate=="true"){
+            for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
+                if(uid == hittups[i].usersInvited[j].uid){
+                    availableHittups.push(hittups[i]);
                 }
             }
         }
         else {
-            availableOccasions.push(occasions[i]);
+            availableHittups.push(hittups[i]);
         }
     }
-    return availableOccasions;
+    return availableHittups;
 }
 
 
 function get(Schema, req, res){
 	if(mongodb.db()){
-        var body = req.body;
-        var uid = body.uid;
-        var coordinates = body.coordinates;
-        var longitude = parseFloat(coordinates[0]);
-        var latitude = parseFloat(coordinates[1]);
-        console.log(coordinates);
-        var timeInterval = 24*60*60; //TODO: better name for this variable
-        if(body.hasOwnProperty("timeInterval")){
-            timeInterval = body.timeInterval;
-        }
-        if(body.hasOwnProperty("maxDistance")){
-            var maxDistance = parseFloat(body.maxDistance);
-            var query = Schema.find({
-                loc: {
-                    $nearSphere: [longitude, latitude],
-                    $maxDistance: maxDistance //in kilometers
-                }
-            });
-            query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
-            query.exec(function (err, results) {
-                if (err) {
-                    return res.send("Error Find: " + err.message);
-                }
-                console.log("going thru in get")
-                res.send(getAvailableOccasions(uid, results));
-            });
-        }
-        else {
-        	console.log("61");
-            //TODO use promises, async callback here has no use
-            geolocation.geoReverseLocation(coordinates, function(err,location){
-                if(err){
+         var body = req.body;
+         var uid = body.uid;
+         var coordinates = body.coordinates;
+         var longitude = parseFloat(coordinates[0]);
+         var latitude = parseFloat(coordinates[1]);
+         var timeInterval = 24*60*60; //TODO: better name for this variable
+         if(body.hasOwnProperty("timeInterval")){
+             timeInterval = body.timeInterval
+         }
+
+         if(body.hasOwnProperty("maxDistance")){
+             var maxDistance = parseFloat(body.maxDistance);
+             var query = Hittup.find({
+                 loc: {
+                     $nearSphere: [longitude, latitude],
+                     $maxDistance: maxDistance //in kilometers
+                 }
+             });
+             query.populate({
+                 path: 'owner usersInvited usersJoined',
+                 select: 'firstName lastName'
+             });
+             query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
+             query.exec(function (err, results) {
+                 if (err) {
+                     return res.send({"success": "false", "error":err.message});
+                 }
+                 res.send(getAvailableHittups(uid, results));
+             });
+         }
+         else {
+             //TODO use promises, async callback here has no use
+             geolocation.geoReverseLocation(coordinates, function(err, location){
+				if(err){
                     Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
                 }
-                var query = Schema.find({"loc.city": location.city, "loc.state": location.state});
-                console.log( location);
-                console.log("bruh");
-                query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
-                query.exec(function (err,results) {
-                    if(err){
-                        return res.send({"success":"false", "error": err.message});
-                    }
-                    console.log("Success");
-                   	console.log(results);
-                    res.send(getAvailableOccasions(uid, results));
-                });
-            });
-        }//end else if user didn't specify maxDistance
-    } else {
-        res.send("MongoDB not Connected");
+                 var query = Hittup.find({"loc.city": location.city, "loc.state": location.state});
+                 query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
+                 query.populate({
+                     path: 'owner usersInvited usersJoined',
+                     select: 'firstName lastName'
+                 });
+                 query.exec(function (err,results) {
+                     if(err){
+                         return res.send({"success": "false", "error": err.message});
+                     }
+                     res.send(getAvailableHittups(uid, results));
+                 });
+             });
+         }//end else if user didn't specify maxDistance
+     } else {
+        res.send({"success": "false", "error": "MongoDB not Connected"});
     }
 }
 

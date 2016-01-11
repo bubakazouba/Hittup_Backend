@@ -41,7 +41,7 @@ exports.geoReverseLocation = function(loc,callback){
             delete location.City;
             delete location.State;
             location.coordinates=[loc[0],loc[1]];
-            callback(null,location);
+            callback(null, location);
         })
     }); //end http.request
     request.end();

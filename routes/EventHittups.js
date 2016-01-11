@@ -6,8 +6,8 @@ var ObjectID = require('mongodb').ObjectID;
 var geolocation = require('../modules/geolocation');
 var mongoose = require('mongoose');
 
-var User = require('../models/user');
-var Event = require('../models/event');
+var User = require('../models/Users');
+var EventHittups = require('../models/EventHittups');
 var HittupHelper = require('../modules/HittupHelper');
 
 /* GET users listing. */
@@ -15,25 +15,8 @@ router.get('/', function(req, res, next) {
   res.send('Hello /Hittup Events!');
 });
 
-function getAvailableOccasions(uid, events){
-    var availableEvents = [];
-    for (var i = events.length - 1; i >= 0; i--) {//TODO: include that in the query
-        if(events[i].isPrivate=="true"){
-            for (var j = events[i].usersInvited.length - 1; j >= 0; j--) {
-                if(uid == events[i].usersInvited[j].uid){
-                    availableEvents.push(events[i]);
-                }
-            }
-        }
-        else {
-            availableEvents.push(events[i]);
-        }
-    }
-    return availableEvents;
-}
-
 router.post('/GetEvents', function(req, res){
-    HittupHelper.get(Event,req,res);
+    HittupHelper.get(EventHittups,req,res);
 });
 
 router.post('/GetInvitations', function(req, res){
@@ -43,19 +26,16 @@ router.post('/GetInvitations', function(req, res){
         timeInterval = body.timeInterval;
     }
     var uid = req.body.uid;
-    console.log(req.body.uid);
     if(mongodb.db){
-        mongodb.db().collection('Events').find({
+        mongodb.db().collection('EventHittups').find({
           usersInvited: {
             $elemMatch: {
               uid: req.body.uid
             }
           }
         }).toArray(function(err, json){
-                    console.log(json);
             res.send(json);
             if(err){
-                Logger.log(err.message,req.connection.remoteAddress, null, "/GetInvitations");
                 console.log('Error while getting general info: err'+err.message);
                 return res.send({"success":"false", "error": err.message});
             }

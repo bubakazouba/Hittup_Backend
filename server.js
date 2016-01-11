@@ -4,20 +4,8 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var hittups = require('./routes/hittups');
-var events = require('./routes/events');
-var winston = require('winston');
-
-require('winston-papertrail').Papertrail;
-
-var paperTrailLogger = new winston.Logger({
-    transports: [
-    new winston.transports.Papertrail({
-        host: 'logs3.papertrailapp.com',
-        port: 11470
-    })
-    ]
-});
+var hittups = require('./routes/FriendHittups');
+var events = require('./routes/EventHittups');
 
 
 // Connect to MongoDB
@@ -30,9 +18,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(routes);
-app.use('/users', users);
-app.use('/hittups', hittups);
-app.use('/events', events);
+app.use('/Users', users);
+app.use('/FriendHittups', hittups);
+app.use('/EventHittups', events);
 
 
 PORT = 8080;
