@@ -36,11 +36,11 @@ router.post('/PostHittup', function (req, res, next) {
         }
     });
     if(body.hasOwnProperty("usersInviteduids")){
-        usersInvitedReferences = []
+        usersInvitedReferences = [];
         for (var i = body.usersInviteduids.length - 1; i >= 0; i--) {
             usersInvitedReferences.push(ObjectID(body.usersInviteduids[i]));
         }
-        hittup.usersInvited = usersInvitedReferences
+        hittup.usersInvited = usersInvitedReferences;
     }
     geolocation.geoReverseLocation(hittup.loc.coordinates, function (location){
         hittup.loc.city = location.city;
@@ -50,7 +50,7 @@ router.post('/PostHittup', function (req, res, next) {
                 console.log("Save Error: " + err.message);
                 return res.send({"success":"false", "error": err.message});
             } 
-            res.send({"success":"true"})
+            res.send({"success":"true"});
         });
     });
 }); 

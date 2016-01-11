@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
 
 
 function getAvailableHittups(uid,hittups){
-    var availableHittups = []
+    var availableHittups = [];
     for (var i = hittups.length - 1; i >= 0; i--) {//TODO: include that in the query
         if(hittups[i].isPrivate=="true"){
             for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
