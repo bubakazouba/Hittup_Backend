@@ -3,9 +3,9 @@ var path = require('path');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
-var hittups = require('./routes/FriendHittups');
-var events = require('./routes/EventHittups');
+var Users = require('./routes/Users');
+var FriendHittups = require('./routes/FriendHittups');
+var EventHittups = require('./routes/EventHittups');
 
 
 // Connect to MongoDB
@@ -18,9 +18,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(routes);
-app.use('/Users', users);
-app.use('/FriendHittups', hittups);
-app.use('/EventHittups', events);
+app.use('/Users', Users);
+app.use('/FriendHittups', FriendHittups);
+app.use('/EventHittups', EventHittups);
 
 
 PORT = 8080;
