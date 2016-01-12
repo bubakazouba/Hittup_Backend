@@ -33,7 +33,6 @@ exports.geoReverseLocation = function(loc,callback){
             //confirming with DB scheme
             location.city=location.City;
             location.state=location.State;
-            console.log(location);
             delete location.City;
             delete location.State;
             location.coordinates=[loc[0],loc[1]];
