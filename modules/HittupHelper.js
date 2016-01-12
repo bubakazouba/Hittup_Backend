@@ -25,7 +25,7 @@ function getAvailableHittups(uid,hittups){
 }
 
 
-function get(Schema, req, res){
+function get(HittupSchema, req, res){
 	if(mongodb.db()){
          var body = req.body;
          var uid = body.uid;
@@ -39,7 +39,7 @@ function get(Schema, req, res){
 
          if(body.hasOwnProperty("maxDistance")){
              var maxDistance = parseFloat(body.maxDistance);
-             var query = Hittup.find({
+             var query = HittupSchema.find({
                  loc: {
                      $nearSphere: [longitude, latitude],
                      $maxDistance: maxDistance //in kilometers
@@ -63,7 +63,7 @@ function get(Schema, req, res){
 				if(err){
                     Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
                 }
-                 var query = Hittup.find({"loc.city": location.city, "loc.state": location.state});
+                 var query = HittupSchema.find({"loc.city": location.city, "loc.state": location.state});
                  query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
                  query.populate({
                      path: 'owner usersInvited usersJoined',
