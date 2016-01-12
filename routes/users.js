@@ -28,6 +28,7 @@ router.post('/GetFriendsList', function(req, res){
     if(mongodb.db()){
         getFBFriends(req.body.uid, function(err, fbFriends){
             if(err){
+                Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
                 res.send({"error": err});
                 return;
             }
@@ -48,6 +49,7 @@ router.post('/AddUser', function (req, res, next) {
         user.fbToken = req.body.fbToken;
         user.save(function (err,insertedUser){
             if(err){
+                Logger.log(err.message,req.connection.remoteAddress, null, "/AddUser");
                 res.send({
                     "uid": user.id,
                     "userStatus": "returning",

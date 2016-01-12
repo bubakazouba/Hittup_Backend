@@ -59,7 +59,10 @@ function get(HittupSchema, req, res){
          }
          else {
              //TODO use promises, async callback here has no use
-             geolocation.geoReverseLocation(coordinates, function(location){
+             geolocation.geoReverseLocation(coordinates, function(err, location){
+				if(err){
+                    Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+                }
                  var query = HittupSchema.find({"loc.city": location.city, "loc.state": location.state});
                  query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
                  query.populate({
