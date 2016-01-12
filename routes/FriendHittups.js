@@ -42,7 +42,11 @@ router.post('/PostHittup', function (req, res, next) {
         }
         hittup.usersInvited = usersInvitedReferences;
     }
-    geolocation.geoReverseLocation(hittup.loc.coordinates, function (location){
+    geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location){
+        if(err){
+            Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
+        }
+
         hittup.loc.city = location.city;
         hittup.loc.state = location.state;
         hittup.save(function (err) {
