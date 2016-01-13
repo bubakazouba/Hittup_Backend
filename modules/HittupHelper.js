@@ -10,9 +10,9 @@ var mongoose = require('mongoose');
 function getAvailableHittups(uid,hittups){
     var availableHittups = [];
     for (var i = hittups.length - 1; i >= 0; i--) {//TODO: include that in the query
-        if(hittups[i].isPrivate=="true"){
+        if(hittups[i].isPrivate==true){
             for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
-                if(uid == hittups[i].usersInvited[j].uid){
+                if(uid == hittups[i].usersInvited[j]._id.toString()){
                     availableHittups.push(hittups[i]);
                 }
             }
