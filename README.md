@@ -13,7 +13,7 @@ Your app should now be running on [localhost:8080](http://localhost:8080/).
 
 # Routes
 
-### Hittups/GetInvitations
+## (Friend/Event)Hittups/GetInvitations
 POST format:
 
 ```
@@ -34,12 +34,16 @@ Response format:
     "dateCreated": "<dateCreated>",
     "usersJoined": [
        {
+            "_id": "<uid>",
+            "fbid": "<fbid>",
             firstName: "<firstName>",
             lastName: "<lastName>"
         }
         ],
     "usersInvited": [
         {
+            "_id": "<uid>",
+            "fbid": "<fbid>",
             firstName: "<firstName>",
             lastName: "<lastName>"
         }
@@ -56,7 +60,7 @@ Response format:
 }
 ```
 
-## Hittups/PostHittup
+## (Friend/Event)Hittups/PostHittup
 ### POST format:
 
 ```
@@ -65,7 +69,7 @@ Response format:
 	"duration": "<seconds>",
 	"title": "<title>",
 	"isPrivate": "<bool>",
-	"owneruid": "<uid>",
+	"uid": "<uid>",
 	"usersInviteduids": ["<uid>","<uid>",...]
 }
 ```
@@ -80,7 +84,7 @@ or
 {"success":"false", "error":"<error message>"}
 ```
 
-## Hittups/GetHittups
+## (Friend/Event)Hittups/GetHittups
 ### POST format:
 
 ```
@@ -105,12 +109,16 @@ or
     "dateCreated": "<seconds>",
     "__v": 0,
     "usersJoined": [
+       "_id": "<uid>",
+       "fbid": "<fbid>",
        "firstName": "<firstName>",
     	"lastName": "<lastName>",
     	},
     	...
     ],
     "usersInvited": [ {
+       "_id": "<uid>",
+       "fbid": "<fbid>",
     	"firstName": "<firstName>",
     	"lastName": "<lastName>",
     	},
