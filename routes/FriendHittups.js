@@ -23,26 +23,7 @@ router.post('/GetHittups', function (req, res){
 
 
 router.post('/JoinHittup', function (req, res){
-    var body = req.body;
-    var owneruid = body.owneruid;
-    var hittupuid = body.hittupuid;
-    FriendHittups.findByIdAndUpdate(
-        ObjectID(hittupuid),
-        {
-            $push: { //try without quotes
-                "usersJoined": {
-                    "_id": ObjectID(owneruid)
-                }
-            }
-        },
-        function (err, model) {
-            if(err){
-                res.send({"success": "false", "error": err.message});
-                return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
-            }
-            res.send({"success":"true"});
-        }
-    );//end .update
+    HittupHelper.JoinHittup(FriendHittups, req, res);
 });
 
 // Post
