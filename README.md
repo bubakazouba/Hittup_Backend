@@ -13,7 +13,7 @@ Your app should now be running on [localhost:8080](http://localhost:8080/).
 
 # Routes
 
-### Hittups/GetInvitations
+## (Friend/Event)Hittups/GetInvitations
 POST format:
 
 ```
@@ -56,7 +56,7 @@ Response format:
 }
 ```
 
-## Hittups/PostHittup
+## (Friend/Event)Hittups/PostHittup
 ### POST format:
 
 ```
@@ -80,7 +80,7 @@ or
 {"success":"false", "error":"<error message>"}
 ```
 
-## Hittups/GetHittups
+## (Friend/Event)Hittups/GetHittups
 ### POST format:
 
 ```
