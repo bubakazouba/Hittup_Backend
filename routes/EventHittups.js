@@ -19,6 +19,11 @@ router.post('/GetHittups', function(req, res){
     HittupHelper.get(EventHittups,req,res);
 });
 
+router.post('/JoinHittup', function (req, res){
+    HittupHelper.JoinHittup(EventHittups, req, res);
+});
+
+
 router.post('/GetInvitations', function(req, res){
     HittupHelper.getInvitations(EventHittups,req,res);
 });
