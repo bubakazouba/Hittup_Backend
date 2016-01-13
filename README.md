@@ -60,12 +60,16 @@ POST format:
     "dateCreated": "<dateCreated>",
     "usersJoined": [
        {
+            "_id": "<uid>",
+            "fbid": "<fbid>",
             firstName: "<firstName>",
             lastName: "<lastName>"
         }
         ],
     "usersInvited": [
         {
+            "_id": "<uid>",
+            "fbid": "<fbid>",
             firstName: "<firstName>",
             lastName: "<lastName>"
         }
@@ -131,12 +135,16 @@ or
     "dateCreated": "<seconds>",
     "__v": 0,
     "usersJoined": [
+       "_id": "<uid>",
+       "fbid": "<fbid>",
        "firstName": "<firstName>",
     	"lastName": "<lastName>",
     	},
     	...
     ],
     "usersInvited": [ {
+       "_id": "<uid>",
+       "fbid": "<fbid>",
     	"firstName": "<firstName>",
     	"lastName": "<lastName>",
     	},

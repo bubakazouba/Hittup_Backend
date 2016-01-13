@@ -34,9 +34,8 @@ function get(HittupSchema, req, res){
          var latitude = parseFloat(coordinates[1]);
          var timeInterval = 24*60*60; //TODO: better name for this variable
          if(body.hasOwnProperty("timeInterval")){
-             timeInterval = body.timeInterval
+             timeInterval = body.timeInterval;
          }
-
          if(body.hasOwnProperty("maxDistance")){
              var maxDistance = parseFloat(body.maxDistance);
              var query = HittupSchema.find({
@@ -82,4 +81,70 @@ function get(HittupSchema, req, res){
     }
 }
 
-module.exports = {get:get};
+function post(HittupSchema,req,res){
+    var body = req.body;
+    var hittup = new HittupSchema({
+        owner: ObjectID(body.uid),
+        title: body.title,
+        isPrivate: ( body.isPrivate.toLowerCase() == "true" ),
+        duration: parseInt(body.duration),
+        dateCreated: Math.floor(Date.now()/1000),
+        loc: {
+            type: "Point",
+            coordinates: [parseFloat(body.coordinates[0]), parseFloat(body.coordinates[1])]
+        }
+    });
+    if(body.hasOwnProperty("usersInviteduids")){
+        usersInvitedReferences = [];
+        for (var i = body.usersInviteduids.length - 1; i >= 0; i--) {
+            usersInvitedReferences.push(ObjectID(body.usersInviteduids[i]));
+        }
+        hittup.usersInvited = usersInvitedReferences;
+    }
+    geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location){
+        hittup.loc.city = location.city;
+        hittup.loc.state = location.state;
+        hittup.save(function (err) {
+            if (err) {
+                Logger.log(err.message,req.connection.remoteAddress, null, "function: post");
+                console.log("Save Error: " + err.message);
+                return res.send({"success":"false", "error": err.message});
+            } 
+            res.send({"success":"true"});
+        });
+    });
+}
+
+function getInvitations(HittupSchema,req,res){
+    if(!mongodb.db){return res.send({"success": "false", "error": "DB not connected"});}
+    res.end({"success":"false","error":"im not implemented yet"});
+    // var body = req.body;
+    // var timeInterval = 24*60*60; //TODO: better name for this variable
+    // var uid = req.body.uid;
+    // if(body.hasOwnProperty("timeInterval")) {
+    //     timeInterval = body.timeInterval;
+    // }
+    // console.log(req.body.uid);
+    // console.log(ObjectID(req.body.uid));
+    // // var query = HittupSchema.find({"usersInvited._id": req.body.uid});
+    // var query = HittupSchema.find({
+    //   usersInvited: {
+    //     $elemMatch: {
+    //       _id: ObjectID(req.body.uid)
+    //     }
+    //   }
+    // });
+    // query.populate({
+    //     path: 'usersInvited',
+    //     select: 'firstName lastName'
+    // });
+    // query.exec(function (err, results){
+    //     if (err) {
+    //         return res.send({"success": "false", "error": err.message});
+    //     }
+    //     console.log(results);
+    //     res.send(results);
+    // });
+}
+
+module.exports = {get:get, post:post, getInvitations:getInvitations};
