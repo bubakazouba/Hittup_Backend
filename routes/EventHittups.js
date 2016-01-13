@@ -15,31 +15,16 @@ router.get('/', function(req, res, next) {
   res.send('Hello /Hittup Events!');
 });
 
-router.post('/GetEvents', function(req, res){
+router.post('/GetHittups', function(req, res){
     HittupHelper.get(EventHittups,req,res);
 });
 
 router.post('/GetInvitations', function(req, res){
-    var body = req.body;
-    var timeInterval = 24*60*60; //TODO: better name for this variable
-    if(body.hasOwnProperty("timeInterval")){
-        timeInterval = body.timeInterval;
-    }
-    var uid = req.body.uid;
-    if(mongodb.db){
-        mongodb.db().collection('EventHittups').find({
-          usersInvited: {
-            $elemMatch: {
-              uid: req.body.uid
-            }
-          }
-        }).toArray(function(err, json){
-            res.send(json);
-            if(err){
-                console.log('Error while getting general info: err'+err.message);
-                return res.send({"success":"false", "error": err.message});
-            }
-        });
-    }
+    HittupHelper.getInvitations(EventHittups,req,res);
 });
+
+router.post('/PostHittup', function (req, res, next) {
+    HittupHelper.post(EventHittups,req,res);
+}); 
+
 module.exports = router;

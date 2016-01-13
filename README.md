@@ -10,6 +10,17 @@ npm start
 
 Your app should now be running on [localhost:8080](http://localhost:8080/).
 
+### Command Line Usage
+To use forever to run scripts continuously:
+
+**Example**
+```
+forever start server.js
+```
+**Example to stop server when running forever**
+```
+forever stop server.js
+```
 
 # Routes
 
