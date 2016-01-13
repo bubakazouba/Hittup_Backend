@@ -24,7 +24,6 @@ app.use('/EventHittups', EventHittups);
 
 
 PORT = 8080;
-
 var server = app.listen(PORT, function () {
   var port = server.address().port;
 
