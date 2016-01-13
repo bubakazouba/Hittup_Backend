@@ -65,7 +65,7 @@ Response format:
 	"duration": "<seconds>",
 	"title": "<title>",
 	"isPrivate": "<bool>",
-	"owneruid": "<uid>",
+	"uid": "<uid>",
 	"usersInviteduids": ["<uid>","<uid>",...]
 }
 ```
