@@ -47,7 +47,7 @@ function get(HittupSchema, req, res){
              });
              query.populate({
                  path: 'owner usersInvited usersJoined',
-                 select: 'firstName lastName'
+                 select: 'firstName lastName fbid'
              });
              query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
              query.exec(function (err, results) {
@@ -67,7 +67,7 @@ function get(HittupSchema, req, res){
                  query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
                  query.populate({
                      path: 'owner usersInvited usersJoined',
-                     select: 'firstName lastName'
+                     select: 'firstName lastName fbid'
                  });
                  query.exec(function (err,results) {
                      if(err){

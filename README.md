@@ -12,7 +12,7 @@ Your app should now be running on [localhost:8080](http://localhost:8080/).
 
 
 # Routes
-## Hittups/JoinHittup
+## (Friend/Event)Hittups/JoinHittup
 ### POST format:
 
 ```
@@ -26,6 +26,13 @@ Your app should now be running on [localhost:8080](http://localhost:8080/).
 {"success":"true"}
 ```
 or
+
+```
+{"success":"false", "error":"<error message>"}
+```
+
+## (Friend/Event)Hittups/GetInvitations
+POST format:
 
 ```
 {"success":"false", "error":"<error message>"}
@@ -75,7 +82,7 @@ or
 }
 ```
 
-## Hittups/PostHittup
+## (Friend/Event)Hittups/PostHittup
 ### POST format:
 
 ```
@@ -84,7 +91,7 @@ or
 	"duration": "<seconds>",
 	"title": "<title>",
 	"isPrivate": "<bool>",
-	"owneruid": "<uid>",
+	"uid": "<uid>",
 	"usersInviteduids": ["<uid>","<uid>",...]
 }
 ```
@@ -99,7 +106,7 @@ or
 {"success":"false", "error":"<error message>"}
 ```
 
-## Hittups/GetHittups
+## (Friend/Event)Hittups/GetHittups
 ### POST format:
 
 ```
