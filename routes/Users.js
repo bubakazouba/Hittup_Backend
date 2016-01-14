@@ -8,14 +8,14 @@ var User = require('../models/Users');
 
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.send('Hello /Users!!');
 });
 
-function getFBFriends(uid, callback){
+function getFBFriends(uid, callback) {
     collection = mongodb.db().collection("Users");
-    collection.find({"_id":ObjectID(uid)}).toArray(function(err,docs){
-        if (docs.length==0){
+    collection.find({"_id":ObjectID(uid)}).toArray(function (err,docs) {
+        if (docs.length==0) {
             callback("user doesn't exist");
         }
         else {
@@ -24,10 +24,10 @@ function getFBFriends(uid, callback){
     });
 }
 
-router.post('/GetFriendsList', function(req, res){
-    if(mongodb.db()){
-        getFBFriends(req.body.uid, function(err, fbFriends){
-            if(err){
+router.post('/GetFriendsList', function (req, res) {
+    if(mongodb.db()) {
+        getFBFriends(req.body.uid, function (err, fbFriends) {
+            if(err) {
                 Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
                 res.send({"success": "false", "error": err.message});
                 return;
@@ -41,15 +41,15 @@ router.post('/GetFriendsList', function(req, res){
 
 router.post('/AddUser', function (req, res, next) {
   User.findOne({ fbid: req.body.fbid }, function (err, user) {
-      if(err){
+      if(err) {
         Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
         return res.send({"success":"false", "error": err.message})
       }
-      if(user != null){
+      if(user != null) {
 
         user.fbToken = req.body.fbToken;
-        user.save(function (err,insertedUser){
-            if(err){
+        user.save(function (err,insertedUser) {
+            if(err) {
                 Logger.log(err.message,req.connection.remoteAddress, null, "/AddUser");
                 res.send({
                     "uid": user.id,
@@ -78,8 +78,8 @@ router.post('/AddUser', function (req, res, next) {
                                     //TODO: fix that
         }
 
-        user.save(function (err,insertedUser){
-            if(err){
+        user.save(function (err,insertedUser) {
+            if(err) {
                 res.send({"success":"false","error":err.message})
                 return;
             }
@@ -89,15 +89,15 @@ router.post('/AddUser', function (req, res, next) {
   });
 });
 
-router.post('/UpdateUserLocation', function(req, res, next) {
+router.post('/UpdateUserLocation', function (req, res, next) {
     var uid = req.body.uid;
     var loc = req.body.coordinates;
 
-    geolocation.geoReverseLocation(loc,function(err, location){
+    geolocation.geoReverseLocation(loc,function (err, location) {
         mongodb.db().collection('Users').update(
             {_id: ObjectID(req.body.uid)},
             { $set: {location: location}}    );
-        if(err){
+        if(err) {
             Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
             return res.send({"success":"false", "error": err.message})
             return 

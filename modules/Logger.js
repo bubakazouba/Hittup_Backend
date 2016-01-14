@@ -11,7 +11,7 @@ var paperTrailLogger = new winston.Logger({
 });
 
 
-function log(error, ip, uid, route){
+function log(error, ip, uid, route) {
 	paperTrailLogger.info(JSON.stringify({
 		"error": error,
 		"ip": ip,

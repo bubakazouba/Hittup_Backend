@@ -1,4 +1,3 @@
-var http = require('http');
 var express = require('express');
 var router = express.Router();
 var mongodb = require('../modules/db');
@@ -7,12 +6,12 @@ var geolocation = require('../modules/geolocation');
 var mongoose = require('mongoose');
 var Logger = require('../modules/Logger');
 
-function getAvailableHittups(uid,hittups){
+function getAvailableHittups(uid,hittups) {
     var availableHittups = [];
     for (var i = hittups.length - 1; i >= 0; i--) {//TODO: include that in the query
-        if(hittups[i].isPrivate==true){
+        if(hittups[i].isPrivate==true) {
             for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
-                if(uid == hittups[i].usersInvited[j]._id.toString()){
+                if(uid == hittups[i].usersInvited[j]._id.toString()) {
                     availableHittups.push(hittups[i]);
                 }
             }
@@ -38,7 +37,7 @@ function join(HittupSchema, req, callback) {
             }
         },
         function (err, model) {
-            if(err){
+            if(err) {
                 callback({"success": "false", "error": err.message});
                 return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
             }
@@ -46,18 +45,18 @@ function join(HittupSchema, req, callback) {
         }
     );//end .update
 }
-function get(HittupSchema, req, callback){
-    if(mongodb.db()){
+function get(HittupSchema, req, callback) {
+    if(mongodb.db()) {
          var body = req.body;
          var uid = body.uid;
          var coordinates = body.coordinates;
          var longitude = parseFloat(coordinates[0]);
          var latitude = parseFloat(coordinates[1]);
          var timeInterval = 24*60*60; //TODO: better name for this variable
-         if(body.hasOwnProperty("timeInterval")){
+         if(body.hasOwnProperty("timeInterval")) {
              timeInterval = body.timeInterval;
          }
-         if(body.hasOwnProperty("maxDistance")){
+         if(body.hasOwnProperty("maxDistance")) {
              var maxDistance = parseFloat(body.maxDistance);
              var query = HittupSchema.find({
                  loc: {
@@ -80,8 +79,8 @@ function get(HittupSchema, req, callback){
          }
          else {
              //TODO use promises, async callback here has no use
-             geolocation.geoReverseLocation(coordinates, function(err, location){
-                if(err){
+             geolocation.geoReverseLocation(coordinates, function (err, location) {
+                if(err) {
                     Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
                     return callback({"success": "false", "error": err.message});
                 }
@@ -105,7 +104,7 @@ function get(HittupSchema, req, callback){
     }
 }
 
-function post(HittupSchema, req, callback){
+function post(HittupSchema, req, callback) {
     var body = req.body;
     var hittup = new HittupSchema({
         owner: ObjectID(body.uid),
@@ -118,14 +117,14 @@ function post(HittupSchema, req, callback){
             coordinates: [parseFloat(body.coordinates[0]), parseFloat(body.coordinates[1])]
         }
     });
-    if(body.hasOwnProperty("usersInviteduids")){
+    if(body.hasOwnProperty("usersInviteduids")) {
         usersInvitedReferences = [];
         for (var i = body.usersInviteduids.length - 1; i >= 0; i--) {
             usersInvitedReferences.push(ObjectID(body.usersInviteduids[i]));
         }
         hittup.usersInvited = usersInvitedReferences;
     }
-    geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location){
+    geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location) {
         hittup.loc.city = location.city;
         hittup.loc.state = location.state;
         hittup.save(function (err) {
@@ -139,8 +138,8 @@ function post(HittupSchema, req, callback){
     });
 }
 
-function getInvitations(HittupSchema, req, res){
-    if(!mongodb.db){return callback({"success": "false", "error": "DB not connected"});}
+function getInvitations(HittupSchema, req, res) {
+    if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
     callback({"success":"false","error":"im not implemented yet"});
     // var body = req.body;
     // var timeInterval = 24*60*60; //TODO: better name for this variable
@@ -162,7 +161,7 @@ function getInvitations(HittupSchema, req, res){
     //     path: 'usersInvited',
     //     select: 'firstName lastName'
     // });
-    // query.exec(function (err, results){
+    // query.exec(function (err, results) {
     //     if (err) {
     //         return callback({"success": "false", "error": err.message});
     //     }

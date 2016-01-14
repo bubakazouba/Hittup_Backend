@@ -1,7 +1,7 @@
 var http = require('http');
 var exports = module.exports = {};
 
-exports.geoReverseLocation = function(loc,callback){
+exports.geoReverseLocation = function (loc,callback) {
     /*
      * args:
      * loc:  [longitude, latitude],
@@ -14,23 +14,23 @@ exports.geoReverseLocation = function(loc,callback){
         method: 'GET'
     }
 
-    var request = http.request(options,function(reverseGeoResponse){
+    var request = http.request(options,function (reverseGeoResponse) {
         var data='';
-        reverseGeoResponse.on('data',function(chunk){
+        reverseGeoResponse.on('data',function (chunk) {
             data+=chunk
         });//end .on(data)
 
-        reverseGeoResponse.on('error', function(error){
+        reverseGeoResponse.on('error', function (error) {
             callback(error);
         });
-        reverseGeoResponse.on('end',function(){
+        reverseGeoResponse.on('end',function () {
             data=data.substr(data.indexOf('(')+1,data.length-data.indexOf('(')-2); //removing the "renderReverse(...)" around JSON string
             data=JSON.parse(data);
             var responseLocation=data.results[0].locations[0];
             var location={"City":-1,"State":-1};
             //parsing JSON returned, example: http://tinyurl.com/q2mmnsa
-            for(var prop in responseLocation){
-                if(Object.keys(location).indexOf(responseLocation[prop])!=-1){
+            for(var prop in responseLocation) {
+                if(Object.keys(location).indexOf(responseLocation[prop])!=-1) {
                     location[responseLocation[prop]]=responseLocation[prop.substr(0,prop.length-4)];
                 }
             }

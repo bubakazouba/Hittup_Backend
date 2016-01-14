@@ -11,9 +11,9 @@ router.get('/', function (req, res, next) {
   res.send('Hello /FriendAndEventHittups!');
 });
 
-router.post('/GetHittups', function (req, res){
-    HittupHelper.get(FriendHittups, req, function (friendHittups){
-        HittupHelper.get(EventHittups, req, function (eventHittups){
+router.post('/GetHittups', function (req, res) {
+    HittupHelper.get(FriendHittups, req, function (friendHittups) {
+        HittupHelper.get(EventHittups, req, function (eventHittups) {
             if (friendHittups.hasOwnProperty("success") && friendHittups.success == "false") {
                  return res.send(friendHittups);
             }
