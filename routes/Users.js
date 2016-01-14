@@ -29,7 +29,7 @@ router.post('/GetFriendsList', function(req, res){
         getFBFriends(req.body.uid, function(err, fbFriends){
             if(err){
                 Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
-                res.send({"error": err});
+                res.send({"success": "false", "error": err.message});
                 return;
             }
             res.send(fbFriends);
@@ -42,6 +42,7 @@ router.post('/GetFriendsList', function(req, res){
 router.post('/AddUser', function (req, res, next) {
   User.findOne({ fbid: req.body.fbid }, function (err, user) {
       if(err){
+        Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
         return res.send({"success":"false", "error": err.message})
       }
       if(user != null){
@@ -92,11 +93,15 @@ router.post('/UpdateUserLocation', function(req, res, next) {
     var uid = req.body.uid;
     var loc = req.body.coordinates;
 
-    geolocation.geoReverseLocation(loc,function(location){
+    geolocation.geoReverseLocation(loc,function(err, location){
         mongodb.db().collection('Users').update(
             {_id: ObjectID(req.body.uid)},
             { $set: {location: location}}    );
-        console.log(location);
+        if(err){
+            Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
+            return res.send({"success":"false", "error": err.message})
+            return 
+        }
         res.send({"city":location.city,"success":"true"});
     });
 })
