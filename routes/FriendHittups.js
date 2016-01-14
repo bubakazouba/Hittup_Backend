@@ -6,7 +6,6 @@ var ObjectID = require('mongodb').ObjectID;
 var geolocation = require('../modules/geolocation');
 var mongoose = require('mongoose');
 
-
 var User = require('../models/Users');
 var FriendHittups = require('../models/FriendHittups');
 var HittupHelper = require('../modules/HittupHelper');
@@ -19,6 +18,11 @@ router.get('/', function (req, res, next) {
 
 router.post('/GetHittups', function (req, res){
     HittupHelper.get(FriendHittups,req,res);
+});
+
+router.post('/InviteFriends', function (req, res, next){
+    console.log(" IM ksdjfksdjfksjfkdsjfksjkdfjskfj>>>>>>>>>>>>>>>>>");
+    HittupHelper.invite(FriendHittups,req,res);
 });
 
 // Post

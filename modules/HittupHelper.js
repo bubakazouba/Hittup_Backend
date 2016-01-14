@@ -5,14 +5,14 @@ var mongodb = require('../modules/db');
 var ObjectID = require('mongodb').ObjectID;
 var geolocation = require('../modules/geolocation');
 var mongoose = require('mongoose');
-
+var Logger = require('../modules/Logger');
 
 function getAvailableHittups(uid,hittups){
     var availableHittups = [];
     for (var i = hittups.length - 1; i >= 0; i--) {//TODO: include that in the query
-        if(hittups[i].isPrivate=="true"){
+        if(hittups[i].isPrivate==true){
             for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
-                if(uid == hittups[i].usersInvited[j].uid){
+                if(uid == hittups[i].usersInvited[j]._id.toString()){
                     availableHittups.push(hittups[i]);
                 }
             }
@@ -24,6 +24,33 @@ function getAvailableHittups(uid,hittups){
     return availableHittups;
 }
 
+
+function invite(HittupSchema, req, res) {
+    var body = req.body;
+    var inviteruid = body.inviteruid;
+    var hittupuid = body.hittupuid; 
+    var friendsuids = body.friendsuids;
+    var friendsuidsReferences = []
+    for (var i = friendsuids.length - 1; i >= 0; i--) {
+        friendsuidsReferences.push(ObjectID(friendsuids[i]))
+    }
+
+    HittupSchema.findByIdAndUpdate(ObjectID(hittupuid), {
+        $addToSet: { // prevent having duplicates
+            "usersInvited": {
+                $each: friendsuidsReferences
+            }
+        }},
+        function(err, idk){
+            if(err){
+                res.send({"success": "false", "error": err.message});
+                Logger.log(err.message,req.connection.remoteAddress, inviteruid, "function: invite");
+                return;
+            }
+            res.json({"success":"true"})
+        }
+    );
+}
 
 function get(HittupSchema, req, res){
 	if(mongodb.db()){
@@ -69,7 +96,7 @@ function get(HittupSchema, req, res){
                      select: 'firstName lastName fbid'
                  });
                  query.exec(function (err,results) {
-                     if(err){
+                     if(err) {
                          return res.send({"success": "false", "error": err.message});
                      }
                      res.send(getAvailableHittups(uid, results));
@@ -147,4 +174,9 @@ function getInvitations(HittupSchema,req,res){
     // });
 }
 
-module.exports = {get:get, post:post, getInvitations:getInvitations};
+module.exports = {
+    get: get,
+    post: post,
+    getInvitations: getInvitations,
+    invite: invite
+};
