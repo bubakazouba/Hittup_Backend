@@ -1,33 +1,62 @@
 # Hittup-Backend
 
+# Production
+```
+npm install
+forever start server.js
+```
+to stop server: `forever stop server.js`
 
-# Running Locally
+# Development
+
+default port is 8080
 
 ```
 npm install
 npm start
 ```
 
-Your app should now be running on [localhost:8080](http://localhost:8080/).
-
-### Command Line Usage
-To use forever to run scripts continuously:
-
-**Example**
-```
-forever start server.js
-```
-**Example to stop server when running forever**
-```
-forever stop server.js
-```
-
 # Routes
+
 ## FriendAndEventHittups/GetHittups
 ### POST format:
 same as gethittup
 ### Response format:
-{"success":"true", "hittups":[{..}] }
+```
+{"success":"true", "hittups":[
+  {
+    "_id": "<uid>",
+    "title": "<title>",
+	"isPrivate": "<bool>",
+    "duration": "<seconds>",
+    "dateCreated": "<seconds>",
+    "usersJoined": [
+       "_id": "<uid>",
+       "fbid": "<fbid>",
+       "firstName": "<firstName>",
+    	"lastName": "<lastName>",
+    	},
+    	...
+    ],
+    "usersInvited": [ {
+       "_id": "<uid>",
+       "fbid": "<fbid>",
+    	"firstName": "<firstName>",
+    	"lastName": "<lastName>",
+    	},
+    	...
+    ],
+    "loc": {
+      "state": "<state>",
+      "city": "<city>",
+      "type": "Point",
+      "coordinates": ["<long>", "<lat>"]
+    }
+  }
+  , ...
+]
+}
+```
 ## (Friend/Event)Hittups/JoinHittup
 ### POST format:
 
@@ -144,12 +173,11 @@ or
 ```
 [
   {
-    "_id": "5691d8dd1451737d532e9a2b",
+    "_id": "<uid>",
     "title": "<title>",
 	"isPrivate": "<bool>",
     "duration": "<seconds>",
     "dateCreated": "<seconds>",
-    "__v": 0,
     "usersJoined": [
        "_id": "<uid>",
        "fbid": "<fbid>",
@@ -173,6 +201,8 @@ or
       "coordinates": ["<long>", "<lat>"]
     }
   }
+  , ...
+]
 ```
 
 ## Users/UpdateUserLocation
