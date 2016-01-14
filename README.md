@@ -10,8 +10,37 @@ npm start
 
 Your app should now be running on [localhost:8080](http://localhost:8080/).
 
+### Command Line Usage
+To use forever to run scripts continuously:
+
+**Example**
+```
+forever start server.js
+```
+**Example to stop server when running forever**
+```
+forever stop server.js
+```
 
 # Routes
+## (Friend/Event)Hittups/JoinHittup
+### POST format:
+
+```
+{
+	"owneruid": "<uid>",
+	"hittupuid": "<uid>"
+}
+```
+### Response format:
+```
+{"success":"true"}
+```
+or
+
+```
+{"success":"false", "error":"<error message>"}
+```
 
 ## (Friend/Event)Hittups/InviteFriends
 ### POST format:
@@ -43,11 +72,19 @@ or
 POST format:
 
 ```
+{"success":"false", "error":"<error message>"}
+```
+
+
+## Hittups/GetInvitations
+### POST format:
+
+```
 {
 	"uid": "<uid>"
 }
 ```
-Response format:
+### Response format:
 ```
 {
     "owner": {
@@ -100,7 +137,7 @@ Response format:
 }
 ```
 
-### response format:
+### Response format:
 ```
 {"success":"true"}
 ```
@@ -124,7 +161,7 @@ or
 `maxDistance` is optional, default behaviour would be looking for hittups in the same city.
 `timeInterval` is optional, default is 24\*60\*60.
 
-### response format:
+### Response format:
 ```
 [
   {
@@ -169,7 +206,7 @@ or
 }
 ```
 
-### response format:
+### Response format:
 
 ```
 {"city":location.city,"success":"true"}
@@ -184,7 +221,7 @@ or
 }
 ```
 
-### response format:
+### Response format:
 
 ```
 {"fb_friends":
@@ -204,7 +241,7 @@ or
 }
 ```
 
-### response format:
+### Response format:
 
 if user doesn't exist:
 

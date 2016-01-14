@@ -25,6 +25,10 @@ router.post('/InviteFriends', function (req, res, next){
     HittupHelper.invite(FriendHittups,req,res);
 });
 
+router.post('/JoinHittup', function (req, res){
+    HittupHelper.JoinHittup(FriendHittups, req, res);
+});
+
 // Post
 router.post('/PostHittup', function (req, res, next) {
     HittupHelper.post(FriendHittups,req,res);

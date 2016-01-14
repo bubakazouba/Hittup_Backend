@@ -24,7 +24,6 @@ function getAvailableHittups(uid,hittups){
     return availableHittups;
 }
 
-
 function invite(HittupSchema, req, res) {
     var body = req.body;
     var inviteruid = body.inviteruid;
@@ -52,6 +51,29 @@ function invite(HittupSchema, req, res) {
     );
 }
 
+
+function join(HittupSchema, req, res) {
+    var body = req.body;
+    var owneruid = body.owneruid;
+    var hittupuid = body.hittupuid;
+    FriendHittups.findByIdAndUpdate(
+        ObjectID(hittupuid),
+        {
+            $push: { //try without quotes
+                "usersJoined": {
+                    "_id": ObjectID(owneruid)
+                }
+            }
+        },
+        function (err, model) {
+            if(err){
+                res.send({"success": "false", "error": err.message});
+                return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
+            }
+            res.send({"success":"true"});
+        }
+    );//end .update
+}
 function get(HittupSchema, req, res){
 	if(mongodb.db()){
          var body = req.body;
