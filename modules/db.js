@@ -4,24 +4,24 @@
 // .close() closes mongodb instance
 
 // Credit DB export to: http://kroltech.com/2015/01/02/simple-mongodb-node-js-client-module/
-(function(){
+(function () {
     var client = require('mongodb').MongoClient,
         mongodb;
  	var mongoose = require('mongoose');
 
     module.exports =  {
-        connect: function(dburl, callback) {
+        connect: function (dburl, callback) {
             client.connect(dburl,
-                function(err, db){
+                function (err, db) {
                     mongodb = db;
                     if(callback) { callback(); }
                 });
             mongoose.connect(dburl);
         },
-        db: function() {
+        db: function () {
             return mongodb;
         },
-        close: function() {
+        close: function () {
             mongodb.close();
         }
     };
@@ -37,7 +37,7 @@
 
 // // Connect MongoClient
 // var mongoClient = require('mongodb').MongoClient;
-// mongoClient.connect("mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981/hittup", function(err, db) {
+// mongoClient.connect("mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981/hittup", function (err, db) {
 //     if (err) {
 //         console.log(err);
 //         return(err);

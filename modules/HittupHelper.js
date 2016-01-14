@@ -1,4 +1,3 @@
-var http = require('http');
 var express = require('express');
 var router = express.Router();
 var mongodb = require('../modules/db');
@@ -7,12 +6,12 @@ var geolocation = require('../modules/geolocation');
 var mongoose = require('mongoose');
 var Logger = require('../modules/Logger');
 
-function getAvailableHittups(uid,hittups){
+function getAvailableHittups(uid,hittups) {
     var availableHittups = [];
     for (var i = hittups.length - 1; i >= 0; i--) {//TODO: include that in the query
-        if(hittups[i].isPrivate==true){
+        if(hittups[i].isPrivate==true) {
             for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
-                if(uid == hittups[i].usersInvited[j]._id.toString()){
+                if(uid == hittups[i].usersInvited[j]._id.toString()) {
                     availableHittups.push(hittups[i]);
                 }
             }
@@ -24,7 +23,7 @@ function getAvailableHittups(uid,hittups){
     return availableHittups;
 }
 
-function invite(HittupSchema, req, res) {
+function invite(HittupSchema, req, callback) {
     var body = req.body;
     var inviteruid = body.inviteruid;
     var hittupuid = body.hittupuid; 
@@ -42,17 +41,17 @@ function invite(HittupSchema, req, res) {
         }},
         function(err, idk){
             if(err){
-                res.send({"success": "false", "error": err.message});
                 Logger.log(err.message,req.connection.remoteAddress, inviteruid, "function: invite");
-                return;
+                return callback({"success": "false", "error": err.message});
             }
-            res.json({"success":"true"})
+            callback({"success":"true"})
         }
     );
 }
 
 
-function join(HittupSchema, req, res) {
+
+function join(HittupSchema, req, callback) {
     var body = req.body;
     var owneruid = body.owneruid;
     var hittupuid = body.hittupuid;
@@ -66,26 +65,26 @@ function join(HittupSchema, req, res) {
             }
         },
         function (err, model) {
-            if(err){
-                res.send({"success": "false", "error": err.message});
+            if(err) {
+                callback({"success": "false", "error": err.message});
                 return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
             }
-            res.send({"success":"true"});
+            callback({"success":"true"});
         }
     );//end .update
 }
-function get(HittupSchema, req, res){
-	if(mongodb.db()){
+function get(HittupSchema, req, callback) {
+    if(mongodb.db()) {
          var body = req.body;
          var uid = body.uid;
          var coordinates = body.coordinates;
          var longitude = parseFloat(coordinates[0]);
          var latitude = parseFloat(coordinates[1]);
          var timeInterval = 24*60*60; //TODO: better name for this variable
-         if(body.hasOwnProperty("timeInterval")){
+         if(body.hasOwnProperty("timeInterval")) {
              timeInterval = body.timeInterval;
          }
-         if(body.hasOwnProperty("maxDistance")){
+         if(body.hasOwnProperty("maxDistance")) {
              var maxDistance = parseFloat(body.maxDistance);
              var query = HittupSchema.find({
                  loc: {
@@ -98,18 +97,20 @@ function get(HittupSchema, req, res){
                  select: 'firstName lastName fbid'
              });
              query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
+             query.lean();
              query.exec(function (err, results) {
                  if (err) {
-                     return res.send({"success": "false", "error":err.message});
+                     return callback({"success": "false", "error":err.message});
                  }
-                 res.send(getAvailableHittups(uid, results));
+                 callback(getAvailableHittups(uid, results));
              });
          }
          else {
              //TODO use promises, async callback here has no use
-             geolocation.geoReverseLocation(coordinates, function(err, location){
-				if(err){
+             geolocation.geoReverseLocation(coordinates, function (err, location) {
+                if(err) {
                     Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+                    return callback({"success": "false", "error": err.message});
                 }
                  var query = HittupSchema.find({"loc.city": location.city, "loc.state": location.state});
                  query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
@@ -117,20 +118,21 @@ function get(HittupSchema, req, res){
                      path: 'owner usersInvited usersJoined',
                      select: 'firstName lastName fbid'
                  });
+                 query.lean();
                  query.exec(function (err,results) {
                      if(err) {
-                         return res.send({"success": "false", "error": err.message});
+                         return callback({"success": "false", "error": err.message});
                      }
-                     res.send(getAvailableHittups(uid, results));
+                     callback(getAvailableHittups(uid, results));
                  });
              });
          }//end else if user didn't specify maxDistance
      } else {
-        res.send({"success": "false", "error": "MongoDB not Connected"});
+        callback({"success": "false", "error": "MongoDB not Connected"});
     }
 }
 
-function post(HittupSchema,req,res){
+function post(HittupSchema, req, callback) {
     var body = req.body;
     var hittup = new HittupSchema({
         owner: ObjectID(body.uid),
@@ -143,30 +145,30 @@ function post(HittupSchema,req,res){
             coordinates: [parseFloat(body.coordinates[0]), parseFloat(body.coordinates[1])]
         }
     });
-    if(body.hasOwnProperty("usersInviteduids")){
+    if(body.hasOwnProperty("usersInviteduids")) {
         usersInvitedReferences = [];
         for (var i = body.usersInviteduids.length - 1; i >= 0; i--) {
             usersInvitedReferences.push(ObjectID(body.usersInviteduids[i]));
         }
         hittup.usersInvited = usersInvitedReferences;
     }
-    geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location){
+    geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location) {
         hittup.loc.city = location.city;
         hittup.loc.state = location.state;
         hittup.save(function (err) {
             if (err) {
                 Logger.log(err.message,req.connection.remoteAddress, null, "function: post");
                 console.log("Save Error: " + err.message);
-                return res.send({"success":"false", "error": err.message});
+                return callback({"success":"false", "error": err.message});
             } 
-            res.send({"success":"true"});
+            callback({"success":"true"});
         });
     });
 }
 
-function getInvitations(HittupSchema,req,res){
-    if(!mongodb.db){return res.send({"success": "false", "error": "DB not connected"});}
-    res.end({"success":"false","error":"im not implemented yet"});
+function getInvitations(HittupSchema, req, res) {
+    if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
+    callback({"success":"false","error":"im not implemented yet"});
     // var body = req.body;
     // var timeInterval = 24*60*60; //TODO: better name for this variable
     // var uid = req.body.uid;
@@ -187,12 +189,12 @@ function getInvitations(HittupSchema,req,res){
     //     path: 'usersInvited',
     //     select: 'firstName lastName'
     // });
-    // query.exec(function (err, results){
+    // query.exec(function (err, results) {
     //     if (err) {
-    //         return res.send({"success": "false", "error": err.message});
+    //         return callback({"success": "false", "error": err.message});
     //     }
     //     console.log(results);
-    //     res.send(results);
+    //     callback(results);
     // });
 }
 
