@@ -15,21 +15,29 @@ router.get('/', function(req, res, next) {
   res.send('Hello /Hittup Events!');
 });
 
-router.post('/GetHittups', function(req, res){
-    HittupHelper.get(EventHittups,req,res);
+router.post('/GetHittups', function (req, res){
+    HittupHelper.get(EventHittups,req, function(result){
+        res.send(result);
+    });
 });
 
 router.post('/JoinHittup', function (req, res){
-    HittupHelper.JoinHittup(EventHittups, req, res);
+    HittupHelper.JoinHittup(EventHittups, req, function (result){
+        res.send(result);
+    });
 });
 
 
-router.post('/GetInvitations', function(req, res){
-    HittupHelper.getInvitations(EventHittups,req,res);
+router.post('/GetInvitations', function (req, res){
+    HittupHelper.getInvitations(EventHittups, req, function (result){
+        res.send(result);
+    });
 });
 
 router.post('/PostHittup', function (req, res, next) {
-    HittupHelper.post(EventHittups,req,res);
+    HittupHelper.post(EventHittups, req, function (result){
+        res.send(result);
+    });
 }); 
 
 module.exports = router;

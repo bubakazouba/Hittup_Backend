@@ -5,7 +5,7 @@ var mongodb = require('../modules/db');
 var ObjectID = require('mongodb').ObjectID;
 var geolocation = require('../modules/geolocation');
 var mongoose = require('mongoose');
-
+var Logger = require('../modules/Logger');
 
 function getAvailableHittups(uid,hittups){
     var availableHittups = [];
@@ -24,7 +24,7 @@ function getAvailableHittups(uid,hittups){
     return availableHittups;
 }
 
-function join(HittupSchema, req, res) {
+function join(HittupSchema, req, callback) {
     var body = req.body;
     var owneruid = body.owneruid;
     var hittupuid = body.hittupuid;
@@ -39,15 +39,15 @@ function join(HittupSchema, req, res) {
         },
         function (err, model) {
             if(err){
-                res.send({"success": "false", "error": err.message});
+                callback({"success": "false", "error": err.message});
                 return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
             }
-            res.send({"success":"true"});
+            callback({"success":"true"});
         }
     );//end .update
 }
-function get(HittupSchema, req, res){
-	if(mongodb.db()){
+function get(HittupSchema, req, callback){
+    if(mongodb.db()){
          var body = req.body;
          var uid = body.uid;
          var coordinates = body.coordinates;
@@ -72,16 +72,17 @@ function get(HittupSchema, req, res){
              query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
              query.exec(function (err, results) {
                  if (err) {
-                     return res.send({"success": "false", "error":err.message});
+                     return callback({"success": "false", "error":err.message});
                  }
-                 res.send(getAvailableHittups(uid, results));
+                 callback(getAvailableHittups(uid, results));
              });
          }
          else {
              //TODO use promises, async callback here has no use
              geolocation.geoReverseLocation(coordinates, function(err, location){
-				if(err){
+                if(err){
                     Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+                    return callback({"success": "false", "error": err.message});
                 }
                  var query = HittupSchema.find({"loc.city": location.city, "loc.state": location.state});
                  query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
@@ -90,19 +91,19 @@ function get(HittupSchema, req, res){
                      select: 'firstName lastName fbid'
                  });
                  query.exec(function (err,results) {
-                     if(err){
-                         return res.send({"success": "false", "error": err.message});
+                     if(err) {
+                         return callback({"success": "false", "error": err.message});
                      }
-                     res.send(getAvailableHittups(uid, results));
+                     callback(getAvailableHittups(uid, results));
                  });
              });
          }//end else if user didn't specify maxDistance
      } else {
-        res.send({"success": "false", "error": "MongoDB not Connected"});
+        callback({"success": "false", "error": "MongoDB not Connected"});
     }
 }
 
-function post(HittupSchema,req,res){
+function post(HittupSchema, req, callback){
     var body = req.body;
     var hittup = new HittupSchema({
         owner: ObjectID(body.uid),
@@ -129,16 +130,16 @@ function post(HittupSchema,req,res){
             if (err) {
                 Logger.log(err.message,req.connection.remoteAddress, null, "function: post");
                 console.log("Save Error: " + err.message);
-                return res.send({"success":"false", "error": err.message});
+                return callback({"success":"false", "error": err.message});
             } 
-            res.send({"success":"true"});
+            callback({"success":"true"});
         });
     });
 }
 
-function getInvitations(HittupSchema,req,res){
-    if(!mongodb.db){return res.send({"success": "false", "error": "DB not connected"});}
-    res.end({"success":"false","error":"im not implemented yet"});
+function getInvitations(HittupSchema, req, res){
+    if(!mongodb.db){return callback({"success": "false", "error": "DB not connected"});}
+    callback({"success":"false","error":"im not implemented yet"});
     // var body = req.body;
     // var timeInterval = 24*60*60; //TODO: better name for this variable
     // var uid = req.body.uid;
@@ -161,11 +162,15 @@ function getInvitations(HittupSchema,req,res){
     // });
     // query.exec(function (err, results){
     //     if (err) {
-    //         return res.send({"success": "false", "error": err.message});
+    //         return callback({"success": "false", "error": err.message});
     //     }
     //     console.log(results);
-    //     res.send(results);
+    //     callback(results);
     // });
 }
 
-module.exports = {get:get, post:post, getInvitations:getInvitations};
+module.exports = {
+    get: get,
+    post: post,
+    getInvitations: getInvitations
+};

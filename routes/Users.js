@@ -96,6 +96,7 @@ router.post('/UpdateUserLocation', function(req, res, next) {
         mongodb.db().collection('Users').update(
             {_id: ObjectID(req.body.uid)},
             { $set: {location: location}}    );
+        console.log(location);
         res.send({"city":location.city,"success":"true"});
     });
 })
