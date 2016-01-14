@@ -147,7 +147,7 @@ POST format:
 
 ### Response format:
 ```
-{"success":"true"}
+{"success":"true", "uid": "<uid>"}
 ```
 or
 

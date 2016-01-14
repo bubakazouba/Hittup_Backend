@@ -127,13 +127,13 @@ function post(HittupSchema, req, callback) {
     geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location) {
         hittup.loc.city = location.city;
         hittup.loc.state = location.state;
-        hittup.save(function (err) {
+        hittup.save(function (err, insertedHittup) {
             if (err) {
                 Logger.log(err.message,req.connection.remoteAddress, null, "function: post");
                 console.log("Save Error: " + err.message);
                 return callback({"success":"false", "error": err.message});
             } 
-            callback({"success":"true"});
+            callback({"success": "true", "uid": insertedHittup.id});
         });
     });
 }
