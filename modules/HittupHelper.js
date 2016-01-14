@@ -70,6 +70,7 @@ function get(HittupSchema, req, callback){
                  select: 'firstName lastName fbid'
              });
              query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
+             query.lean();
              query.exec(function (err, results) {
                  if (err) {
                      return callback({"success": "false", "error":err.message});
@@ -90,6 +91,7 @@ function get(HittupSchema, req, callback){
                      path: 'owner usersInvited usersJoined',
                      select: 'firstName lastName fbid'
                  });
+                 query.lean();
                  query.exec(function (err,results) {
                      if(err) {
                          return callback({"success": "false", "error": err.message});

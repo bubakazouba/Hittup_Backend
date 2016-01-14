@@ -23,6 +23,11 @@ forever stop server.js
 ```
 
 # Routes
+## FriendAndEventHittups/GetHittups
+### POST format:
+same as gethittup
+### Response format:
+{"success":"true", "hittups":[{..}] }
 ## (Friend/Event)Hittups/JoinHittup
 ### POST format:
 
