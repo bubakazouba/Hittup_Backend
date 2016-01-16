@@ -36,7 +36,7 @@ function join(HittupSchema, req, callback) {
                 }
             }
         },
-        function (err, model) {
+        function (err, updatedHittup) {
             if(err) {
                 callback({"success": "false", "error": err.message});
                 return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
@@ -45,6 +45,52 @@ function join(HittupSchema, req, callback) {
         }
     );//end .update
 }
+
+function update(HittupSchema, req, callback) {
+    if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
+    var body = req.body;
+    var uid = body.uid;
+    var updateFields = ["title"]
+    var hittupToUpdate = {}
+    for(var prop in body) {
+        if(updateFields.indexOf(prop) != -1) { //if we should update it
+            hittupToUpdate[prop] = body[prop]
+        }
+    }
+    if(body.hasOwnProperty("isPrivate"))
+        hittupToUpdate.isPrivate = ( body.isPrivate.toLowerCase() == "true" );
+    if(body.hasOwnProperty("duration"))
+        hittupToUpdate.duration = parseInt(body.duration);
+
+    if(body.hasOwnProperty("coordinates")){ //TODO: refactor that
+        hittupToUpdate.loc = {
+            type: "Point",
+            coordinates: [parseFloat(body.coordinates[0]), parseFloat(body.coordinates[1])]
+        }
+        geolocation.geoReverseLocation(hittupToUpdate.loc.coordinates, function (err, location) {
+            hittupToUpdate.loc.city = location.city;
+            hittupToUpdate.loc.state = location.state;
+            HittupSchema.findByIdAndUpdate(ObjectID(uid), hittupToUpdate, function (err, updatedHittup) {
+                if(err) {
+                    callback({"success": "false", "error": err.message});
+                    return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
+                }
+                callback({"success":"true"});
+            });//end .update
+        });
+
+    }
+    else {
+        HittupSchema.findByIdAndUpdate(ObjectID(hittupuid), hittupToUpdate, function (err, updatedHittup) {
+            if(err) {
+                callback({"success": "false", "error": err.message});
+                return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
+            }
+            callback({"success":"true"});
+        });//end .update
+    }
+}
+
 
 function get(HittupSchema, req, callback) {
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
@@ -177,5 +223,6 @@ function getInvitations(HittupSchema, req, callback) {
 module.exports = {
     get: get,
     post: post,
-    getInvitations: getInvitations
+    getInvitations: getInvitations,
+    update: update
 };

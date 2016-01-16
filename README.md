@@ -155,6 +155,34 @@ or
 {"success":"false", "error":"<error message>"}
 ```
 
+## (Friend/Event)Hittups/UpdateHittup
+### POST format:
+```
+{
+    "hittupuid": "<uid>",
+    "owneruid": "<uid>",
+    "title": "<title>",
+    "coordinates": ["<long>","<lan>"],
+    "isPrivate": "<bool>",
+    "duration": "<seconds>"
+}
+```
+### Response format:
+```
+{"success":"true", "uid": "<uid>"}
+```
+or
+
+```
+{"success":"false", "error":"<error message>"}
+```
+
+
+
+
+
+
+
 ## (Friend/Event)Hittups/GetHittups
 ### POST format:
 
