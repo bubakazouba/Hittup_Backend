@@ -23,34 +23,34 @@ npm start
 same as gethittup
 ### Response format:
 ```
-{"success":"true", "hittups":[
+{"success":true, "hittups":[
   {
     "_id": "<uid>",
     "title": "<title>",
-	"isPrivate": "<bool>",
-    "duration": "<seconds>",
-    "dateCreated": "<seconds>",
+    "isPrivate": <boolean>,
+    "duration": <seconds>,
+    "dateCreated": <seconds>,
     "usersJoined": [
        "_id": "<uid>",
        "fbid": "<fbid>",
        "firstName": "<firstName>",
-    	"lastName": "<lastName>",
-    	},
-    	...
+        "lastName": "<lastName>",
+        },
+        ...
     ],
     "usersInvited": [ {
        "_id": "<uid>",
        "fbid": "<fbid>",
-    	"firstName": "<firstName>",
-    	"lastName": "<lastName>",
-    	},
-    	...
+        "firstName": "<firstName>",
+        "lastName": "<lastName>",
+        },
+        ...
     ],
     "loc": {
       "state": "<state>",
       "city": "<city>",
       "type": "Point",
-      "coordinates": ["<long>", "<lat>"]
+      "coordinates": [<long>, <lat>]
     }
   }
   , ...
@@ -62,51 +62,25 @@ same as gethittup
 
 ```
 {
-	"owneruid": "<uid>",
-	"hittupuid": "<uid>"
+    "owneruid": "<uid>",
+    "hittupuid": "<uid>"
 }
 ```
 ### Response format:
 ```
-{"success":"true"}
+{"success":true}
 ```
 or
 
 ```
-{"success":"false", "error":"<error message>"}
+{"success":false, "error":"<error message>"}
 ```
 
-## (Friend/Event)Hittups/InviteFriends
-### POST format:
-```
-{
-	"inviteruid": "<uid>",
-	"hittupuid": "<uid>",
-	"friendsuids": ["<uid>", ..]
-}
-```
-
-### Response format:
-
-```
-{
-	"success": "true", //means no errors
-	"<uid>": "invited",
-	"<uid>": "alreadyinvited",
-	...
-}
-```
-
-or
-
-```
-{"success":"false", "error":"<error message>"}
-```
 ## (Friend/Event)Hittups/GetInvitations
 POST format:
 
 ```
-{"success":"false", "error":"<error message>"}
+{"success":false, "error":"<error message>"}
 ```
 
 
@@ -115,7 +89,7 @@ POST format:
 
 ```
 {
-	"uid": "<uid>"
+    "uid": "<uid>"
 }
 ```
 ### Response format:
@@ -126,7 +100,7 @@ POST format:
         lastName: "<lastName>"
     },
     "title": "<title>",
-    "isPrivate": "<boolean>",
+    "isPrivate": <boolean>,
     "duration": "<duration>",
     "dateCreated": "<dateCreated>",
     "usersJoined": [
@@ -162,23 +136,23 @@ POST format:
 
 ```
 {
-	"coordinates": [longitude, latitude],
-	"duration": "<seconds>",
-	"title": "<title>",
-	"isPrivate": "<bool>",
-	"uid": "<uid>",
-	"usersInviteduids": ["<uid>","<uid>",...]
+    "coordinates": [longitude, latitude],
+    "duration": <seconds>,
+    "title": "<title>",
+    "isPrivate": <boolean>,
+    "uid": "<uid>",
+    "usersInviteduids": ["<uid>","<uid>",...]
 }
 ```
 
 ### Response format:
 ```
-{"success":"true", "uid": "<uid>"}
+{"success":true, "uid": "<uid>"}
 ```
 or
 
 ```
-{"success":"false", "error":"<error message>"}
+{"success":false, "error":"<error message>"}
 ```
 
 ## (Friend/Event)Hittups/UpdateHittup
@@ -188,19 +162,19 @@ or
     "hittupuid": "<uid>",
     "owneruid": "<uid>",
     "title": "<title>",
-    "coordinates": ["<long>","<lan>"],
-    "isPrivate": "<bool>",
-    "duration": "<seconds>"
+    "coordinates": [<long>,"<lan>"],
+    "isPrivate": <boolean>,
+    "duration": <seconds>
 }
 ```
 ### Response format:
 ```
-{"success":"true", "uid": "<uid>"}
+{"success":true, "uid": "<uid>"}
 ```
 or
 
 ```
-{"success":"false", "error":"<error message>"}
+{"success":false, "error":"<error message>"}
 ```
 
 
@@ -214,10 +188,10 @@ or
 
 ```
 { 
-	"uid": "<uid>",
-	"maxDistance": "<distance in km>", 
-	"coordinates": ["<long>","<lat>"],
-	"timeInterval": "<seconds>"
+    "uid": "<uid>",
+    "maxDistance": "<distance in km>", 
+    "coordinates": [<long>,<lat>],
+    "timeInterval": <seconds>
 }
 ```
 `maxDistance` is optional, default behaviour would be looking for hittups in the same city.
@@ -229,30 +203,30 @@ or
   {
     "_id": "<uid>",
     "title": "<title>",
-	"isPrivate": "<bool>",
-    "duration": "<seconds>",
-    "dateCreated": "<seconds>",
+    "isPrivate": <boolean>,
+    "duration": <seconds>,
+    "dateCreated": <seconds>,
     "usersJoined": [
        "_id": "<uid>",
        "fbid": "<fbid>",
        "firstName": "<firstName>",
-    	"lastName": "<lastName>",
-    	},
-    	...
+        "lastName": "<lastName>",
+        },
+        ...
     ],
     "usersInvited": [ {
        "_id": "<uid>",
        "fbid": "<fbid>",
-    	"firstName": "<firstName>",
-    	"lastName": "<lastName>",
-    	},
-    	...
+        "firstName": "<firstName>",
+        "lastName": "<lastName>",
+        },
+        ...
     ],
     "loc": {
       "state": "<state>",
       "city": "<city>",
       "type": "Point",
-      "coordinates": ["<long>", "<lat>"]
+      "coordinates": [<long>, <lat>]
     }
   }
   , ...
@@ -264,15 +238,15 @@ or
 
 ```
 {
-	"coordinates": [longitude, latitude]
-	"uid": "<uid>"
+    "coordinates": [longitude, latitude]
+    "uid": "<uid>"
 }
 ```
 
 ### Response format:
 
 ```
-{"city":location.city,"success":"true"}
+{"city":location.city,"success":true}
 ```
 
 ## Users/GetFriendsList
@@ -280,7 +254,7 @@ or
 
 ```
 {
-	"uid": "<uid>"
+    "uid": "<uid>"
 }
 ```
 
@@ -289,19 +263,19 @@ or
 ```
 {"fb_friends":
 [ 
-	{
-		"firstName":"<firstname>",
-		"lastName": "<lastname>",
-		"_id": "<uid>",
-		"fbid": fbid,
-		"loc":{
-			"type":"Point",
-			"state":"<state>",
-			"city":"<city>",
-			"coordinates":[<long>,<lat>]
-		}
-	},
-		...
+    {
+        "firstName":"<firstname>",
+        "lastName": "<lastname>",
+        "_id": "<uid>",
+        "fbid": fbid,
+        "loc":{
+            "type":"Point",
+            "state":"<state>",
+            "city":"<city>",
+            "coordinates":[<long>,<lat>]
+        }
+    },
+        ...
 ]
 }
 
@@ -313,8 +287,8 @@ or
 
 ```
 {
-	"fbid": "<fbid>"
-	"fbToken": "<fbToken>"
+    "fbid": "<fbid>"
+    "fbToken": "<fbToken>"
 }
 ```
 
@@ -324,8 +298,8 @@ if user doesn't exist:
 
 ```
 {
-	"userStatus": "new",
-	"uid": "<uid>"
+    "userStatus": "new",
+    "uid": "<uid>"
 }
 ```
 
@@ -333,9 +307,9 @@ if user already exists:
 
 ```
 {
-	"userStatus": "returning",
-	"uid": "<uid>",
-	"fb_friends":
+    "userStatus": "returning",
+    "uid": "<uid>",
+    "fb_friends":
     [ 
         {
             "firstName":"<firstname>",

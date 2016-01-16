@@ -16,7 +16,7 @@ router.get('/', function (req, res, next) {
 function getFBFriends(uid, callback) {
     //returns [] if user not found
 
-    if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
+    if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
 
     var query = User.findOne({_id: ObjectID(uid)});
     query.populate({
@@ -42,7 +42,7 @@ router.post('/GetFriendsList', function (req, res) {
     getFBFriends(req.body.uid, function (err, fbFriends) {
         if(err) {
             Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
-            res.send({"success": "false", "error": err.message});
+            res.send({"success": false, "error": err.message});
             return;
         }
         res.send(fbFriends);
@@ -58,7 +58,7 @@ router.post('/AddUser', function (req, res, next) {
     query.exec(function (err, user) {
       if(err) {
         Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
-        return res.send({"success":"false", "error": err.message})
+        return res.send({"success": false, "error": err.message})
       }
       if(user != null) { //if he was a returning user
         user.fbToken = req.body.fbToken;
@@ -68,7 +68,7 @@ router.post('/AddUser', function (req, res, next) {
                 res.send({
                     "uid": user.id,
                     "userStatus": "returning",
-                    "success": "false",
+                    "success": false,
                     "error": err.message
                 });
                 return;
@@ -77,7 +77,7 @@ router.post('/AddUser', function (req, res, next) {
                 "uid": user.id,
                 "userStatus": "returning: Updated fbToken",
                 "fbFriends": user.fbFriends,
-                "success": "true"
+                "success": true
             });
         });
       } //end if user != null
@@ -94,30 +94,34 @@ router.post('/AddUser', function (req, res, next) {
 
         user.save(function (err,insertedUser) {
             if(err) {
-                res.send({"success":"false","error":err.message})
+                res.send({"success": false,"error":err.message})
                 return;
             }
-            res.send({"success":"true", "uid": insertedUser.id});
+            res.send({"success": true, "uid": insertedUser.id});
         });
       }//end if user == null
   });
 });
 
 router.post('/UpdateUserLocation', function (req, res, next) {
-    var uid = req.body.uid;
-    var loc = req.body.coordinates;
+    var body = req.body;
+    var uid = body.uid;
+    var loc = {
+        type: "Point",
+        coordinates: body.coordinates        
+    }
 
-    geolocation.geoReverseLocation(loc,function (err, location) {
-        mongodb.db().collection('Users').update(
-            {_id: ObjectID(req.body.uid)},
-            { $set: {location: location}}    );
-        if(err) {
-            Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
-            return res.send({"success":"false", "error": err.message})
-            return 
-        }
-        res.send({"city":location.city,"success":"true"});
+    geolocation.geoReverseLocation(loc.coordinates, function (err, location) {
+        loc.city = location.city;
+        loc.state = location.state;
+        User.findByIdAndUpdate(ObjectID(uid), {loc: loc}, function (err, updatedUser){
+            if(err) {
+                res.send({"success": false, "error": err.message})
+                return Logger.log(err.message,req.connection.remoteAddress, null, "/UpdateUserLocation");
+            }
+            res.send({"city":location.city,"success": true});
+        });
     });
-})
+});
 
 module.exports = router;
