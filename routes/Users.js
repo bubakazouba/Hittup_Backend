@@ -13,42 +13,55 @@ router.get('/', function (req, res, next) {
 });
 
 function getFBFriends(uid, callback) {
-    collection = mongodb.db().collection("Users");
-    collection.find({"_id":ObjectID(uid)}).toArray(function (err,docs) {
-        if (docs.length==0) {
-            callback("user doesn't exist");
+    //returns [] if user not found
+
+    if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
+
+    var query = User.findOne({_id: ObjectID(uid)});
+    query.populate({
+        path: 'fbFriends',
+        select: 'firstName lastName fbid loc'
+    });
+
+    query.exec(function (err, userFound){
+        console.log(userFound);
+        if(err){
+            return callback(err);
+        }
+        if(userFound){
+            callback(null, userFound.fbFriends);
         }
         else {
-            callback(null, docs[0].fbFriends);
+            callback(null, []);
         }
     });
 }
 
 router.post('/GetFriendsList', function (req, res) {
-    if(mongodb.db()) {
-        getFBFriends(req.body.uid, function (err, fbFriends) {
-            if(err) {
-                Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
-                res.send({"success": "false", "error": err.message});
-                return;
-            }
-            res.send(fbFriends);
-        });
-    } else {
-        res.send("DB Not Connected")
-    }
+    getFBFriends(req.body.uid, function (err, fbFriends) {
+        if(err) {
+            Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
+            res.send({"success": "false", "error": err.message});
+            return;
+        }
+        res.send(fbFriends);
+    });
 });
 
 router.post('/AddUser', function (req, res, next) {
-  User.findOne({ fbid: req.body.fbid }, function (err, user) {
+    var query = User.findOne({ fbid: req.body.fbid });
+    query.populate({
+        path: 'fbFriends',
+        select: 'firstName lastName fbid loc'
+    });
+    query.exec(function (err, user) {
       if(err) {
         Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
         return res.send({"success":"false", "error": err.message})
       }
-      if(user != null) {
-
+      if(user != null) { //if he was a returning user
         user.fbToken = req.body.fbToken;
-        user.save(function (err,insertedUser) {
+        user.save(function (err,user) {
             if(err) {
                 Logger.log(err.message,req.connection.remoteAddress, null, "/AddUser");
                 res.send({
@@ -66,7 +79,7 @@ router.post('/AddUser', function (req, res, next) {
                 "success": "true"
             });
         });
-      }
+      } //end if user != null
       else {
         user = new User();
         user.fbid = req.body.fbid;
@@ -85,7 +98,7 @@ router.post('/AddUser', function (req, res, next) {
             }
             res.send({"success":"true", "uid": insertedUser.id});
         });
-      }
+      }//end if user == null
   });
 });
 

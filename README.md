@@ -234,7 +234,21 @@ or
 
 ```
 {"fb_friends":
-[ {"firstName":"<firstname>", "lastName": "<lastname>", "uid": "<uid>", "fbid": fbid, "city": "<city>"}, {}..]
+[ 
+	{
+		"firstName":"<firstname>",
+		"lastName": "<lastname>",
+		"_id": "<uid>",
+		"fbid": fbid,
+		"loc":{
+			"type":"Point",
+			"state":"<state>",
+			"city":"<city>",
+			"coordinates":[<long>,<lat>]
+		}
+	},
+		...
+]
 }
 
 ```
@@ -267,6 +281,21 @@ if user already exists:
 {
 	"userStatus": "returning",
 	"uid": "<uid>",
-	"fbFriends": [{"uid": "<uid>", "fbid": <fbid>, "firstname": <firstname>, "lastname": <lastname>, "city": "<city>", "state": "<state>"}]
+	"fb_friends":
+    [ 
+        {
+            "firstName":"<firstname>",
+            "lastName": "<lastname>",
+            "_id": "<uid>",
+            "fbid": fbid,
+            "loc":{
+                "type":"Point",
+                "state":"<state>",
+                "city":"<city>",
+                "coordinates":[<long>,<lat>]
+            }
+        },
+     ...
+    ]
 }
 ```
