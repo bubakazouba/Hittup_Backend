@@ -45,63 +45,62 @@ function join(HittupSchema, req, callback) {
         }
     );//end .update
 }
+
 function get(HittupSchema, req, callback) {
-    if(mongodb.db()) {
-         var body = req.body;
-         var uid = body.uid;
-         var coordinates = body.coordinates;
-         var longitude = parseFloat(coordinates[0]);
-         var latitude = parseFloat(coordinates[1]);
-         var timeInterval = 24*60*60; //TODO: better name for this variable
-         if(body.hasOwnProperty("timeInterval")) {
-             timeInterval = body.timeInterval;
-         }
-         if(body.hasOwnProperty("maxDistance")) {
-             var maxDistance = parseFloat(body.maxDistance);
-             var query = HittupSchema.find({
-                 loc: {
-                     $nearSphere: [longitude, latitude],
-                     $maxDistance: maxDistance //in kilometers
-                 }
-             });
-             query.populate({
-                 path: 'owner usersInvited usersJoined',
-                 select: 'firstName lastName fbid'
-             });
-             query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
-             query.lean();
-             query.exec(function (err, results) {
-                 if (err) {
-                     return callback({"success": "false", "error":err.message});
-                 }
-                 callback(getAvailableHittups(uid, results));
-             });
-         }
-         else {
-             //TODO use promises, async callback here has no use
-             geolocation.geoReverseLocation(coordinates, function (err, location) {
-                if(err) {
-                    Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
-                    return callback({"success": "false", "error": err.message});
-                }
-                 var query = HittupSchema.find({"loc.city": location.city, "loc.state": location.state});
-                 query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
-                 query.populate({
-                     path: 'owner usersInvited usersJoined',
-                     select: 'firstName lastName fbid'
-                 });
-                 query.lean();
-                 query.exec(function (err,results) {
-                     if(err) {
-                         return callback({"success": "false", "error": err.message});
-                     }
-                     callback(getAvailableHittups(uid, results));
-                 });
-             });
-         }//end else if user didn't specify maxDistance
-     } else {
-        callback({"success": "false", "error": "MongoDB not Connected"});
+    if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
+    var body = req.body;
+    var uid = body.uid;
+    var coordinates = body.coordinates;
+    var longitude = parseFloat(coordinates[0]);
+    var latitude = parseFloat(coordinates[1]);
+    var timeInterval = 24*60*60; //TODO: better name for this variable
+    if(body.hasOwnProperty("timeInterval")) {
+       timeInterval = body.timeInterval;
     }
+    if(body.hasOwnProperty("maxDistance")) {
+        var maxDistance = parseFloat(body.maxDistance);
+        var query = HittupSchema.find({
+            loc: {
+                $nearSphere: [longitude, latitude],
+                $maxDistance: maxDistance //in kilometers
+            }
+        });
+        query.populate({
+            path: 'owner usersInvited usersJoined',
+            select: 'firstName lastName fbid'
+        });
+        query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
+        query.lean();
+        query.exec(function (err, results) {
+           if (err) {
+                Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+                return callback({"success": "false", "error":err.message});
+           }
+           callback(getAvailableHittups(uid, results));
+        });
+    }
+    else {
+         //TODO use promises, async callback here has no use
+        geolocation.geoReverseLocation(coordinates, function (err, location) {
+            if(err) {
+                Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+                return callback({"success": "false", "error": err.message});
+            }
+            var query = HittupSchema.find({"loc.city": location.city, "loc.state": location.state});
+            query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
+            query.populate({
+                path: 'owner usersInvited usersJoined',
+                select: 'firstName lastName fbid'
+            });
+            query.lean();
+            query.exec(function (err,results) {
+               if(err) {
+                   return callback({"success": "false", "error": err.message});
+               }
+               callback(getAvailableHittups(uid, results));
+            });
+        });
+    }//end else if user didn't specify maxDistance
 }
 
 function post(HittupSchema, req, callback) {
