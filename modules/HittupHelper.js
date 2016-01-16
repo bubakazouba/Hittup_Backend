@@ -155,43 +155,48 @@ function post(HittupSchema, req, callback) {
     geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location) {
         hittup.loc.city = location.city;
         hittup.loc.state = location.state;
-        hittup.save(function (err) {
+        hittup.save(function (err, insertedHittup) {
             if (err) {
                 Logger.log(err.message,req.connection.remoteAddress, null, "function: post");
                 console.log("Save Error: " + err.message);
                 return callback({"success":"false", "error": err.message});
             } 
-            callback({"success":"true"});
+            callback({"success": "true", "uid": insertedHittup.id});
         });
     });
 }
 
-function getInvitations(HittupSchema, req, res) {
+function getInvitations(HittupSchema, req, callback) {
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
-    callback({"success":"false","error":"im not implemented yet"});
+
     // var body = req.body;
     // var timeInterval = 24*60*60; //TODO: better name for this variable
     // var uid = req.body.uid;
     // if(body.hasOwnProperty("timeInterval")) {
     //     timeInterval = body.timeInterval;
     // }
-    // console.log(req.body.uid);
-    // console.log(ObjectID(req.body.uid));
-    // // var query = HittupSchema.find({"usersInvited._id": req.body.uid});
-    // var query = HittupSchema.find({
-    //   usersInvited: {
-    //     $elemMatch: {
-    //       _id: ObjectID(req.body.uid)
+    // var query = HittupSchema.find({"usersInvited._id":  (req.body.uid)});
+
+    // find({
+    //     usersInvited: {
+    //         $elemMatch: {
+    //             uid: req.body.uid
+    //         }
     //     }
-    //   }
+    // })
+    // var query = HittupSchema.find({
+    //     usersInvited: {
+    //         $elemMatch: ObjectID(req.body.uid)
+    //     }
     // });
     // query.populate({
     //     path: 'usersInvited',
-    //     select: 'firstName lastName'
+    //     select: 'firstName lastName fbid'
     // });
     // query.exec(function (err, results) {
     //     if (err) {
-    //         return callback({"success": "false", "error": err.message});
+    //         callback({"success": "false", "error": err.message});
+    //         return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
     //     }
     //     console.log(results);
     //     callback(results);

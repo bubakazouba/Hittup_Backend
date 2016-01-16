@@ -13,13 +13,7 @@ var UserSchema   = new Schema({
          city: String,
          state: String,
     },
-    // fbFriends:[{ type: Schema.ObjectId, ref: 'Users' }]
-    fbFriends: [{
-        uid: String,
-        fbid: String,
-        firstName: String,
-        lastName: String
-    }],
+    fbFriends:[{ type: Schema.ObjectId, ref: 'Users' }]
 }, {collection: 'Users'});
 
 UserSchema.index({ loc: '2dsphere' });
