@@ -76,6 +76,32 @@ or
 {"success":"false", "error":"<error message>"}
 ```
 
+## (Friend/Event)Hittups/InviteFriends
+### POST format:
+```
+{
+	"inviteruid": "<uid>",
+	"hittupuid": "<uid>",
+	"friendsuids": ["<uid>", ..]
+}
+```
+
+### Response format:
+
+```
+{
+	"success": "true", //means no errors
+	"<uid>": "invited",
+	"<uid>": "alreadyinvited",
+	...
+}
+```
+
+or
+
+```
+{"success":"false", "error":"<error message>"}
+```
 ## (Friend/Event)Hittups/GetInvitations
 POST format:
 

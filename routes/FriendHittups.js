@@ -11,30 +11,34 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/GetHittups', function (req, res) {
-    HittupHelper.get(FriendHittups,req, function (result) {
+    HittupHelper.get(EventHittups,req, function (result) {
+        res.send(result);
+    });
+});
+
+router.post('/InviteFriends', function (req, res){
+    HittupHelper.invite(EventHittups, req, function (result){
         res.send(result);
     });
 });
 
 router.post('/JoinHittup', function (req, res) {
-    HittupHelper.JoinHittup(FriendHittups, req, function (result) {
+    HittupHelper.JoinHittup(EventHittups, req, function (result) {
         res.send(result);
     });
 });
 
 
 router.post('/GetInvitations', function (req, res) {
-    HittupHelper.getInvitations(FriendHittups, req, function (result) {
+    HittupHelper.getInvitations(EventHittups, req, function (result) {
         res.send(result);
     });
 });
 
 router.post('/PostHittup', function (req, res, next) {
-    HittupHelper.post(FriendHittups, req, function (result) {
+    HittupHelper.post(EventHittups, req, function (result) {
         res.send(result);
     });
 }); 
-
-
 
 module.exports = router;

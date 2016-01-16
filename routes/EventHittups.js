@@ -15,6 +15,12 @@ router.post('/GetHittups', function (req, res) {
     });
 });
 
+router.post('/InviteFriends', function (req, res){
+    HittupHelper.invite(EventHittups, req, function (result){
+        res.send(result);
+    });
+});
+
 router.post('/JoinHittup', function (req, res) {
     HittupHelper.JoinHittup(EventHittups, req, function (result) {
         res.send(result);

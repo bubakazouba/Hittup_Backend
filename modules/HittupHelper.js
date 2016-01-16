@@ -23,6 +23,34 @@ function getAvailableHittups(uid,hittups) {
     return availableHittups;
 }
 
+function invite(HittupSchema, req, callback) {
+    var body = req.body;
+    var inviteruid = body.inviteruid;
+    var hittupuid = body.hittupuid; 
+    var friendsuids = body.friendsuids;
+    var friendsuidsReferences = []
+    for (var i = friendsuids.length - 1; i >= 0; i--) {
+        friendsuidsReferences.push(ObjectID(friendsuids[i]))
+    }
+
+    HittupSchema.findByIdAndUpdate(ObjectID(hittupuid), {
+        $addToSet: { // prevent having duplicates
+            "usersInvited": {
+                $each: friendsuidsReferences
+            }
+        }},
+        function(err, idk){
+            if(err){
+                Logger.log(err.message,req.connection.remoteAddress, inviteruid, "function: invite");
+                return callback({"success": "false", "error": err.message});
+            }
+            callback({"success":"true"})
+        }
+    );
+}
+
+
+
 function join(HittupSchema, req, callback) {
     var body = req.body;
     var owneruid = body.owneruid;
@@ -178,5 +206,6 @@ function getInvitations(HittupSchema, req, callback) {
 module.exports = {
     get: get,
     post: post,
-    getInvitations: getInvitations
+    getInvitations: getInvitations,
+    invite: invite
 };
