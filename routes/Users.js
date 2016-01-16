@@ -5,6 +5,7 @@ var mongodb = require('../modules/db');
 var ObjectID = require('mongodb').ObjectID
 var geolocation = require('../modules/geolocation');
 var User = require('../models/Users');
+var Logger = require('../modules/Logger');
 
 
 /* GET users listing. */
