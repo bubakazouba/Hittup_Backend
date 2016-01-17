@@ -87,8 +87,8 @@ router.post('/AddUser', function (req, res, next) {
         user.fbToken = req.body.fbToken;
         user.loc= {
             type: "Point",
-            coordinates: [-10, -10] //mongoose doesnt like empty coordinates cuz it's being indexed
-                                    //so i just added a point in the middle of the sea
+            coordinates: [-10, -10], //mongoose doesnt like empty coordinates cuz it's being indexed
+            lastUpdatedTime: Math.floor(Date.now()/1000)//so i just added a point in the middle of the sea
                                     //TODO: fix that
         }
 
@@ -108,7 +108,8 @@ router.post('/UpdateUserLocation', function (req, res, next) {
     var uid = body.uid;
     var loc = {
         type: "Point",
-        coordinates: body.coordinates        
+        coordinates: body.coordinates,
+        lastUpdatedTime: Math.floor(Date.now()) 
     }
 
     geolocation.geoReverseLocation(loc.coordinates, function (err, location) {

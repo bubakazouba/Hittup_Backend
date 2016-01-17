@@ -12,6 +12,7 @@ var UserSchema   = new Schema({
          coordinates: [ ] ,// [<longitude>, <latitude>]
          city: String,
          state: String,
+         lastUpdatedTime: Number
     },
     fbFriends:[{ type: Schema.ObjectId, ref: 'Users' }]
 }, {collection: 'Users'});

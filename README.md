@@ -50,7 +50,8 @@ same as `/GetHittups`
       "state": "<state>",
       "city": "<city>",
       "type": "Point",
-      "coordinates": [<long>, <lat>]
+      "coordinates": [<long>, <lat>],
+      "lastUpdatedTime": <Int>
     }
   }
   , ...
@@ -93,7 +94,8 @@ same as `/GetHittups`
       "state": "<state>",
       "city": "<city>",
       "type": "Point",
-      "coordinates": [<long>, <lat>]
+      "coordinates": [<long>, <lat>],
+      "lastUpdatedTime": <Int>
     }
   }
 }
@@ -142,7 +144,8 @@ same as `/GetHittups`
       "state": "<state>",
       "city": "<city>",
       "type": "Point",
-      "coordinates": [<long>, <lat>]
+      "coordinates": [<long>, <lat>],
+      "lastUpdatedTime": <Int>
     }
   }
   , ...
@@ -215,10 +218,8 @@ POST format:
         "state": "<state>",
         "city": "<city>",
         "type": "<Point>",
-        "coordinates": [
-            "<longitude>",
-            "<latitude>"
-        ]
+        "coordinates":[<long>,<lat>],
+        "lastUpdatedTime": <int>
     }
 }
 ```
@@ -254,7 +255,7 @@ or
     "hittupuid": "<uid>",
     "owneruid": "<uid>",
     "title": "<title>",
-    "coordinates": [<long>,"<lan>"],
+    "coordinates": [<long>,<lan>],
     "isPrivate": <boolean>,
     "duration": <seconds>
 }
@@ -308,7 +309,8 @@ or
             "type":"Point",
             "state":"<state>",
             "city":"<city>",
-            "coordinates":[<long>,<lat>]
+            "coordinates":[<long>,<lat>],
+            "lastUpdatedTime": <int>
         }
     },
         ...
@@ -356,7 +358,8 @@ if user already exists:
                 "type":"Point",
                 "state":"<state>",
                 "city":"<city>",
-                "coordinates":[<long>,<lat>]
+                "coordinates":[<long>,<lat>],
+                "lastUpdatedTime": <int>
             }
         },
      ...
