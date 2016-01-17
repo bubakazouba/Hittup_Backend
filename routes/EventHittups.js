@@ -9,14 +9,14 @@ router.get('/', function (req, res, next) {
   res.send('Hello /Hittup Events!');
 });
 
-router.post('/GetAllHittups', function (req, res) {
+router.post('/GetHittup', function (req, res) {
     HittupHelper.get(EventHittups,req, function (result) {
         res.send(result);
     });
 });
 
-router.post('/UpdateHittup', function (req, res) {
-    HittupHelper.update(EventHittups,req, function (result) {
+router.post('/GetAllHittups', function (req, res) {
+    HittupHelper.getAll(EventHittups,req, function (result) {
         res.send(result);
     });
 });
@@ -27,12 +27,17 @@ router.post('/InviteFriends', function (req, res){
     });
 });
 
+router.post('/UpdateHittup', function (req, res) {
+    HittupHelper.update(EventHittups, req, function (result) {
+        res.send(result);
+    });
+});
+
 router.post('/JoinHittup', function (req, res) {
     HittupHelper.JoinHittup(EventHittups, req, function (result) {
         res.send(result);
     });
 });
-
 
 router.post('/GetInvitations', function (req, res) {
     HittupHelper.getInvitations(EventHittups, req, function (result) {

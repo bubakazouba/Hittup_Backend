@@ -115,8 +115,26 @@ function update(HittupSchema, req, callback) {
     }
 }
 
-
 function get(HittupSchema, req, callback) {
+    if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
+    var body = req.body;
+    var uid = body.uid;
+    var query = HittupSchema.findById(ObjectID(uid));
+    query.populate({
+        path: 'owner usersInvited usersJoined',
+        select: 'firstName lastName fbid'
+    });
+    query.exec(function (err, hittup) {
+        if (err) {
+            callback({"success": false, "error":err.message});
+            return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+        }
+        callback(hittup);
+    });
+
+}
+
+function getAll(HittupSchema, req, callback) {
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
     var body = req.body;
     var uid = body.uid;
@@ -141,7 +159,7 @@ function get(HittupSchema, req, callback) {
         query.lean();
         query.exec(function (err, results) {
            if (err) {
-                Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+                Logger.log(err.message,req.connection.remoteAddress, null, "function: getAll");
                 return callback({"success": false, "error":err.message});
            }
            callback(getAvailableHittups(uid, results));
@@ -151,7 +169,7 @@ function get(HittupSchema, req, callback) {
          //TODO use promises, async callback here has no use
         geolocation.geoReverseLocation(coordinates, function (err, location) {
             if(err) {
-                Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+                Logger.log(err.message,req.connection.remoteAddress, null, "function: getAll");
                 return callback({"success": false, "error": err.message});
             }
             var query = HittupSchema.find({"loc.city": location.city, "loc.state": location.state});

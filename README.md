@@ -20,7 +20,7 @@ npm start
 
 ## FriendAndEventHittups/GetAllHittups
 ### POST format:
-same as gethittup
+same as `/GetHittups`
 ### Response format:
 ```
 {"success":true, "hittups":[
@@ -57,6 +57,49 @@ same as gethittup
 ]
 }
 ```
+
+## (Friend/Event)Hittups/GetHittup
+### POST format:
+```
+{
+	"uid": "<uid>"
+}
+```
+### Response format:
+```
+{"success":true, "hittup": {
+    "_id": "<uid>",
+    "title": "<title>",
+    "isPrivate": <boolean>,
+    "duration": <seconds>,
+    "dateCreated": <seconds>,
+    "usersJoined": [ {
+       "_id": "<uid>",
+       "fbid": "<fbid>",
+       "firstName": "<firstName>",
+        "lastName": "<lastName>",
+        },
+        ...
+    ],
+    "usersInvited": [ {
+       "_id": "<uid>",
+       "fbid": "<fbid>",
+        "firstName": "<firstName>",
+        "lastName": "<lastName>",
+        },
+        ...
+    ],
+    "loc": {
+      "state": "<state>",
+      "city": "<city>",
+      "type": "Point",
+      "coordinates": [<long>, <lat>]
+    }
+  }
+}
+```
+
+
 ## (Friend/Event)Hittups/JoinHittup
 ### POST format:
 

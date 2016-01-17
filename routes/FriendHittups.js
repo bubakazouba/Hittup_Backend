@@ -9,8 +9,14 @@ router.get('/', function (req, res, next) {
   res.send('Hello /Hittups!');
 });
 
-router.post('/GetAllHittups', function (req, res) {
+router.post('/GetHittup', function (req, res) {
     HittupHelper.get(FriendHittups,req, function (result) {
+        res.send(result);
+    });
+});
+
+router.post('/GetAllHittups', function (req, res) {
+    HittupHelper.getAll(FriendHittups,req, function (result) {
         res.send(result);
     });
 });
