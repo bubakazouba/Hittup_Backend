@@ -99,6 +99,55 @@ same as `/GetHittups`
 }
 ```
 
+## (Friend/Event)Hittups/GetAllHittups
+### POST format:
+
+```
+{ 
+    "uid": "<uid>",
+    "maxDistance": "<distance in km>", 
+    "coordinates": [<long>,<lat>],
+    "timeInterval": <seconds>
+}
+```
+`maxDistance` is optional, default behaviour would be looking for hittups in the same city.
+`timeInterval` is optional, default is 24\*60\*60.
+
+### Response format:
+```
+[
+  {
+    "_id": "<uid>",
+    "title": "<title>",
+    "isPrivate": <boolean>,
+    "duration": <seconds>,
+    "dateCreated": <seconds>,
+    "usersJoined": [
+       "_id": "<uid>",
+       "fbid": "<fbid>",
+       "firstName": "<firstName>",
+        "lastName": "<lastName>",
+        },
+        ...
+    ],
+    "usersInvited": [ {
+       "_id": "<uid>",
+       "fbid": "<fbid>",
+        "firstName": "<firstName>",
+        "lastName": "<lastName>",
+        },
+        ...
+    ],
+    "loc": {
+      "state": "<state>",
+      "city": "<city>",
+      "type": "Point",
+      "coordinates": [<long>, <lat>]
+    }
+  }
+  , ...
+]
+```
 
 ## (Friend/Event)Hittups/JoinHittup
 ### POST format:
@@ -218,62 +267,6 @@ or
 
 ```
 {"success":false, "error":"<error message>"}
-```
-
-
-
-
-
-
-
-## (Friend/Event)Hittups/GetHittups
-### POST format:
-
-```
-{ 
-    "uid": "<uid>",
-    "maxDistance": "<distance in km>", 
-    "coordinates": [<long>,<lat>],
-    "timeInterval": <seconds>
-}
-```
-`maxDistance` is optional, default behaviour would be looking for hittups in the same city.
-`timeInterval` is optional, default is 24\*60\*60.
-
-### Response format:
-```
-[
-  {
-    "_id": "<uid>",
-    "title": "<title>",
-    "isPrivate": <boolean>,
-    "duration": <seconds>,
-    "dateCreated": <seconds>,
-    "usersJoined": [
-       "_id": "<uid>",
-       "fbid": "<fbid>",
-       "firstName": "<firstName>",
-        "lastName": "<lastName>",
-        },
-        ...
-    ],
-    "usersInvited": [ {
-       "_id": "<uid>",
-       "fbid": "<fbid>",
-        "firstName": "<firstName>",
-        "lastName": "<lastName>",
-        },
-        ...
-    ],
-    "loc": {
-      "state": "<state>",
-      "city": "<city>",
-      "type": "Point",
-      "coordinates": [<long>, <lat>]
-    }
-  }
-  , ...
-]
 ```
 
 ## Users/UpdateUserLocation
