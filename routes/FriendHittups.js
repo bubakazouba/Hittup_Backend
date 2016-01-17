@@ -9,12 +9,18 @@ router.get('/', function (req, res, next) {
   res.send('Hello /Hittups!');
 });
 
+router.post('/UnjoinHittup', function (req, res) {
+    HittupHelper.unjoin(FriendHittups,req, function (result) {
+        res.send(result);
+    });
+});
+
+
 router.post('/RemoveHittup', function (req, res) {
     HittupHelper.remove(FriendHittups,req, function (result) {
         res.send(result);
     });
 });
-
 
 router.post('/GetHittup', function (req, res) {
     HittupHelper.get(FriendHittups,req, function (result) {

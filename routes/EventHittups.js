@@ -9,6 +9,13 @@ router.get('/', function (req, res, next) {
   res.send('Hello /Hittup Events!');
 });
 
+router.post('/UnjoinHittup', function (req, res) {
+    HittupHelper.unjoin(EventHittups,req, function (result) {
+        res.send(result);
+    });
+});
+
+
 router.post('/RemoveHittup', function (req, res) {
     HittupHelper.remove(EventHittups,req, function (result) {
         res.send(result);

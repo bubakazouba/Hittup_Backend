@@ -59,6 +59,24 @@ same as `/GetHittups`
 }
 ```
 
+## (Friend/Event)Hittups/UnjoinHittup
+### POST format:
+```
+{
+	"hittupuid": "<uid>",
+	"useruid": "<uid>"
+}
+```
+### Response format:
+```
+{"success":true}
+```
+or
+
+```
+{"success":false, "error":"<error message>"}
+```
+
 ## (Friend/Event)Hittups/RemoveHittup
 ### POST format:
 ```

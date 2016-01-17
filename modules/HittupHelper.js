@@ -23,6 +23,26 @@ function getAvailableHittups(uid,hittups) {
     return availableHittups;
 }
 
+function unjoin(HittupSchema, req, callback) {
+    var body = req.body;
+    var useruid = body.useruid;
+    var hittupuid = body.hittupuid;
+
+    HittupSchema.findByIdAndUpdate(ObjectID(hittupuid), 
+        { 
+            $pull: {
+                "usersJoined": ObjectID(useruid)
+            }
+        }, function (err, results) {
+                if(err){
+                    Logger.log(err.message,req.connection.remoteAddress, inviteruid, "function: invite");
+                    return callback({"success": false, "error": err.message});
+                }
+                callback({"success": "true"});
+            }
+        ); //user $pullAll if there is more than one
+}
+
 function remove(HittupSchema, req, callback) {
     var body = req.body;
     var owneruid = body.owneruid;
@@ -281,5 +301,6 @@ module.exports = {
     invite: invite,
 	update: update,
     remove: remove,
-    getAll: getAll
+    getAll: getAll,
+    unjoin: unjoin
 };
