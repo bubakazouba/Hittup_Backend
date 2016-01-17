@@ -59,6 +59,25 @@ same as `/GetHittups`
 }
 ```
 
+## (Friend/Event)Hittups/RemoveHittup
+### POST format:
+```
+{
+	"hittupuid": "<uid>",
+	"owneruid": "<uid>"
+}
+```
+### Response format:
+```
+{"success":true}
+```
+or
+
+```
+{"success":false, "error":"<error message>"}
+```
+
+
 ## (Friend/Event)Hittups/GetHittup
 ### POST format:
 ```

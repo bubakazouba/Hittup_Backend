@@ -23,6 +23,20 @@ function getAvailableHittups(uid,hittups) {
     return availableHittups;
 }
 
+function remove(HittupSchema, req, callback) {
+    var body = req.body;
+    var owneruid = body.owneruid;
+    var hittupuid = body.hittupuid;
+
+    HittupSchema.findById(ObjectID(hittupuid)).remove().exec(function (err, model){
+        if(err){
+            Logger.log(err.message,req.connection.remoteAddress, inviteruid, "function: invite");
+            return callback({"success": false, "error": err.message});
+        }
+        callback({"success": "true"});
+    });
+}
+
 function invite(HittupSchema, req, callback) {
     var body = req.body;
     var inviteruid = body.inviteruid;
@@ -265,5 +279,7 @@ module.exports = {
     post: post,
     getInvitations: getInvitations,
     invite: invite,
-	update: update
+	update: update,
+    remove: remove,
+    getAll: getAll
 };
