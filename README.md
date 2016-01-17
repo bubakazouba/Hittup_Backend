@@ -18,7 +18,7 @@ npm start
 
 # Routes
 
-## FriendAndEventHittups/GetHittups
+## FriendAndEventHittups/GetAllHittups
 ### POST format:
 same as gethittup
 ### Response format:

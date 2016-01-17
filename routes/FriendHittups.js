@@ -9,14 +9,14 @@ router.get('/', function (req, res, next) {
   res.send('Hello /Hittups!');
 });
 
-router.post('/GetHittups', function (req, res) {
-    HittupHelper.get(EventHittups,req, function (result) {
+router.post('/GetAllHittups', function (req, res) {
+    HittupHelper.get(FriendHittups,req, function (result) {
         res.send(result);
     });
 });
 
 router.post('/InviteFriends', function (req, res){
-    HittupHelper.invite(EventHittups, req, function (result){
+    HittupHelper.invite(FriendHittups, req, function (result){
         res.send(result);
     });
 });
@@ -28,19 +28,19 @@ router.post('/UpdateHittup', function (req, res) {
 });
 
 router.post('/JoinHittup', function (req, res) {
-    HittupHelper.JoinHittup(EventHittups, req, function (result) {
+    HittupHelper.JoinHittup(FriendHittups, req, function (result) {
         res.send(result);
     });
 });
 
 router.post('/GetInvitations', function (req, res) {
-    HittupHelper.getInvitations(EventHittups, req, function (result) {
+    HittupHelper.getInvitations(FriendHittups, req, function (result) {
         res.send(result);
     });
 });
 
 router.post('/PostHittup', function (req, res, next) {
-    HittupHelper.post(EventHittups, req, function (result) {
+    HittupHelper.post(FriendHittups, req, function (result) {
         res.send(result);
     });
 }); 

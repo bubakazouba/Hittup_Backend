@@ -9,7 +9,7 @@ router.get('/', function (req, res, next) {
   res.send('Hello /Hittup Events!');
 });
 
-router.post('/GetHittups', function (req, res) {
+router.post('/GetAllHittups', function (req, res) {
     HittupHelper.get(EventHittups,req, function (result) {
         res.send(result);
     });
