@@ -9,6 +9,10 @@ var HittupSchema   = new Schema({
     isPrivate: Boolean,
     duration: Number,
     dateCreated: Number,
+    images: [{
+          lowQualityImageurl: String,
+          highQualityImageurl: String
+    }],
     owner: { type: Schema.ObjectId, ref: 'Users' },
     loc: { 
       type: { type: String },

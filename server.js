@@ -1,8 +1,9 @@
-var app = require('express')();
+var fs = require('fs');
+var express = require('express')
+var app = express();
 var path = require('path');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
 var Users = require('./routes/Users');
 var FriendHittups = require('./routes/FriendHittups');
 var EventHittups = require('./routes/EventHittups');
@@ -14,10 +15,16 @@ mongodb.connect('mongodb://Hittup:katyCherry1738@ds043981.mongolab.com:43981/hit
     console.log('Connected to MongoDB.');
 });
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(routes);
+IMG_DIR_PATH = './images'
+
+if (!fs.existsSync(IMG_DIR_PATH)) {//make sure './images' exists
+    fs.mkdirSync(IMG_DIR_PATH);
+}
+
+app.use('/images', express.static('images'));
 app.use('/Users', Users);
 app.use('/FriendHittups', FriendHittups);
 app.use('/EventHittups', EventHittups);

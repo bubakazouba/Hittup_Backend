@@ -1,10 +1,14 @@
-var express = require('express');
-var router = express.Router();
-var mongodb = require('../modules/db');
-var ObjectID = require('mongodb').ObjectID;
-var geolocation = require('../modules/geolocation');
-var mongoose = require('mongoose');
-var Logger = require('../modules/Logger');
+var express = require('express'),
+    router = express.Router(),
+    mongodb = require('../modules/db'),
+    ObjectID = require('mongodb').ObjectID,
+    geolocation = require('../modules/geolocation'),
+    mongoose = require('mongoose'),
+    Logger = require('../modules/Logger'),
+    easyimg = require('easyimage'),
+    fs = require('fs');
+
+var IMG_DIR_PATH = "./images";
 
 function getAvailableHittups(uid,hittups) {
     var availableHittups = [];
@@ -82,8 +86,6 @@ function invite(HittupSchema, req, callback) {
         }
     );
 }
-
-
 
 function join(HittupSchema, req, callback) {
     var body = req.body;
@@ -223,38 +225,85 @@ function getAll(HittupSchema, req, callback) {
     }//end else if user didn't specify maxDistance
 }
 
+function base64_decode(base64str) {
+    var bitmap = new Buffer(base64str, 'base64');
+    return bitmap
+}
+
+function getUniqueFileName(time) {
+    time = typeof time !== 'undefined' ? time : Date.now();
+    return time + '-' + Math.random();
+}
+
+
+function getImageurls(imageData){
+    var filedata = base64_decode(imageData);
+    var uniqueFileName = getUniqueFileName()
+    var HQFileName = uniqueFileName + '.jpg'
+    var LQFileName = uniqueFileName + 'LQ.jpg'
+    var HQImageFilePath = IMG_DIR_PATH + '/' + HQFileName;
+    var LQImageFilePath = IMG_DIR_PATH + '/' + LQFileName;
+
+    var HQImageurl = "http://ec2-52-53-231-44.us-west-1.compute.amazonaws.com/images/" + HQFileName;
+    var LQImageurl = "http://ec2-52-53-231-44.us-west-1.compute.amazonaws.com/images/" + LQFileName;
+    fs.writeFileSync(HQImageFilePath, filedata);
+
+    easyimg.info(HQImageFilePath).then(
+        function(file) {
+            easyimg.thumbnail({
+                src:HQImageFilePath, dst:LQImageFilePath,
+                width: file.width,
+                height: file.height,
+                quality: 20
+            }).then(function(image) {
+                callback(HQImageurl, LQImageurl);
+            }, function (err) {
+                console.log(err);
+            });
+        }, function (err) {
+            console.log(err);
+        });
+}
 function post(HittupSchema, req, callback) {
     var body = req.body;
-    var hittup = new HittupSchema({
-        owner: ObjectID(body.uid),
-        title: body.title,
-        isPrivate: body.isPrivate,
-        duration: body.duration,
-        dateCreated: Math.floor(Date.now()/1000),
-        loc: {
-            type: "Point",
-            coordinates: body.coordinates
-        }
-    });
-    if(body.hasOwnProperty("usersInviteduids")) {
-        usersInvitedReferences = [];
-        for (var i = body.usersInviteduids.length - 1; i >= 0; i--) {
-            usersInvitedReferences.push(ObjectID(body.usersInviteduids[i]));
-        }
-        hittup.usersInvited = usersInvitedReferences;
-    }
-    geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location) {
-        hittup.loc.city = location.city;
-        hittup.loc.state = location.state;
-        hittup.save(function (err, insertedHittup) {
-            if (err) {
-                Logger.log(err.message,req.connection.remoteAddress, null, "function: post");
-                console.log("Save Error: " + err.message);
-                return callback({"success": false, "error": err.message});
-            } 
-            callback({"success": true, "uid": insertedHittup.id});
+    
+    getImageurls(body.image, function (HQImageurl, LQImageurl) {
+        var hittup = new HittupSchema({
+            owner: ObjectID(body.uid),
+            title: body.title,
+            isPrivate: body.isPrivate,
+            duration: body.duration,
+            images : [{
+                lowQualityImageurl: LQImageurl,
+                highQualityImageurl: HQImageurl
+            }],
+            dateCreated: Math.floor(Date.now()/1000),
+            loc: {
+                type: "Point",
+                coordinates: body.coordinates
+            }
         });
-    });
+
+        if(body.hasOwnProperty("usersInviteduids")) {
+            usersInvitedReferences = [];
+            for (var i = body.usersInviteduids.length - 1; i >= 0; i--) {
+                usersInvitedReferences.push(ObjectID(body.usersInviteduids[i]));
+            }
+            hittup.usersInvited = usersInvitedReferences;
+        }
+        geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location) {
+            hittup.loc.city = location.city;
+            hittup.loc.state = location.state;
+            hittup.save(function (err, insertedHittup) {
+                if (err) {
+                    Logger.log(err.message,req.connection.remoteAddress, null, "function: post");
+                    console.log("Save Error: " + err.message);
+                    return callback({"success": false, "error": err.message});
+                } 
+                callback({"success": true, "uid": insertedHittup.id});
+            }); //end hittup.save
+        }); //end geoLocation
+    }); //end getImageurls
 }
 
 function getInvitations(HittupSchema, req, callback) {

@@ -30,6 +30,10 @@ same as `/GetHittups`
     "isPrivate": <boolean>,
     "duration": <seconds>,
     "dateCreated": <seconds>,
+    "images": [ {
+		"lowQualityImageurl": "<full url>",
+		"highQualityImageurl": "<full url>"
+    },...],
     "usersJoined": [
        "_id": "<uid>",
        "fbid": "<fbid>",
@@ -111,6 +115,10 @@ or
     "isPrivate": <boolean>,
     "duration": <seconds>,
     "dateCreated": <seconds>,
+    "images": [ {
+		"lowQualityImageurl": "<full url>",
+		"highQualityImageurl": "<full url>"
+    },...],
     "usersJoined": [ {
        "_id": "<uid>",
        "fbid": "<fbid>",
@@ -269,11 +277,14 @@ POST format:
     "coordinates": [longitude, latitude],
     "duration": <seconds>,
     "title": "<title>",
+    "image": "<base64encodedimage>"
     "isPrivate": <boolean>,
     "uid": "<uid>",
-    "usersInviteduids": ["<uid>","<uid>",...]
+    "usersInviteduids": ["<uid>","<uid>",...],
+    "image": "<base64encodedstring>"
 }
 ```
+format of the image doesn't matter
 
 ### Response format:
 ```
