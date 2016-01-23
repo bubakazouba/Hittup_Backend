@@ -385,7 +385,8 @@ if user doesn't exist:
 ```
 {
     "userStatus": "new",
-    "uid": "<uid>"
+    "uid": "<uid>",
+    "fb_friends": [ ... ] (same as below)
 }
 ```
 

@@ -6,7 +6,7 @@ var ObjectID = require('mongodb').ObjectID
 var geolocation = require('../modules/geolocation');
 var User = require('../models/Users');
 var Logger = require('../modules/Logger');
-
+var Facebook = require('../modules/facebook');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -55,51 +55,84 @@ router.post('/AddUser', function (req, res, next) {
         path: 'fbFriends',
         select: 'firstName lastName fbid loc'
     });
-    query.exec(function (err, user) {
-      if(err) {
-        Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
-        return res.send({"success": false, "error": err.message})
-      }
-      if(user != null) { //if he was a returning user
-        user.fbToken = req.body.fbToken;
-        user.save(function (err,user) {
-            if(err) {
-                Logger.log(err.message,req.connection.remoteAddress, null, "/AddUser");
-                res.send({
-                    "uid": user.id,
-                    "userStatus": "returning",
-                    "success": false,
-                    "error": err.message
+    query.exec(function (err, foundUser) {
+        if(err) {
+            Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
+            return res.send({"success": false, "error": err.message})
+        }
+        if(foundUser == null) { //if he was a new user
+            Facebook.getFbData(req.body.fbid,req.body.fbToken, function(data) {
+                fbData = JSON.parse(data);
+
+
+                var friends = fbData["friends"]["data"];
+                var fbids = [];
+                for (var i = friends.length - 1; i >= 0; i--) {
+                    friends[i]["fbFriends"];
+                    fbids.push(friends[i]["id"]);
+                };
+
+                var user = new User();
+                user.firstName = fbData["first_name"];
+                user.lastName = fbData["last_name"];
+                user.fbToken = req.body.fbToken;
+                user.fbid = req.body.fbid;
+                user.loc= {
+                    type: "Point",
+                    coordinates: [-10, -10], //mongoose doesnt like empty coordinates cuz it's being indexed
+                    lastUpdatedTime: Math.floor(Date.now()/1000)//so i just added a point in the middle of the sea
+                }                                               //TODO: fix that
+
+                var query = User.find({fbid: { $in: fbids }});
+
+                query.exec(function (err,userFriends) {
+                    if(err) {
+                        res.send({"success": "false", "error": err.message});
+                        return;
+                    }
+                    user.fbFriends = [];
+                    for (var i = userFriends.length - 1; i >= 0; i--) {
+                        user.fbFriends.push(userFriends[i]._id);
+                    };
+
+                    user.save(function (err,insertedUser) {
+                        if(err) {
+                            res.send({
+                                "userStatus": "returning",
+                                "success": false,
+                                "error": err.message
+                            });
+                            return Logger.log(err.message,req.connection.remoteAddress, null, "/AddUser");
+                        }
+                        res.send({
+                            "uid": user.id,
+                            "userStatus": "new",
+                            "fbFriends": user.fbFriends,
+                            "success": "true"
+                        });
+                    });//save user
                 });
-                return;
-            } 
-            res.send({
-                "uid": user.id,
-                "userStatus": "returning: Updated fbToken",
-                "fbFriends": user.fbFriends,
-                "success": true
-            });
-        });
-      } //end if user != null
-      else {
-        user = new User();
-        user.fbid = req.body.fbid;
-        user.fbToken = req.body.fbToken;
-        user.loc= {
-            type: "Point",
-            coordinates: [-10, -10], //mongoose doesnt like empty coordinates cuz it's being indexed
-            lastUpdatedTime: Math.floor(Date.now()/1000)//so i just added a point in the middle of the sea
-                                    //TODO: fix that
+                
+            });//end Facebook.getFbdata
+    }//end if user == null
+    else {
+        var userToUpdate = {
+            fbToken: req.body.fbToken
         }
 
-        user.save(function (err,insertedUser) {
+        User.findByIdAndUpdate(foundUser.id,userToUpdate, function (err,updatedUser) {
             if(err) {
-                res.send({"success": false,"error":err.message})
-                return;
+                res.send({"success": false, "error": err.message});
+                return Logger.log(err.message,req.connection.remoteAddress, null, "/UpdateUserLocation");
             }
-            res.send({"success": true, "uid": insertedUser.id});
+            res.send({
+                "success": true,
+                "uid": foundUser.id,
+                "userStatus": "returning",
+                "fb_friends": foundUser.fbFriends
+            });
         });
-      }//end if user == null
+    }//end if user != null
   });
 });
 

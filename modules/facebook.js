@@ -4,14 +4,13 @@
 // Credit: http://stackoverflow.com/questions/13108995/how-to-get-facebook-friends-from-facebook-api-with-node-js
 
 var https = require('https');
-exports.getFbData = function(accessToken, apiPath, callback) {
+exports.getFbData = function(fbid, access_token, callback) {
     var options = {
         host: 'graph.facebook.com',
         port: 443,
-        path: apiPath + '?access_token=' + accessToken, //apiPath example: '/me/friends'
+        path: '/v2.5/me?fields=first_name,last_name,friends&access_token='+access_token,
         method: 'GET'
     };
-
     var buffer = ''; //this buffer will be populated with the chunks of the data received from facebook
     var request = https.get(options, function(result){
         result.setEncoding('utf8');
