@@ -19,7 +19,7 @@ var IMG_DIR_PATH = "./images";
 function getAvailableHittups(uid,hittups) {
     var availableHittups = [];
     for (var i = hittups.length - 1; i >= 0; i--) {//TODO: include that in the query
-        if(hittups[i].isPrivate == true) {
+        if(hittups[i].isPrivate === true) {
             for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
                 if(uid == hittups[i].usersInvited[j]._id.toString()) {
                     availableHittups.push(hittups[i]);
@@ -72,9 +72,9 @@ function invite(HittupSchema, req, callback) {
     var inviteruid = body.inviteruid;
     var hittupuid = body.hittupuid; 
     var friendsuids = body.friendsuids;
-    var friendsuidsReferences = []
+    var friendsuidsReferences = [];
     for (var i = friendsuids.length - 1; i >= 0; i--) {
-        friendsuidsReferences.push(ObjectID(friendsuids[i]))
+        friendsuidsReferences.push(ObjectID(friendsuids[i]));
     }
 
     HittupSchema.findByIdAndUpdate(ObjectID(hittupuid), {
@@ -88,7 +88,7 @@ function invite(HittupSchema, req, callback) {
                 Logger.log(err.message,req.connection.remoteAddress, inviteruid, "function: invite");
                 return callback({"success": false, "error": err.message});
             }
-            callback({"success": true})
+            callback({"success": true});
         }
     );
 }
@@ -120,11 +120,11 @@ function update(HittupSchema, req, callback) {
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
     var body = req.body;
     var uid = body.uid;
-    var updateFields = ["title", "duration", "isPrivate"]
-    var hittupToUpdate = {}
+    var updateFields = ["title", "duration", "isPrivate"];
+    var hittupToUpdate = {};
     for(var prop in body) {
         if(updateFields.indexOf(prop) != -1) { //if we should update it
-            hittupToUpdate[prop] = body[prop]
+            hittupToUpdate[prop] = body[prop];
         }
     }
 
@@ -132,7 +132,7 @@ function update(HittupSchema, req, callback) {
         hittupToUpdate.loc = {
             type: "Point",
             coordinates: body.coordinates
-        }
+        };
         geolocation.geoReverseLocation(hittupToUpdate.loc.coordinates, function (err, location) {
             hittupToUpdate.loc.city = location.city;
             hittupToUpdate.loc.state = location.state;
@@ -217,9 +217,9 @@ function getAllFriendHittups(req, callback) {
         //get only hittups created by myself or my friends
         var uids = [ObjectID(foundUser.id)];
         for (var i = foundUser.fbFriends.length - 1; i >= 0; i--) {
-            uids.push(ObjectID(foundUser.fbFriends[i]["id"]));
-        };
-        var query = FriendHittupsSchema.find({"owner": {$in : uids} })
+            uids.push(ObjectID(foundUser.fbFriends[i].id));
+        }
+        var query = FriendHittupsSchema.find({"owner": {$in : uids} });
         query.populate({
             path: 'owner usersInvited usersJoined',
             select: 'firstName lastName fbid'
@@ -276,7 +276,7 @@ function getAllEventHittups(req, callback) {
 
 function base64_decode(base64str) {
     var bitmap = new Buffer(base64str, 'base64');
-    return bitmap
+    return bitmap;
 }
 
 function getUniqueFileName(time) {
@@ -287,9 +287,9 @@ function getUniqueFileName(time) {
 
 function getImageurls(imageData, callback){
     var filedata = base64_decode(imageData);
-    var uniqueFileName = getUniqueFileName()
-    var HQFileName = uniqueFileName + '.jpg'
-    var LQFileName = uniqueFileName + 'LQ.jpg'
+    var uniqueFileName = getUniqueFileName();
+    var HQFileName = uniqueFileName + '.jpg';
+    var LQFileName = uniqueFileName + 'LQ.jpg';
     var HQImageFilePath = IMG_DIR_PATH + '/' + HQFileName;
     var LQImageFilePath = IMG_DIR_PATH + '/' + LQFileName;
 

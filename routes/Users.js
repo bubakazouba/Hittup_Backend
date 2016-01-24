@@ -2,7 +2,7 @@ var http = require('http');
 var express = require('express');
 var router = express.Router();
 var mongodb = require('../modules/db');
-var ObjectID = require('mongodb').ObjectID
+var ObjectID = require('mongodb').ObjectID;
 var geolocation = require('../modules/geolocation');
 var User = require('../models/Users');
 var Logger = require('../modules/Logger');
@@ -25,7 +25,6 @@ function getFBFriends(uid, callback) {
     });
 
     query.exec(function (err, userFound){
-        console.log(userFound);
         if(err){
             return callback(err);
         }
@@ -58,29 +57,29 @@ router.post('/AddUser', function (req, res, next) {
     query.exec(function (err, foundUser) {
         if(err) {
             Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
-            return res.send({"success": false, "error": err.message})
+            return res.send({"success": false, "error": err.message});
         }
-        if(foundUser == null) { //if he was a new user
+        if(foundUser === null) { //if he was a new user
             Facebook.getFbData(req.body.fbid,req.body.fbToken, function(data) {
                 fbData = JSON.parse(data);
 
 
-                var friends = fbData["friends"]["data"];
+                var friends = fbData.friends.data;
                 var fbids = [];
                 for (var i = friends.length - 1; i >= 0; i--) {
-                    fbids.push(friends[i]["id"]);
-                };
+                    fbids.push(friends[i].id);
+                }
 
                 var user = new User();
-                user.firstName = fbData["first_name"];
-                user.lastName = fbData["last_name"];
+                user.firstName = fbData.first_name;
+                user.lastName = fbData.last_name;
                 user.fbToken = req.body.fbToken;
                 user.fbid = req.body.fbid;
                 user.loc= {
                     type: "Point",
                     coordinates: [-10, -10], //mongoose doesnt like empty coordinates cuz it's being indexed
                     lastUpdatedTime: Math.floor(Date.now()/1000)//so i just added a point in the middle of the sea
-                }                                               //TODO: fix that
+                };                                               //TODO: fix that
 
                 var query = User.find({fbid: { $in: fbids }});
 
@@ -92,7 +91,7 @@ router.post('/AddUser', function (req, res, next) {
                     user.fbFriends = [];
                     for (var i = userFriends.length - 1; i >= 0; i--) {
                         user.fbFriends.push(userFriends[i]._id);
-                    };
+                    }
 
                     user.save(function (err,insertedUser) {
                         if(err) {
@@ -117,7 +116,7 @@ router.post('/AddUser', function (req, res, next) {
     else {
         var userToUpdate = {
             fbToken: req.body.fbToken
-        }
+        };
 
         User.findByIdAndUpdate(foundUser.id,userToUpdate, function (err,updatedUser) {
             if(err) {
@@ -142,14 +141,14 @@ router.post('/UpdateUserLocation', function (req, res, next) {
         type: "Point",
         coordinates: body.coordinates,
         lastUpdatedTime: Math.floor(Date.now()) 
-    }
+    };
 
     geolocation.geoReverseLocation(loc.coordinates, function (err, location) {
         loc.city = location.city;
         loc.state = location.state;
         User.findByIdAndUpdate(ObjectID(uid), {loc: loc}, function (err, updatedUser){
             if(err) {
-                res.send({"success": false, "error": err.message})
+                res.send({"success": false, "error": err.message});
                 return Logger.log(err.message,req.connection.remoteAddress, null, "/UpdateUserLocation");
             }
             res.send({"city":location.city,"success": true});

@@ -14,5 +14,8 @@
     "mongoose": "~4.2.9",
     "winston": "^2.1.1",
     "winston-papertrail": "^1.0.2"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.1"
   }
 }

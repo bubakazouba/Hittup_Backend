@@ -28,8 +28,6 @@ router.post('/GetAllHittups', function (req, res) {
                 eventHittups[i].hittupType = "event";
             };
 
-            console.log("event hittups");
-            console.log(eventHittups);
             res.send({"success": "true", "hittups": eventHittups.concat(friendHittups)});
         });
     });
