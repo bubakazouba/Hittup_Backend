@@ -3,6 +3,7 @@ var router = express.Router();
 
 var FriendHittups = require('../models/FriendHittups');
 var HittupHelper = require('../modules/HittupHelper');
+var EventOrganizers = require('../models/EventOrganizers');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -15,21 +16,19 @@ router.post('/UnjoinHittup', function (req, res) {
     });
 });
 
-
 router.post('/RemoveHittup', function (req, res) {
     HittupHelper.remove(FriendHittups,req, function (result) {
         res.send(result);
     });
 });
-
 router.post('/GetHittup', function (req, res) {
-    HittupHelper.get(FriendHittups,req, function (result) {
+    HittupHelper.getFriendHittup(req, function (result) {
         res.send(result);
     });
 });
 
 router.post('/GetAllHittups', function (req, res) {
-    HittupHelper.getAll(FriendHittups,req, function (result) {
+    HittupHelper.getAllFriendHittups(req, function (result) {
         res.send(result);
     });
 });
@@ -59,7 +58,7 @@ router.post('/GetInvitations', function (req, res) {
 });
 
 router.post('/PostHittup', function (req, res, next) {
-    HittupHelper.post(FriendHittups, req, function (result) {
+    HittupHelper.postFriendHittup(req, function (result) {
         res.send(result);
     });
 }); 

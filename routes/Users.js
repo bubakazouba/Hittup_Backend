@@ -68,7 +68,6 @@ router.post('/AddUser', function (req, res, next) {
                 var friends = fbData["friends"]["data"];
                 var fbids = [];
                 for (var i = friends.length - 1; i >= 0; i--) {
-                    friends[i]["fbFriends"];
                     fbids.push(friends[i]["id"]);
                 };
 

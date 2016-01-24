@@ -7,8 +7,6 @@ add upsert for /join
 
 make sure when we query FB that we don't need to go through the "paging" url to go to the next page, i.e make sure it gets all the users in one page
 
-date started field for events
-
 load balancer
 push notificaitons:
     whenever a user joins ur hittup
@@ -25,9 +23,8 @@ push notificaitons:
 
 * make sure server returns json everywhere
 
-* the post hittup would be different for event schema and friend schema
 * don't make getAllHittups serial
-* write in 2 databases and auto delete hittups when they are done: http://blog.mehdivk.net/auto-delete-mongodb-documents-using-expiry-date/
+* write in 2 databases and auto delete both friend and hittups when they are done: http://blog.mehdivk.net/auto-delete-mongodb-documents-using-expiry-date/
 ==================
 Port Forwarding Instructions: http://www.lauradhamilton.com/how-to-set-up-a-nodejs-web-server-on-amazon-ec2
 

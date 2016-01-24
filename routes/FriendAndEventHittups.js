@@ -2,8 +2,6 @@ var express = require('express');
 var router = express.Router();
 
 var User = require('../models/Users');
-var FriendHittups = require('../models/FriendHittups');
-var EventHittups = require('../models/EventHittups');
 var HittupHelper = require('../modules/HittupHelper');
 
 /* GET users listing. */
@@ -12,8 +10,8 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/GetAllHittups', function (req, res) {
-    HittupHelper.getAll(FriendHittups, req, function (friendHittups) {
-        HittupHelper.getAll(EventHittups, req, function (eventHittups) {
+    HittupHelper.getAllFriendHittups(req, function (friendHittups) {
+        HittupHelper.getAllEventHittups(req, function (eventHittups) {
             if (friendHittups.hasOwnProperty("success") && friendHittups.success == "false") {
                  return res.send(friendHittups);
             }

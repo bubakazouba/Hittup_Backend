@@ -1,20 +1,18 @@
 var mongoose  = require('mongoose');
 var Schema  = mongoose.Schema;
 
-
-//TODO: fix duplicating the `user` type
-
-var EventSchema   = new Schema({
+var EventSchema = new Schema({
     title: String,
     isPrivate: Boolean,
     duration: Number,
     dateCreated: Number,
+    dateStarts: Number,
+    description: String,
     images: [{
       lowQualityImageurl: String,
       highQualityImageurl: String
     }],
-    owner: { type: Schema.ObjectId, ref: 'Users' },
-    category: String,
+    owner: { type: Schema.ObjectId, ref: 'EventOrganizers' },
     loc: { 
       type: { type: String },
       coordinates: [ ] ,// [<longitude>, <latitude>]

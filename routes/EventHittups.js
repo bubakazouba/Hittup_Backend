@@ -22,14 +22,15 @@ router.post('/RemoveHittup', function (req, res) {
     });
 });
 
+
 router.post('/GetHittup', function (req, res) {
-    HittupHelper.get(EventHittups,req, function (result) {
+    HittupHelper.getEventHittup(req, function (result) {
         res.send(result);
     });
 });
 
 router.post('/GetAllHittups', function (req, res) {
-    HittupHelper.getAll(EventHittups,req, function (result) {
+    HittupHelper.getAllEventHittups(req, function (result) {
         res.send(result);
     });
 });
@@ -59,7 +60,7 @@ router.post('/GetInvitations', function (req, res) {
 });
 
 router.post('/PostHittup', function (req, res, next) {
-    HittupHelper.post(EventHittups, req, function (result) {
+    HittupHelper.postEventHittup(req, function (result) {
         res.send(result);
     });
 }); 

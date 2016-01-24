@@ -1,10 +1,7 @@
 var mongoose  = require('mongoose');
 var Schema  = mongoose.Schema;
-
-
-//TODO: fix duplicating the `user` type
     
-var HittupSchema   = new Schema({
+var HittupSchema = new Schema({
     title: String,
     isPrivate: Boolean,
     duration: Number,

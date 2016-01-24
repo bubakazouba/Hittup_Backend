@@ -100,8 +100,10 @@ or
 ```
 
 
-## (Friend/Event)Hittups/GetHittup
+## FriendHittups/GetHittup
 ### POST format:
+the first image is the image posted by the host
+
 ```
 {
 	"uid": "<uid>"
@@ -111,6 +113,11 @@ or
 ```
 {"success":true, "hittup": {
     "_id": "<uid>",
+    "owner": {
+    	"firstName": "<firstname>",
+    	"lastName: "<lastName>",
+    	"fbid": "<fbid>"
+    },
     "title": "<title>",
     "isPrivate": <boolean>,
     "duration": <seconds>,
@@ -146,30 +153,34 @@ or
 }
 ```
 
-## (Friend/Event)Hittups/GetAllHittups
-### POST format:
 
+## EventHittups/GetHittup
+the first image is the image posted by the host
+### POST format:
 ```
-{ 
-    "uid": "<uid>",
-    "maxDistance": "<distance in km>", 
-    "coordinates": [<long>,<lat>],
-    "timeInterval": <seconds>
+{
+	"uid": "<uid>"
 }
 ```
-`maxDistance` is optional, default behaviour would be looking for hittups in the same city.
-`timeInterval` is optional, default is 24\*60\*60.
-
 ### Response format:
 ```
-[
-  {
+{"success":true, "hittup": {
     "_id": "<uid>",
+    "owner": {
+    	"name": "<name>",
+    	"imageurl": "<url>"
+    },
     "title": "<title>",
     "isPrivate": <boolean>,
     "duration": <seconds>,
+    "dateStarts": <seconds>,
+    "description": "<description >",
     "dateCreated": <seconds>,
-    "usersJoined": [
+    "images": [ {
+		"lowQualityImageurl": "<full url>",
+		"highQualityImageurl": "<full url>"
+    },...],
+    "usersJoined": [ {
        "_id": "<uid>",
        "fbid": "<fbid>",
        "firstName": "<firstName>",
@@ -193,8 +204,38 @@ or
       "lastUpdatedTime": <Int>
     }
   }
-  , ...
-]
+}
+```
+
+
+## FriendHittups/GetAllHittups
+gets all the hittups created by the user or by any of his friends
+### POST format:
+
+```
+{ 
+    "uid": "<uid>"
+}
+```
+
+### Response format:
+```
+[ FriendHittups ] //just like the one in GetHittup
+```
+
+## EventHittups/GetAllHittups
+get all events starts within the next 24 hours
+### POST format:
+
+```
+{ 
+    "uid": "<uid>"
+}
+```
+
+### Response format:
+```
+[ EventHittups ] //just like the one in GetHittup
 ```
 
 ## (Friend/Event)Hittups/JoinHittup
@@ -269,7 +310,7 @@ POST format:
 }
 ```
 
-## (Friend/Event)Hittups/PostHittup
+## FriendHittups/PostHittup
 ### POST format:
 
 ```
@@ -279,7 +320,7 @@ POST format:
     "title": "<title>",
     "image": "<base64encodedimage>"
     "isPrivate": <boolean>,
-    "uid": "<uid>",
+    "uid": "<useruid>",
     "usersInviteduids": ["<uid>","<uid>",...],
     "image": "<base64encodedstring>"
 }
@@ -295,6 +336,35 @@ or
 ```
 {"success":false, "error":"<error message>"}
 ```
+
+## EventHittups/PostHittup
+### POST format:
+
+```
+{
+    "coordinates": [longitude, latitude],
+    "duration": <seconds>,
+    "title": "<title>",
+    "description": "<title>",
+    "image": "<base64encodedimage>"
+    "isPrivate": <boolean>,
+    "uid": "<EventOrganizeruid>",
+    "dateStarts": <seconds>,
+    "image": "<base64encodedstring>"
+}
+```
+format of the image doesn't matter
+
+### Response format:
+```
+{"success":true, "uid": "<uid>"}
+```
+or
+
+```
+{"success":false, "error":"<error message>"}
+```
+
 
 ## (Friend/Event)Hittups/UpdateHittup
 ### POST format:

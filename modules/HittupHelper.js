@@ -6,9 +6,15 @@ var express = require('express'),
     mongoose = require('mongoose'),
     Logger = require('../modules/Logger'),
     easyimg = require('easyimage'),
-    fs = require('fs');
+    fs = require('fs'),
+    FriendHittupsSchema = require('../models/FriendHittups'),
+    EventHittupsSchema = require('../models/EventHittups'),
+    User = require('../models/Users');
 
 var IMG_DIR_PATH = "./images";
+
+
+
 
 function getAvailableHittups(uid,hittups) {
     var availableHittups = [];
@@ -151,11 +157,11 @@ function update(HittupSchema, req, callback) {
     }
 }
 
-function get(HittupSchema, req, callback) {
+function getFriendHittup(req, callback) {
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
     var body = req.body;
     var uid = body.uid;
-    var query = HittupSchema.findById(ObjectID(uid));
+    var query = FriendHittupsSchema.findById(ObjectID(uid));
     query.populate({
         path: 'owner usersInvited usersJoined',
         select: 'firstName lastName fbid'
@@ -167,62 +173,105 @@ function get(HittupSchema, req, callback) {
         }
         callback(hittup);
     });
-
 }
 
-function getAll(HittupSchema, req, callback) {
+function getEventHittup(req, callback) {
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
     var body = req.body;
     var uid = body.uid;
-    var coordinates = body.coordinates;
-    var timeInterval = 24*60*60; //TODO: better name for this variable
-    if(body.hasOwnProperty("timeInterval")) {
-       timeInterval = body.timeInterval;
-    }
-    if(body.hasOwnProperty("maxDistance")) {
-        var maxDistance = body.maxDistance;
-        var query = HittupSchema.find({
-            loc: {
-                $nearSphere: coordinates,
-                $maxDistance: maxDistance //in kilometers
-            }
-        });
+    var query = EventHittupsSchema.findById(ObjectID(uid));
+    query.populate({
+        path: 'usersInvited usersJoined',
+        select: 'firstName lastName fbid'
+    });
+    query.populate({
+        path: 'owner',
+        select: 'name imageurl'
+    });
+    query.exec(function (err, hittup) {
+        if (err) {
+            callback({"success": false, "error": err.message});
+            return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+        }
+        callback(hittup);
+    });
+}
+
+function getAllFriendHittups(req, callback) {
+    if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
+    var body = req.body;
+    var uid = body.uid;
+    var query = User.findById(ObjectID(body.uid));
+    query.populate({
+        path: 'fbFriends',
+        select: 'fbid'
+    });
+    query.exec(function (err, foundUser) {
+        if (err) {
+            callback({"success": false, "error": err.message});
+            return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+        }
+        if(!foundUser) {
+            return res.send({"success": false, "error": "user not found"});
+        }
+        //get only hittups created by myself or my friends
+        var uids = [ObjectID(foundUser.id)];
+        for (var i = foundUser.fbFriends.length - 1; i >= 0; i--) {
+            uids.push(ObjectID(foundUser.fbFriends[i]["id"]));
+        };
+        var query = FriendHittupsSchema.find({"owner": {$in : uids} })
         query.populate({
             path: 'owner usersInvited usersJoined',
             select: 'firstName lastName fbid'
         });
-        query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
         query.lean();
-        query.exec(function (err, results) {
-           if (err) {
-                Logger.log(err.message,req.connection.remoteAddress, null, "function: getAll");
-                return callback({"success": false, "error":err.message});
+        query.exec(function (err,results) {
+           if(err) {
+               callback({"success": false, "error": err.message});
+               return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
            }
            callback(getAvailableHittups(uid, results));
         });
-    }
-    else {
-         //TODO use promises, async callback here has no use
-        geolocation.geoReverseLocation(coordinates, function (err, location) {
-            if(err) {
-                Logger.log(err.message,req.connection.remoteAddress, null, "function: getAll");
-                return callback({"success": false, "error": err.message});
-            }
-            var query = HittupSchema.find({"loc.city": location.city, "loc.state": location.state});
-            query.where('dateCreated').gte(Date.now()/1000 - timeInterval);
-            query.populate({
-                path: 'owner usersInvited usersJoined',
-                select: 'firstName lastName fbid'
-            });
-            query.lean();
-            query.exec(function (err,results) {
-               if(err) {
-                   return callback({"success": false, "error": err.message});
-               }
-               callback(getAvailableHittups(uid, results));
-            });
+    });
+}
+
+function getAllEventHittups(req, callback) {
+    if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
+    var body = req.body;
+    var uid = body.uid;
+    var query = User.findById(ObjectID(uid));
+    query.populate({
+        path: 'fbFriends',
+        select: 'fbid'
+    });
+    query.exec(function (err, foundUser) {
+        //get all event hittups that start in 24 hours or less
+        if (err) {
+            callback({"success": false, "error": err.message});
+            return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+        }
+        if(!foundUser) {
+            return res.send({"success": false, "error": "user not found"});
+        }
+        var query = EventHittupsSchema.find({});
+        query.where('dateStarts').lte(Date.now()/1000 + 24*60*60);
+        query.populate({
+            path: 'usersInvited usersJoined',
+            select: 'firstName lastName fbid'
         });
-    }//end else if user didn't specify maxDistance
+        query.populate({
+            path: 'owner',
+            select: 'name imageurl'
+        });
+        query.lean();
+        query.exec(function (err,results) {
+           if(err) {
+               callback({"success": false, "error": err.message});
+               return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+           }
+           callback(getAvailableHittups(uid, results));
+        });
+    });
 }
 
 function base64_decode(base64str) {
@@ -236,7 +285,7 @@ function getUniqueFileName(time) {
 }
 
 
-function getImageurls(imageData){
+function getImageurls(imageData, callback){
     var filedata = base64_decode(imageData);
     var uniqueFileName = getUniqueFileName()
     var HQFileName = uniqueFileName + '.jpg'
@@ -247,7 +296,6 @@ function getImageurls(imageData){
     var HQImageurl = "http://ec2-52-53-231-44.us-west-1.compute.amazonaws.com/images/" + HQFileName;
     var LQImageurl = "http://ec2-52-53-231-44.us-west-1.compute.amazonaws.com/images/" + LQFileName;
     fs.writeFileSync(HQImageFilePath, filedata);
-
     easyimg.info(HQImageFilePath).then(
         function(file) {
             easyimg.thumbnail({
@@ -264,11 +312,11 @@ function getImageurls(imageData){
             console.log(err);
         });
 }
-function post(HittupSchema, req, callback) {
+function postFriendHittup(req, callback) {
     var body = req.body;
     
     getImageurls(body.image, function (HQImageurl, LQImageurl) {
-        var hittup = new HittupSchema({
+        var hittup = new FriendHittupsSchema({
             owner: ObjectID(body.uid),
             title: body.title,
             isPrivate: body.isPrivate,
@@ -296,9 +344,44 @@ function post(HittupSchema, req, callback) {
             hittup.loc.state = location.state;
             hittup.save(function (err, insertedHittup) {
                 if (err) {
-                    Logger.log(err.message,req.connection.remoteAddress, null, "function: post");
-                    console.log("Save Error: " + err.message);
-                    return callback({"success": false, "error": err.message});
+                    callback({"success": false, "error": err.message});
+                    return Logger.log(err.message,req.connection.remoteAddress, null, "function: post");
+                } 
+                callback({"success": true, "uid": insertedHittup.id});
+            }); //end hittup.save
+        }); //end geoLocation
+    }); //end getImageurls
+}
+
+
+function postEventHittup(req, callback) {
+    var body = req.body;
+    getImageurls(body.image, function (HQImageurl, LQImageurl) {
+        var hittup = new EventHittupsSchema({
+            owner: ObjectID(body.uid),
+            title: body.title,
+            isPrivate: body.isPrivate,
+            duration: body.duration,
+            dateStarts: body.dateStarts,
+            description: body.description,
+            images : [{
+                lowQualityImageurl: LQImageurl,
+                highQualityImageurl: HQImageurl
+            }],
+            dateCreated: Math.floor(Date.now()/1000),
+            loc: {
+                type: "Point",
+                coordinates: body.coordinates
+            }
+        });
+
+        geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location) {
+            hittup.loc.city = location.city;
+            hittup.loc.state = location.state;
+            hittup.save(function (err, insertedHittup) {
+                if (err) {
+                    callback({"success": false, "error": err.message});
+                    return Logger.log(err.message,req.connection.remoteAddress, null, "function: post");
                 } 
                 callback({"success": true, "uid": insertedHittup.id});
             }); //end hittup.save
@@ -344,12 +427,15 @@ function getInvitations(HittupSchema, req, callback) {
 }
 
 module.exports = {
-    get: get,
-    post: post,
+    getAllEventHittups: getAllEventHittups,
+    getAllFriendHittups: getAllFriendHittups,
+    getFriendHittup: getFriendHittup,
+    getEventHittup: getEventHittup,
+    postFriendHittup: postFriendHittup,
+    postEventHittup: postEventHittup,
     getInvitations: getInvitations,
     invite: invite,
 	update: update,
     remove: remove,
-    getAll: getAll,
     unjoin: unjoin
 };
