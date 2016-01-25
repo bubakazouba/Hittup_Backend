@@ -7,7 +7,6 @@ problem: share images over the servers
 switch to google maps
 
 facebook stuff:
-    make sure when we query FB that we don't need to go through the "paging" url to go to the next page, i.e make sure it gets all the users in one page
     what happens when fb token expires for the webhook?
 webhook:
     check blocks

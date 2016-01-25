@@ -40,9 +40,8 @@ function getFBFriends(uid, callback) {
 router.post('/GetFriendsList', function (req, res) {
     getFBFriends(req.body.uid, function (err, fbFriends) {
         if(err) {
-            Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
             res.send({"success": false, "error": err.message});
-            return;
+            return Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
         }
         res.send(fbFriends);
     });
@@ -60,19 +59,20 @@ router.post('/AddUser', function (req, res, next) {
             return res.send({"success": false, "error": err.message});
         }
         if(foundUser === null) { //if he was a new user
-            Facebook.getFbData(req.body.fbid,req.body.fbToken, function(data) {
-                fbData = JSON.parse(data);
+            Facebook.getFbData(req.body.fbToken, function (err, firstName, lastName, friends) {
+                if(err){
+                    Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList");
+                    return res.send({"success": false, "error": err.message});
+                }
 
-
-                var friends = fbData.friends.data;
                 var fbids = [];
                 for (var i = friends.length - 1; i >= 0; i--) {
                     fbids.push(friends[i].id);
                 }
 
                 var user = new User();
-                user.firstName = fbData.first_name;
-                user.lastName = fbData.last_name;
+                user.firstName = firstName;
+                user.lastName = lastName;
                 user.fbToken = req.body.fbToken;
                 user.fbid = req.body.fbid;
                 user.loc= {
