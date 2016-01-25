@@ -1,30 +1,35 @@
+breaking down a problem:
+problem: share images over the servers
+1-shared file system so every server can access them
+2-how would we be able to retrieve them using <the same url>/images/image
+
 --------now------------
 switch to google maps
 
-add this everywhere after I merge in /invite >> if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
+facebook stuff:
+    make sure when we query FB that we don't need to go through the "paging" url to go to the next page, i.e make sure it gets all the users in one page
+    what happens when fb token expires for the webhook?
+webhook:
+    check blocks
+    check unfriending
+    check adding friends
+    check someone just signed up, do other people get notifications? does that person get notifications?
+    if other people get notifications when someone just signs up to the app, we would need to make an upsert because we 
+    
+* add error handling if server didn't receive anything
 
-add upsert for /join
-
-make sure when we query FB that we don't need to go through the "paging" url to go to the next page, i.e make sure it gets all the users in one page
-
-load balancer
 push notificaitons:
     whenever a user joins ur hittup
     whenever a hittup is added
     for when a user is invited
     when a hittup has been deleted if a user was joined or invited
 
-* add error handling if server didn't receive anything
-* ask if the fbtoken would update automatically?
-* /inviteFriends: error handling check if hittup exists first
-* what if I was trying to insert a user with all his fb friends then one was missing because he signed up at the same time and 
-   wasn't inserted yet in the DB
-
-
-* make sure server returns json everywhere
-
-* don't make getAllHittups serial
 * write in 2 databases and auto delete both friend and hittups when they are done: http://blog.mehdivk.net/auto-delete-mongodb-documents-using-expiry-date/
+
+with 2 servers:
+    load balancer
+    clustering of filesystem
+    clustering of mongodb
 ==================
 Port Forwarding Instructions: http://www.lauradhamilton.com/how-to-set-up-a-nodejs-web-server-on-amazon-ec2
 
@@ -32,8 +37,6 @@ problem: when a new user is added, we can't know if it's the webhook that will c
 
 * I need to know if the user get all friends from the beginning in the FB_webhook. so would we need to add the friends or not?
 ====================
-
-
 -----------------later------------------
 1 hide coordinates of user whenever he is retrieved from DB in anyway
 2 whenever we return uid of hittup to clientside, name it uid instead of _id
@@ -44,6 +47,7 @@ problem: when a new user is added, we can't know if it's the webhook that will c
 5 testing everywhere
 6 jenkins
 7 let the image upload as in form not json so we can upload a file (more efficient)
+8 don't make getAllHittups serial
 
 good design practices mongodb??
 

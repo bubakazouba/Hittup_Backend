@@ -388,6 +388,27 @@ or
 {"success":false, "error":"<error message>"}
 ```
 
+## (Friend/Event)Hittups/InviteFriends
+### POST format:
+```
+{
+    "inviteruid": "<uid>",
+    "hittupuid": "<uid>",
+    "friendsuids": ["<uid>","<uid>"]
+}
+```
+### Response format:
+```
+{"success":true}
+```
+or
+
+```
+{"success":false, "error":"<error message>"}
+```
+
+
+
 ## Users/UpdateUserLocation
 ### POST format:
 
