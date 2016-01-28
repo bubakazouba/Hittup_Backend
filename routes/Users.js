@@ -70,16 +70,19 @@ router.post('/AddUser', function (req, res, next) {
                     fbids.push(friends[i].id);
                 }
 
-                var user = new User();
-                user.firstName = firstName;
-                user.lastName = lastName;
-                user.fbToken = req.body.fbToken;
-                user.fbid = req.body.fbid;
-                user.loc= {
-                    type: "Point",
-                    coordinates: [-10, -10], //mongoose doesnt like empty coordinates cuz it's being indexed
-                    lastUpdatedTime: Math.floor(Date.now()/1000)//so i just added a point in the middle of the sea
-                };                                               //TODO: fix that
+                //TODO: cleaner way of doing that (loop through an array of properties)
+                var user = new User({
+                    firstName: firstName,
+                    lastName: lastName,
+                    fbToken: req.body.fbToken,
+                    fbid: req.body.fbid,
+                    deviceToken: req.body.deviceToken,
+                    loc: {
+                        type: "Point",
+                        coordinates: [-10, -10], //mongoose doesnt like empty coordinates cuz it's being indexed
+                        lastUpdatedTime: Math.floor(Date.now()/1000)//so i just added a point in the middle of the sea
+                    }                                               //TODO: fix that
+                });
 
                 var query = User.find({fbid: { $in: fbids }});
 
@@ -130,9 +133,9 @@ router.post('/AddUser', function (req, res, next) {
                 "fb_friends": foundUser.fbFriends
             });
         });
-    }//end if user != null
+    } // end if user != null
   });
-});
+}); // end /AddUser
 
 router.post('/UpdateUserLocation', function (req, res, next) {
     var body = req.body;

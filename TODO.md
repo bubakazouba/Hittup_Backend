@@ -6,9 +6,8 @@ problem: share images over the servers
 --------now------------
 switch to google maps
 
-facebook stuff:
-    what happens when fb token expires for the webhook?
 webhook:
+    what happens when fb token expires for the webhook?
     check blocks
     check unfriending
     check adding friends
@@ -55,6 +54,7 @@ check character limits on server side too
 security:
     add some basic security for updateHittup/deleteHittup, to make sure the user sending is the owner  
     hide uid's for users when returning to clientside, and for /InviteFriends invite by fbid's
+    hide deviceToken
 
 cleaning up the project:
     - reindent all code to be 4 spaces

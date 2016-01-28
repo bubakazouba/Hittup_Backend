@@ -464,8 +464,9 @@ or
 
 ```
 {
-    "fbid": "<fbid>"
-    "fbToken": "<fbToken>"
+    "fbid": "<fbid>",
+    "fbToken": "<fbToken>",
+    "deviceToken": "<deviceToken"
 }
 ```
 
