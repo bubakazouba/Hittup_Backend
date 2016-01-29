@@ -127,6 +127,8 @@ function invite(HittupSchema, req, callback) {
 function join(HittupSchema, req, callback) {
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
 
+
+
     var body = req.body;
     var owneruid = body.owneruid;
     var hittupuid = body.hittupuid;
@@ -275,7 +277,8 @@ function getAllFriendHittups(req, callback) {
 function getAllEventHittups(req, callback) {
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
     var query = EventHittupsSchema.find({});
-    query.where('dateStarts').gte(Date.now()/1000 - 24*60*60);
+    query.where('dateStarts').lte(Date.now()/1000 + 24*60*60);
+
     query.populate({
         path: 'usersInvited usersJoined',
         select: 'firstName lastName fbid'

@@ -21,7 +21,6 @@ webhook:
 push notificaitons:
     whenever a user joins ur hittup
     whenever a hittup is added
-    for when a user is invited
     when a hittup has been deleted if a user was joined or invited
 
 * write in 2 databases and auto delete both friend and hittups when they are done: http://blog.mehdivk.net/auto-delete-mongodb-documents-using-expiry-date/
@@ -71,7 +70,7 @@ cleaning up the project:
         * mongoose.set('debug', true)
         * debugging on console
         * use a different testing DB for everyone of us
-        
+
 continuous integration server (suggestion: jenkins)
 remote server deployment tool (suggestion: capistrano)
 
