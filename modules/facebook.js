@@ -27,8 +27,8 @@ var getData = function(path, friends, firstName, lastName, callback) {
         result.on('end', function(){
             data = JSON.parse(buffer);
             if(data.first_name) { //then it's the first time
-                firstName = data.firstName;
-                lastName = data.lastName;
+                firstName = data.first_name;
+                lastName = data.last_name;
                 if(data.friends.paging.next){
                     nextPath = url.parse(data.friends.paging.next).path;
                 } else {

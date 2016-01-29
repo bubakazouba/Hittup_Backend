@@ -76,14 +76,15 @@ router.post('/AddUser', function (req, res, next) {
                     lastName: lastName,
                     fbToken: req.body.fbToken,
                     fbid: req.body.fbid,
-                    deviceToken: req.body.deviceToken,
                     loc: {
                         type: "Point",
                         coordinates: [-10, -10], //mongoose doesnt like empty coordinates cuz it's being indexed
                         lastUpdatedTime: Math.floor(Date.now()/1000)//so i just added a point in the middle of the sea
                     }                                               //TODO: fix that
                 });
-
+                if(req.body.hasOwnProperty("deviceToken")) {
+                    user.deviceTokens = [req.body.deviceToken];
+                }
                 var query = User.find({fbid: { $in: fbids }});
 
                 query.exec(function (err,userFriends) {
@@ -121,7 +122,11 @@ router.post('/AddUser', function (req, res, next) {
             fbToken: req.body.fbToken
         };
 
-        User.findByIdAndUpdate(foundUser.id,userToUpdate, function (err,updatedUser) {
+        if(req.body.hasOwnProperty("deviceToken")) {
+            userToUpdate.$addToSet = {deviceTokens: req.body.deviceToken};
+        }
+
+        User.findByIdAndUpdate(foundUser.id, userToUpdate, function (err, updatedUser) {
             if(err) {
                 res.send({"success": false, "error": err.message});
                 return Logger.log(err.message,req.connection.remoteAddress, null, "/UpdateUserLocation");
@@ -133,7 +138,7 @@ router.post('/AddUser', function (req, res, next) {
                 "fb_friends": foundUser.fbFriends
             });
         });
-    } // end if user != null
+    } // end if user != null (user is not new)
   });
 }); // end /AddUser
 

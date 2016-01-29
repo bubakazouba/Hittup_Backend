@@ -8,6 +8,7 @@ var EventSchema = new Schema({
     dateCreated: Number,
     dateStarts: Number,
     description: String,
+    emoji: String,
     images: [{
       lowQualityImageurl: String,
       highQualityImageurl: String
