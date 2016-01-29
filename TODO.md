@@ -2,6 +2,16 @@ breaking down a problem:
 problem: share images over the servers
 1-shared file system so every server can access them
 2-how would we be able to retrieve them using <the same url>/images/image
+---
+problem: push notifications
+1-handle feedback
+2-handle errors
+    * report to Logger when it doesn't work uing .on('error')
+
+
+I will need to work on the feedback thing with the database so it deletes the user's deviceToken
+
+
 
 --------now------------
 switch to google maps
@@ -36,6 +46,9 @@ problem: when a new user is added, we can't know if it's the webhook that will c
 * I need to know if the user get all friends from the beginning in the FB_webhook. so would we need to add the friends or not?
 ====================
 -----------------later------------------
+DO FIRST THE STUFF THAT DON'T REQUIRE CHANGING CLIENT SIDE
+WRITE TESTS
+
 1 hide coordinates of user whenever he is retrieved from DB in anyway
 2 whenever we return uid of hittup to clientside, name it uid instead of _id
 3 log all requests node
@@ -46,6 +59,8 @@ problem: when a new user is added, we can't know if it's the webhook that will c
 6 jenkins
 7 let the image upload as in form not json so we can upload a file (more efficient)
 8 don't make getAllHittups serial
+
+
 
 good design practices mongodb??
 

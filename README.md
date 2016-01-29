@@ -159,7 +159,7 @@ the first image is the image posted by the host
 ### POST format:
 ```
 {
-	"uid": "<uid>"
+
 }
 ```
 ### Response format:
@@ -461,6 +461,7 @@ or
 
 ## Users/AddUser
 ### POST format:
+deviceToken is optional
 
 ```
 {

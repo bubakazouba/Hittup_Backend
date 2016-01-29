@@ -21,7 +21,7 @@ function getAvailableHittups(uid,hittups) {
 
     var availableHittups = [];
     for (var i = hittups.length - 1; i >= 0; i--) {//TODO: include that in the query
-        if(hittups[i].isPrivate === true) {
+        if(hittups[i].isPrivate === true && hittups[i].owner._id.toString() != uid) {
             for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
                 if(uid == hittups[i].usersInvited[j]._id.toString()) {
                     availableHittups.push(hittups[i]);
@@ -91,12 +91,12 @@ function invite(HittupSchema, req, callback) {
                 $each: friendsuidsReferences
             }
         }},
-        function(err, idk){
+        function(err, updatedHittup){
             if(err){
                 Logger.log(err.message,req.connection.remoteAddress, inviteruid, "function: invite");
                 return callback({"success": false, "error": err.message});
             }
-            if(idk === null){
+            if(updatedHittup === null){
                 Logger.log(err.message,req.connection.remoteAddress, inviteruid, "function: invite");
                 return callback({"success": false, "error": "hittup doesn't exist"});
             }
@@ -230,7 +230,7 @@ function getAllFriendHittups(req, callback) {
             return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
         }
         if(!foundUser) {
-            return res.send({"success": false, "error": "user not found"});
+            return callback({"success": false, "error": "user not found"});
         }
         //get only hittups created by myself or my friends
         var uids = [ObjectID(foundUser.id)];
@@ -255,41 +255,23 @@ function getAllFriendHittups(req, callback) {
 
 function getAllEventHittups(req, callback) {
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
-
-    var body = req.body;
-    var uid = body.uid;
-    var query = User.findById(ObjectID(uid));
+    var query = EventHittupsSchema.find({});
+    query.where('dateStarts').gte(Date.now()/1000 - 24*60*60);
     query.populate({
-        path: 'fbFriends',
-        select: 'fbid'
+        path: 'usersInvited usersJoined',
+        select: 'firstName lastName fbid'
     });
-    query.exec(function (err, foundUser) {
-        //get all event hittups that start in 24 hours or less
-        if (err) {
-            callback({"success": false, "error": err.message});
-            return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
-        }
-        if(!foundUser) {
-            return res.send({"success": false, "error": "user not found"});
-        }
-        var query = EventHittupsSchema.find({});
-        query.where('dateStarts').lte(Date.now()/1000 + 24*60*60);
-        query.populate({
-            path: 'usersInvited usersJoined',
-            select: 'firstName lastName fbid'
-        });
-        query.populate({
-            path: 'owner',
-            select: 'name imageurl'
-        });
-        query.lean();
-        query.exec(function (err,results) {
-           if(err) {
-               callback({"success": false, "error": err.message});
-               return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
-           }
-           callback(getAvailableHittups(uid, results));
-        });
+    query.populate({
+        path: 'owner',
+        select: 'name imageurl'
+    });
+    query.lean();
+    query.exec(function (err,results) {
+       if(err) {
+           callback({"success": false, "error": err.message});
+           return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+       }
+       callback(results);
     });
 }
 
@@ -387,6 +369,7 @@ function postEventHittup(req, callback) {
             duration: body.duration,
             dateStarts: body.dateStarts,
             description: body.description,
+            emoji: body.emoji,
             images : [{
                 lowQualityImageurl: LQImageurl,
                 highQualityImageurl: HQImageurl
