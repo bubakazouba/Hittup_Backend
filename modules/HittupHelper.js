@@ -1,10 +1,10 @@
 var express = require('express'),
     router = express.Router(),
     mongodb = require('../modules/db'),
-    ObjectID = require('mongodb').ObjectID,
     geolocation = require('../modules/geolocation'),
     mongoose = require('mongoose'),
     Logger = require('../modules/Logger'),
+    ObjectID = require('mongodb').ObjectID,
     easyimg = require('easyimage'),
     fs = require('fs'),
     FriendHittupsSchema = require('../models/FriendHittups'),
@@ -14,6 +14,21 @@ var express = require('express'),
 
 var IMG_DIR_PATH = "./images";
 
+function pushNotifyInvitations(HittupSchema, hittupTitle, friendsuidsReferences, inviterName){
+    UsersSchema.find({_id: {$in: friendsuidsReferences}}, function (err, usersFound) {
+        if (err) {
+            Logger.log(err.message, "", "", "function: pushNotifyInvitations");
+            return console.log(err);
+        }
+        deviceTokens = [];
+        for (var i = usersFound.length - 1; i >= 0; i--) {
+            for (var j = usersFound[i].deviceTokens.length - 1; j >= 0; j--) {
+                deviceTokens.push(usersFound[i].deviceTokens[j]);
+            }
+        }
+        apn.pushNotify(inviterName + " has invited you to \""+hittupTitle+"\"", deviceTokens);
+    });
+}
 
 function getAvailableHittups(uid,hittups) {
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
@@ -42,7 +57,7 @@ function unjoin(HittupSchema, req, callback) {
     var hittupuid = body.hittupuid;
 
     HittupSchema.findByIdAndUpdate(ObjectID(hittupuid), 
-        { 
+        {
             $pull: {
                 "usersJoined": ObjectID(useruid)
             }
@@ -75,14 +90,19 @@ function remove(HittupSchema, req, callback) {
 function invite(HittupSchema, req, callback) {
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
 
-    var body = req.body;
-    var inviteruid = body.inviteruid;
-    var hittupuid = body.hittupuid; 
-    var friendsuids = body.friendsuids;
-    var friendsuidsReferences = [];
+    var body = req.body,
+        inviteruid = body.inviteruid,
+        hittupuid = body.hittupuid,
+        hittupTitle = body.hittupTitle,
+        friendsuids = body.friendsuids,
+        inviterName = body.inviterName,
+        friendsuidsReferences = [];
+
     for (var i = friendsuids.length - 1; i >= 0; i--) {
-        friendsuidsReferences.push(ObjectID(friendsuids[i]));
+        friendsuidsReferences.push(new ObjectID(friendsuids[i]));
     }
+
+    pushNotifyInvitations(HittupSchema, hittupTitle, friendsuidsReferences, inviterName);
 
     HittupSchema.findByIdAndUpdate(ObjectID(hittupuid), {
         $addToSet: { // prevent having duplicates
@@ -96,7 +116,7 @@ function invite(HittupSchema, req, callback) {
                 return callback({"success": false, "error": err.message});
             }
             if(updatedHittup === null){
-                Logger.log(err.message,req.connection.remoteAddress, inviteruid, "function: invite");
+                Logger.log("hittup doesn't exist",req.connection.remoteAddress, inviteruid, "function: invite");
                 return callback({"success": false, "error": "hittup doesn't exist"});
             }
             callback({"success": true});
@@ -340,6 +360,7 @@ function postFriendHittup(req, callback) {
                 usersInvitedReferences.push(ObjectID(body.usersInviteduids[i]));
             }
             hittup.usersInvited = usersInvitedReferences;
+            pushNotifyInvitations(FriendHittupsSchema, title, usersInvitedReferences);
         }
         geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location) {
             hittup.loc.city = location.city;

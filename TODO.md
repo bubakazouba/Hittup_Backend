@@ -3,12 +3,7 @@ problem: share images over the servers
 1-shared file system so every server can access them
 2-how would we be able to retrieve them using <the same url>/images/image
 ---
-problem: push notifications
-2-handle errors
-    * report to Logger when it doesn't work uing .on('error')
-
-
->>>>>I will need to work on the feedback thing with the database so it deletes the user's deviceToken
+push notifications: handle errors: report to Logger when it doesn't work uing .on('error')
 
 --------now------------
 switch to google maps
@@ -76,6 +71,9 @@ cleaning up the project:
         * mongoose.set('debug', true)
         * debugging on console
         * use a different testing DB for everyone of us
+        
+continuous integration server (suggestion: jenkins)
+remote server deployment tool (suggestion: capistrano)
 
 efficiency:
     * change my getAvailableHitups to use the function rohit found $elemMatch

@@ -9,7 +9,7 @@ var apnConnection = new apn.connection({});
  });
 
 apnConnection.on("transmitted", function(notification, device) {
-     console.log("Notification transmitted to:" + device.token.toString("hex"));
+     // console.log("Notification transmitted to:" + device.token.toString("hex"));
 });
 
 apnConnection.on("transmissionError", function(errCode, notification, device) {
@@ -55,7 +55,7 @@ var pushNotify = function(text, tokens) {
     apnConnection.pushNotification(note, tokens);
 
     // note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
-    // note.badge = 3;
+    // note.badge = 1337;
     // note.payload = {"content-available": 1} //to indicate that new content is available for the app to fetch: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH107-SW1
 }
 

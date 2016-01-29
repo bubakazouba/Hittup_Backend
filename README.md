@@ -394,6 +394,8 @@ or
 {
     "inviteruid": "<uid>",
     "hittupuid": "<uid>",
+    "inviterName": "<uid>",
+    "hittupTitle": "<string>",
     "friendsuids": ["<uid>","<uid>"]
 }
 ```
@@ -508,3 +510,26 @@ if user already exists:
     ]
 }
 ```
+
+# PUSH NOTIFICATIONS
+
+*HOW TO PUSH NOTIFY*
+
+download the certificate from http://developer.apple.com/iphone/manage/overview/index.action
+
+open it using keychain access, export it to apns-cert.p12, then expand it and export the key to apns-key.p12
+
+to convert them to .pem:
+
+`openssl pkcs12 -clcerts -nokeys -out apns-cert.pem -in apns-cert.p12`
+`openssl pkcs12 -nocerts -out apns-key.pem -in apns-key.p12` #<<<<<for that one make sure u set a password
+
+now we need to remove the password:
+`openssl rsa -in apns-key.pem -out apns-key-noenc.pem`
+
+now `mv apns-key-noenc.pem key.pem`
+and `mv apns-dev-cert.pem cert.pem`
+
+and make sure you remove anything before and after `---BEGIN CERTIFICATE---` and `---END CERTIFICATE-----`
+
+run with: `NODE_ENV=production node <scriptName>.js`
