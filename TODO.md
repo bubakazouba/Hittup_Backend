@@ -4,14 +4,11 @@ problem: share images over the servers
 2-how would we be able to retrieve them using <the same url>/images/image
 ---
 problem: push notifications
-1-handle feedback
 2-handle errors
     * report to Logger when it doesn't work uing .on('error')
 
 
-I will need to work on the feedback thing with the database so it deletes the user's deviceToken
-
-
+>>>>>I will need to work on the feedback thing with the database so it deletes the user's deviceToken
 
 --------now------------
 switch to google maps

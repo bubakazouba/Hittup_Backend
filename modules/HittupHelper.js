@@ -9,11 +9,10 @@ var express = require('express'),
     fs = require('fs'),
     FriendHittupsSchema = require('../models/FriendHittups'),
     EventHittupsSchema = require('../models/EventHittups'),
-    User = require('../models/Users');
+    UsersSchema = require('../models/Users'),
+    apn = require('../modules/apn');
 
 var IMG_DIR_PATH = "./images";
-
-
 
 
 function getAvailableHittups(uid,hittups) {
@@ -219,7 +218,7 @@ function getAllFriendHittups(req, callback) {
 
     var body = req.body;
     var uid = body.uid;
-    var query = User.findById(ObjectID(body.uid));
+    var query = UsersSchema.findById(ObjectID(body.uid));
     query.populate({
         path: 'fbFriends',
         select: 'fbid'
