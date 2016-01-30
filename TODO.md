@@ -21,7 +21,8 @@ webhook:
 push notificaitons:
     nearby friend and hittups
 
-* write in 2 databases and auto delete both friend and hittups when they are done: http://blog.mehdivk.net/auto-delete-mongodb-documents-using-expiry-date/
+* write in 2 databases
+* auto delete both friend and hittups when they are done: http://blog.mehdivk.net/auto-delete-mongodb-documents-using-expiry-date/
 
 with 2 servers:
     load balancer

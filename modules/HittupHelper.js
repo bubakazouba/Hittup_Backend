@@ -363,7 +363,8 @@ function getImageurls(imageData, callback){
 function postFriendHittup(req, callback) {
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
 
-    var body = req.body;
+    var body = req.body,
+        ownerName = body.ownerName;
     
     getImageurls(body.image, function (HQImageurl, LQImageurl) {
         var hittup = new FriendHittupsSchema({
@@ -383,13 +384,14 @@ function postFriendHittup(req, callback) {
         });
 
         if(body.hasOwnProperty("usersInviteduids")) {
-            usersInvitedReferences = [];
+            var usersInvitedReferences = [];
             for (var i = body.usersInviteduids.length - 1; i >= 0; i--) {
                 usersInvitedReferences.push(ObjectID(body.usersInviteduids[i]));
             }
             hittup.usersInvited = usersInvitedReferences;
-            pushNotifyInvitations(FriendHittupsSchema, title, usersInvitedReferences);
+            pushNotifyInvitations(FriendHittupsSchema, title, usersInvitedReferences, ownerName);
         }
+
         geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location) {
             hittup.loc.city = location.city;
             hittup.loc.state = location.state;

@@ -50,6 +50,9 @@ feedback.on("feedbackError", console.error);
 
 //function accepts token string or tokens array
 var pushNotify = function(text, tokens) {
+    if(typeof tokens == 'object' && tokens.length == 0)
+        return;
+
     var note = new apn.notification();
     note.setAlertText(text);
     apnConnection.pushNotification(note, tokens);
