@@ -74,15 +74,31 @@ function unjoin(HittupSchema, req, callback) {
 function remove(HittupSchema, req, callback) {
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
 
-    var body = req.body;
-    var owneruid = body.owneruid;
-    var hittupuid = body.hittupuid;
+    var body = req.body,
+        owneruid = body.owneruid,
+        ownerName = body.ownerName,
+        hittupuid = body.hittupuid;
 
-    HittupSchema.findById(ObjectID(hittupuid)).remove().exec(function (err, model){
+    var query = HittupSchema.findById(ObjectID(hittupuid));
+    query.populate({
+        path: 'usersJoined',
+        select: 'deviceTokens'
+    });
+    query.exec(function (err, hittup) {
         if(err){
             Logger.log(err.message,req.connection.remoteAddress, inviteruid, "function: invite");
             return callback({"success": false, "error": err.message});
         }
+
+        hittup.remove();
+        var deviceTokens = [];
+        for (var i = hittup.usersJoined.length - 1; i >= 0; i--) {
+            for (var j = hittup.usersJoined[i].deviceTokens.length - 1; j >= 0; j--) {
+                deviceTokens.push(hittup.usersJoined[i].deviceTokens[j]);
+            }
+        }
+        apn.pushNotify(ownerName + "'s \"" + hittup.title + "\" was canceled",deviceTokens);
+
         callback({"success": "true"});
     });
 }
@@ -131,6 +147,7 @@ function join(HittupSchema, req, callback) {
         useruid = body.useruid,
         userName = body.userName,
         hittupuid = body.hittupuid;
+
     HittupSchema.findByIdAndUpdate(
         ObjectID(hittupuid),
         {

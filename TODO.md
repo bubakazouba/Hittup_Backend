@@ -19,7 +19,8 @@ webhook:
 * add error handling if server didn't receive anything
 
 push notificaitons:
-    when a hittup has been deleted if a user was joined or invited
+    nearby friend and hittups
+    unjoin
 
 * write in 2 databases and auto delete both friend and hittups when they are done: http://blog.mehdivk.net/auto-delete-mongodb-documents-using-expiry-date/
 
