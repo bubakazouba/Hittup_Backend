@@ -87,7 +87,8 @@ or
 ```
 {
 	"hittupuid": "<uid>",
-	"useruid": "<uid>"
+	"owneruid": "<uid>",
+	"ownerName": "<string>"
 }
 ```
 ### Response format:

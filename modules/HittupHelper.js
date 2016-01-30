@@ -52,20 +52,26 @@ function getAvailableHittups(uid,hittups) {
 function unjoin(HittupSchema, req, callback) {
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
 
-    var body = req.body;
-    var useruid = body.useruid;
-    var hittupuid = body.hittupuid;
+    var body = req.body,
+        useruid = body.useruid,
+        userName = body.userName,
+        hittupuid = body.hittupuid;
 
     HittupSchema.findByIdAndUpdate(ObjectID(hittupuid), 
         {
             $pull: {
                 "usersJoined": ObjectID(useruid)
             }
-        }, function (err, results) {
+        }, function (err, updatedHittup) {
                 if(err){
                     Logger.log(err.message,req.connection.remoteAddress, inviteruid, "function: invite");
                     return callback({"success": false, "error": err.message});
                 }
+
+                HittupSchema.populate(updatedHittup, {path:"owner", select: 'deviceTokens'}, function(err, populatedHittup) { 
+                    apn.pushNotify(userName + " has declined your hittup", populatedHittup.owner.deviceTokens);
+                });
+
                 callback({"success": "true"});
             }
         ); //user $pullAll if there is more than one
@@ -163,7 +169,7 @@ function join(HittupSchema, req, callback) {
                 return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
             }
             HittupSchema.populate(updatedHittup, {path:"owner", select: 'deviceTokens'}, function(err, populatedHittup) { 
-                apn.pushNotify(userName + " has joined ur hittup", populatedHittup.owner.deviceTokens);
+                apn.pushNotify(userName + " has joined your hittup", populatedHittup.owner.deviceTokens);
             });
             callback({"success": true});
         }
