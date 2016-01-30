@@ -2,9 +2,6 @@ breaking down a problem:
 problem: share images over the servers
 1-shared file system so every server can access them
 2-how would we be able to retrieve them using <the same url>/images/image
----
-push notifications: handle errors: report to Logger when it doesn't work uing .on('error')
-
 --------now------------
 switch to google maps
 
@@ -16,9 +13,7 @@ webhook:
     check someone just signed up, do other people get notifications? does that person get notifications?
     if other people get notifications when someone just signs up to the app, we would need to make an upsert because we 
 
-
-mark hittups as deleted
-later: actually delete hittups when they're done using TTL, and automatically calculate statistics --> add all hittups marked as deleted for statistics and delete them
+push notifications: handle errors: report to Logger when it doesn't work uing .on('error')
 
 with 2 servers:
     load balancer
@@ -36,20 +31,20 @@ problem: when a new user is added, we can't know if it's the webhook that will c
 ====================
 -----------------later------------------
 DO FIRST THE STUFF THAT DON'T REQUIRE CHANGING CLIENT SIDE
-WRITE TESTS
 
-1 hide coordinates of user whenever he is retrieved from DB in anyway, hide deviceTokens
-2 whenever we return uid of hittup to clientside, name it uid instead of _id
-3 log all requests node
-4 move any heavy lifting from serverside to client side so we don't have to pay a lot for servers
+hide coordinates of user whenever he is retrieved from DB in anyway, hide deviceTokens
+whenever we return uid of hittup to clientside, name it uid instead of _id
+log all requests node
+move any heavy lifting from serverside to client side so we don't have to pay a lot for servers
     - converting low quality image
     - google maps requests
-5 testing everywhere
-6 jenkins
-7 let the image upload as in form not json so we can upload a file (more efficient)
-8 don't make getAllHittups serial
+testing everywhere
+jenkins
+let the image upload as in form not json so we can upload a file (more efficient)
+don't make getAllHittups serial
+actually delete hittups when they're done using TTL, and automatically calculate statistics --> add all hittups marked as deleted for statistics and delete them
 
-
+write tests
 
 good design practices mongodb??
 
