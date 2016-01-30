@@ -252,16 +252,21 @@ function getFriendHittup(req, callback) {
     var body = req.body;
     var uid = body.uid;
     var query = FriendHittupsSchema.findById(ObjectID(uid));
+    query.$where(Date.now()/1000 + ' <= this.dateStarts + this.duration');
     query.populate({
         path: 'owner usersInvited usersJoined',
         select: 'firstName lastName fbid'
     });
-    query.exec(function (err, hittup) {
+    query.exec(function (err, foundHittup) {
         if (err) {
             callback({"success": false, "error":err.message});
             return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
         }
-        callback(hittup);
+        if (!foundHittup) {
+            return callback({"success": false, "error": "404" });
+        }
+
+        callback(foundHittup);
     });
 }
 
@@ -274,6 +279,7 @@ function getEventHittup(req, callback) {
     var body = req.body;
     var uid = body.uid;
     var query = EventHittupsSchema.findById(ObjectID(uid));
+    query.$where(Date.now()/1000 + ' <= this.dateStarts + this.duration');
     query.populate({
         path: 'usersInvited usersJoined',
         select: 'firstName lastName fbid'
@@ -282,12 +288,16 @@ function getEventHittup(req, callback) {
         path: 'owner',
         select: 'name imageurl'
     });
-    query.exec(function (err, hittup) {
+    query.exec(function (err, foundHittup) {
         if (err) {
             callback({"success": false, "error": err.message});
             return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
         }
-        callback(hittup);
+        if (!foundHittup) {
+            return callback({"success": false, "error": "404" });
+        }
+
+        callback(foundHittup);
     });
 }
 
@@ -300,6 +310,7 @@ function getAllFriendHittups(req, callback) {
     var body = req.body;
     var uid = body.uid;
     var query = UsersSchema.findById(ObjectID(body.uid));
+    query.$where(Date.now()/1000 + ' <= this.dateStarts + this.duration');
     query.populate({
         path: 'fbFriends',
         select: 'fbid'
@@ -336,8 +347,8 @@ function getAllFriendHittups(req, callback) {
 function getAllEventHittups(req, callback) {
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
     var query = EventHittupsSchema.find({});
-    query.where('dateStarts').lte(Date.now()/1000 + 24*60*60);
-
+    query.where('dateStarts').lte(Date.now()/1000 + 24*60*60);//only show event hittups that are starting in less than 24 hours
+    query.$where(Date.now()/1000 + ' <= this.dateStarts + this.duration');
     query.populate({
         path: 'usersInvited usersJoined',
         select: 'firstName lastName fbid'
@@ -415,6 +426,7 @@ function postFriendHittup(req, callback) {
                 highQualityImageurl: HQImageurl
             }],
             dateCreated: Math.floor(Date.now()/1000),
+            dateStarts: Math.floor(Date.now()/1000),
             loc: {
                 type: "Point",
                 coordinates: body.coordinates
@@ -493,7 +505,6 @@ module.exports = {
     getEventHittup: getEventHittup,
     postFriendHittup: postFriendHittup,
     postEventHittup: postEventHittup,
-    getInvitations: getInvitations,
     invite: invite,
 	update: update,
     remove: remove,
