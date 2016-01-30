@@ -67,6 +67,9 @@ function unjoin(HittupSchema, req, callback) {
                     Logger.log(err.message,req.connection.remoteAddress, inviteruid, "function: invite");
                     return callback({"success": false, "error": err.message});
                 }
+                if (!updatedHittup) {
+                    return callback({"success": false, "error": "404" });
+                }
 
                 HittupSchema.populate(updatedHittup, {path:"owner", select: 'deviceTokens'}, function(err, populatedHittup) { 
                     apn.pushNotify(userName + " has declined your hittup", populatedHittup.owner.deviceTokens);
@@ -137,6 +140,10 @@ function invite(HittupSchema, req, callback) {
                 Logger.log(err.message,req.connection.remoteAddress, inviteruid, "function: invite");
                 return callback({"success": false, "error": err.message});
             }
+            if (!updatedHittup) {
+                return callback({"success": false, "error": "404" });
+            }
+
             if(updatedHittup === null){
                 Logger.log("hittup doesn't exist",req.connection.remoteAddress, inviteruid, "function: invite");
                 return callback({"success": false, "error": "hittup doesn't exist"});
@@ -164,13 +171,19 @@ function join(HittupSchema, req, callback) {
             }
         },
         function (err, updatedHittup) {
-            if(err) {
+            if (err) {
                 callback({"success": false, "error": err.message});
                 return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
             }
-            HittupSchema.populate(updatedHittup, {path:"owner", select: 'deviceTokens'}, function(err, populatedHittup) { 
-                apn.pushNotify(userName + " has joined your hittup", populatedHittup.owner.deviceTokens);
-            });
+            
+            if (!updatedHittup) {
+                return callback({"success": false, "error": "404" });
+            }
+
+            if(HittupSchema !== EventHittupsSchema) //only do that for events
+                HittupSchema.populate(updatedHittup, {path:"owner", select: 'deviceTokens'}, function(err, populatedHittup) { 
+                    apn.pushNotify(userName + " has joined your hittup", populatedHittup.owner.deviceTokens);
+                });
             callback({"success": true});
         }
     );//end .update
@@ -389,7 +402,7 @@ function postFriendHittup(req, callback) {
                 usersInvitedReferences.push(ObjectID(body.usersInviteduids[i]));
             }
             hittup.usersInvited = usersInvitedReferences;
-            pushNotifyInvitations(FriendHittupsSchema, title, usersInvitedReferences, ownerName);
+            pushNotifyInvitations(FriendHittupsSchema, body.title, usersInvitedReferences, ownerName);
         }
 
         geolocation.geoReverseLocation(hittup.loc.coordinates, function (err, location) {

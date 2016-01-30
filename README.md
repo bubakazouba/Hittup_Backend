@@ -17,6 +17,7 @@ npm start
 ```
 
 # Routes
+an error message of 404 for `/JoinHittup`, `/UnjoinHittup`, `/RemoveHittup` means the hittup doesn't exist.
 
 ## FriendAndEventHittups/GetAllHittups
 ### POST format:
