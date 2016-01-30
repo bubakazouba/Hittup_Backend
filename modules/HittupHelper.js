@@ -127,17 +127,16 @@ function invite(HittupSchema, req, callback) {
 function join(HittupSchema, req, callback) {
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
 
-
-
-    var body = req.body;
-    var owneruid = body.owneruid;
-    var hittupuid = body.hittupuid;
-    FriendHittups.findByIdAndUpdate(
+    var body = req.body,
+        useruid = body.useruid,
+        userName = body.userName,
+        hittupuid = body.hittupuid;
+    HittupSchema.findByIdAndUpdate(
         ObjectID(hittupuid),
         {
             $addToSet: { //try without quotes
                 "usersJoined": {
-                    "_id": ObjectID(owneruid)
+                    "_id": ObjectID(useruid)
                 }
             }
         },
@@ -146,6 +145,9 @@ function join(HittupSchema, req, callback) {
                 callback({"success": false, "error": err.message});
                 return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
             }
+            HittupSchema.populate(updatedHittup, {path:"owner", select: 'deviceTokens'}, function(err, populatedHittup) { 
+                apn.pushNotify(userName + " has joined ur hittup", populatedHittup.owner.deviceTokens);
+            });
             callback({"success": true});
         }
     );//end .update
@@ -466,5 +468,6 @@ module.exports = {
     invite: invite,
 	update: update,
     remove: remove,
-    unjoin: unjoin
+    unjoin: unjoin,
+    join: join
 };

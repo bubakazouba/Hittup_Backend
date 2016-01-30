@@ -19,8 +19,6 @@ webhook:
 * add error handling if server didn't receive anything
 
 push notificaitons:
-    whenever a user joins ur hittup
-    whenever a hittup is added
     when a hittup has been deleted if a user was joined or invited
 
 * write in 2 databases and auto delete both friend and hittups when they are done: http://blog.mehdivk.net/auto-delete-mongodb-documents-using-expiry-date/
@@ -40,7 +38,7 @@ problem: when a new user is added, we can't know if it's the webhook that will c
 DO FIRST THE STUFF THAT DON'T REQUIRE CHANGING CLIENT SIDE
 WRITE TESTS
 
-1 hide coordinates of user whenever he is retrieved from DB in anyway
+1 hide coordinates of user whenever he is retrieved from DB in anyway, hide deviceTokens
 2 whenever we return uid of hittup to clientside, name it uid instead of _id
 3 log all requests node
 4 move any heavy lifting from serverside to client side so we don't have to pay a lot for servers
@@ -76,6 +74,7 @@ remote server deployment tool (suggestion: capistrano)
 
 efficiency:
     * change my getAvailableHitups to use the function rohit found $elemMatch
+    * find a way to populate and update at the same time for /joinHitup
     * use upsert for /adduser and see if he was already there (check if that would work tho) (http://stackoverflow.com/questions/13955212/check-if-mongodb-upsert-did-an-insert-or-an-update)
 
 use redis

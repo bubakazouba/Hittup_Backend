@@ -68,7 +68,8 @@ same as `/GetHittups`
 ```
 {
 	"hittupuid": "<uid>",
-	"useruid": "<uid>"
+	"useruid": "<uid>",
+	"userName": "<string>"
 }
 ```
 ### Response format:
@@ -86,7 +87,8 @@ or
 ```
 {
 	"hittupuid": "<uid>",
-	"owneruid": "<uid>"
+	"useruid": "<uid>",
+	"userName": "<string>"
 }
 ```
 ### Response format:
@@ -243,8 +245,9 @@ get all events starts within the next 24 hours
 
 ```
 {
-    "owneruid": "<uid>",
-    "hittupuid": "<uid>"
+	"hittupuid": "<uid>",
+	"useruid": "<uid>",
+	"userName": "<string>"
 }
 ```
 ### Response format:

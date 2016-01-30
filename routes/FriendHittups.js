@@ -46,7 +46,7 @@ router.post('/UpdateHittup', function (req, res) {
 });
 
 router.post('/JoinHittup', function (req, res) {
-    HittupHelper.JoinHittup(FriendHittups, req, function (result) {
+    HittupHelper.join(FriendHittups, req, function (result) {
         res.send(result);
     });
 });
