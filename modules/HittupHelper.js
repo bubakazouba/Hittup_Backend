@@ -10,7 +10,8 @@ var express = require('express'),
     FriendHittupsSchema = require('../models/FriendHittups'),
     EventHittupsSchema = require('../models/EventHittups'),
     UsersSchema = require('../models/Users'),
-    apn = require('../modules/apn');
+    apn = require('../modules/apn'),
+    Helpers = require('../modules/Helpers');
 
 var IMG_DIR_PATH = "./images";
 
@@ -50,6 +51,9 @@ function getAvailableHittups(uid,hittups) {
 }
 
 function unjoin(HittupSchema, req, callback) {
+    if(!Helpers.check(["useruid","userName","hittupuid"], req))
+        return;
+
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
 
     var body = req.body,
@@ -81,6 +85,9 @@ function unjoin(HittupSchema, req, callback) {
 }
 
 function remove(HittupSchema, req, callback) {
+    if(!Helpers.check(["owneruid","ownerName","hittupuid"], req))
+        return;
+
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
 
     var body = req.body,
@@ -113,6 +120,9 @@ function remove(HittupSchema, req, callback) {
 }
 
 function invite(HittupSchema, req, callback) {
+    if(!Helpers.check(["inviteruid","hittupuid","hittupTitle","friendsuids","inviterName"], req))
+        return;
+
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
 
     var body = req.body,
@@ -144,16 +154,15 @@ function invite(HittupSchema, req, callback) {
                 return callback({"success": false, "error": "404" });
             }
 
-            if(updatedHittup === null){
-                Logger.log("hittup doesn't exist",req.connection.remoteAddress, inviteruid, "function: invite");
-                return callback({"success": false, "error": "hittup doesn't exist"});
-            }
             callback({"success": true});
         }
     );
 }
 
 function join(HittupSchema, req, callback) {
+    if(!Helpers.check(["useruid","userName","hittupuid"], req))
+        return;
+
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
 
     var body = req.body,
@@ -175,7 +184,7 @@ function join(HittupSchema, req, callback) {
                 callback({"success": false, "error": err.message});
                 return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
             }
-            
+
             if (!updatedHittup) {
                 return callback({"success": false, "error": "404" });
             }
@@ -190,6 +199,9 @@ function join(HittupSchema, req, callback) {
 }
 
 function update(HittupSchema, req, callback) {
+    if(!Helpers.check(["uid","title","duration","isPrivate","coordinates"], req))
+        return;
+
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
 
     var body = req.body;
@@ -232,6 +244,9 @@ function update(HittupSchema, req, callback) {
 }
 
 function getFriendHittup(req, callback) {
+    if(!Helpers.check(["uid"], req))
+        return;
+
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
 
     var body = req.body;
@@ -251,6 +266,9 @@ function getFriendHittup(req, callback) {
 }
 
 function getEventHittup(req, callback) {
+    if(!Helpers.check(["uid"], req))
+        return;
+
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
 
     var body = req.body;
@@ -274,6 +292,9 @@ function getEventHittup(req, callback) {
 }
 
 function getAllFriendHittups(req, callback) {
+    if(!Helpers.check(["uid"], req))
+        return;
+
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
 
     var body = req.body;
@@ -373,7 +394,11 @@ function getImageurls(imageData, callback){
             console.log(err);
         });
 }
+
 function postFriendHittup(req, callback) {
+    if(!Helpers.check(["ownerName","uid","title","isPrivate","duration","coordinates","image"], req))
+        return;
+
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
 
     var body = req.body,
@@ -421,6 +446,9 @@ function postFriendHittup(req, callback) {
 
 
 function postEventHittup(req, callback) {
+    if(!Helpers.check(["uid","title","isPrivate","duration","coordinates","image"], req))
+        return;
+
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
 
     var body = req.body;
@@ -456,43 +484,6 @@ function postEventHittup(req, callback) {
             }); //end hittup.save
         }); //end geoLocation
     }); //end getImageurls
-}
-
-function getInvitations(HittupSchema, req, callback) {
-    if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
-
-    // var body = req.body;
-    // var timeInterval = 24*60*60; //TODO: better name for this variable
-    // var uid = req.body.uid;
-    // if(body.hasOwnProperty("timeInterval")) {
-    //     timeInterval = body.timeInterval;
-    // }
-    // var query = HittupSchema.find({"usersInvited._id":  (req.body.uid)});
-
-    // find({
-    //     usersInvited: {
-    //         $elemMatch: {
-    //             uid: req.body.uid
-    //         }
-    //     }
-    // })
-    // var query = HittupSchema.find({
-    //     usersInvited: {
-    //         $elemMatch: ObjectID(req.body.uid)
-    //     }
-    // });
-    // query.populate({
-    //     path: 'usersInvited',
-    //     select: 'firstName lastName fbid'
-    // });
-    // query.exec(function (err, results) {
-    //     if (err) {
-    //         callback({"success": false, "error": err.message});
-    //         return Logger.log(err.message,req.connection.remoteAddress, null, "function: PostHittup");
-    //     }
-    //     console.log(results);
-    //     callback(results);
-    // });
 }
 
 module.exports = {

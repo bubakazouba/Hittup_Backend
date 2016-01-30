@@ -18,8 +18,6 @@ webhook:
     
 * add error handling if server didn't receive anything
 
-push notificaitons:
-    nearby friend and hittups
 
 * write in 2 databases
 * auto delete both friend and hittups when they are done: http://blog.mehdivk.net/auto-delete-mongodb-documents-using-expiry-date/
@@ -28,6 +26,9 @@ with 2 servers:
     load balancer
     clustering of filesystem
     clustering of mongodb
+
+push notificaitons:
+    nearby friend and hittups
 ==================
 Port Forwarding Instructions: http://www.lauradhamilton.com/how-to-set-up-a-nodejs-web-server-on-amazon-ec2
 

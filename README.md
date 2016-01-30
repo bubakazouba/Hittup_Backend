@@ -325,6 +325,7 @@ POST format:
     "image": "<base64encodedimage>"
     "isPrivate": <boolean>,
     "uid": "<useruid>",
+    "ownerName": "<string>",
     "usersInviteduids": ["<uid>","<uid>",...],
     "image": "<base64encodedstring>"
 }

@@ -1,12 +1,13 @@
-var http = require('http');
-var express = require('express');
-var router = express.Router();
-var mongodb = require('../modules/db');
-var ObjectID = require('mongodb').ObjectID;
-var geolocation = require('../modules/geolocation');
-var User = require('../models/Users');
-var Logger = require('../modules/Logger');
-var Facebook = require('../modules/facebook');
+var http = require('http'),
+    express = require('express'),
+    router = express.Router(),
+    mongodb = require('../modules/db'),
+    ObjectID = require('mongodb').ObjectID,
+    geolocation = require('../modules/geolocation'),
+    User = require('../models/Users'),
+    Logger = require('../modules/Logger'),
+    Facebook = require('../modules/facebook'),
+    Helpers = require('../modules/Helpers');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -38,6 +39,9 @@ function getFBFriends(uid, callback) {
 }
 
 router.post('/GetFriendsList', function (req, res) {
+    if(!Helpers.check(["uid"], req))
+        return;
+
     getFBFriends(req.body.uid, function (err, fbFriends) {
         if(err) {
             res.send({"success": false, "error": err.message});
@@ -48,6 +52,9 @@ router.post('/GetFriendsList', function (req, res) {
 });
 
 router.post('/AddUser', function (req, res, next) {
+    if(!Helpers.check(["fbid", "fbToken"], req))
+        return;
+
     var query = User.findOne({ fbid: req.body.fbid });
     query.populate({
         path: 'fbFriends',
@@ -143,13 +150,16 @@ router.post('/AddUser', function (req, res, next) {
 }); // end /AddUser
 
 router.post('/UpdateUserLocation', function (req, res, next) {
-    var body = req.body;
-    var uid = body.uid;
-    var loc = {
-        type: "Point",
-        coordinates: body.coordinates,
-        lastUpdatedTime: Math.floor(Date.now()) 
-    };
+    if(!Helpers.check(["uid", "coordinates"], req))
+        return;
+
+    var body = req.body,
+        uid = body.uid,
+        loc = {
+            type: "Point",
+            coordinates: body.coordinates,
+            lastUpdatedTime: Math.floor(Date.now()) 
+        };
 
     geolocation.geoReverseLocation(loc.coordinates, function (err, location) {
         loc.city = location.city;
