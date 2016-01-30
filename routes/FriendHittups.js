@@ -51,12 +51,6 @@ router.post('/JoinHittup', function (req, res) {
     });
 });
 
-router.post('/GetInvitations', function (req, res) {
-    HittupHelper.getInvitations(FriendHittups, req, function (result) {
-        res.send(result);
-    });
-});
-
 router.post('/PostHittup', function (req, res, next) {
     HittupHelper.postFriendHittup(req, function (result) {
         res.send(result);

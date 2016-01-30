@@ -15,12 +15,10 @@ webhook:
     check adding friends
     check someone just signed up, do other people get notifications? does that person get notifications?
     if other people get notifications when someone just signs up to the app, we would need to make an upsert because we 
-    
-* add error handling if server didn't receive anything
 
 
-* write in 2 databases
-* auto delete both friend and hittups when they are done: http://blog.mehdivk.net/auto-delete-mongodb-documents-using-expiry-date/
+mark hittups as deleted
+later: actually delete hittups when they're done using TTL, and automatically calculate statistics --> add all hittups marked as deleted for statistics and delete them
 
 with 2 servers:
     load balancer
