@@ -1,4 +1,5 @@
 node_modules
+images/
 npm-debug.log
 FB_WEBHOOK/
 hittup_backend.sublime-project
