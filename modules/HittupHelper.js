@@ -346,10 +346,18 @@ function getAllFriendHittups(req, callback) {
 }
 
 function getAllEventHittups(req, callback) {
+    if(!Helpers.check(["timeInterval"], req))
+        return;
+
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
+
+    var body = req.body,
+        startsIn = body.timeInterval[0],
+        endsFrom = body.timeInterval[1];
+
     var query = EventHittupsSchema.find({});
-    query.where('dateStarts').lte(Date.now()/1000 + 24*60*60);//only show event hittups that are starting in less than 24 hours
-    query.$where(Date.now()/1000 + ' <= this.dateStarts + this.duration');
+    query.where('dateStarts').lte(Date.now()/1000 + startsIn);//only show event hittups that are starting in less than <timeInterval> seconds
+    query.$where(Date.now()/1000 - endsFrom + ' <= this.dateStarts + this.duration'); // hittups that are still active or ended 30 min ago
     query.populate({
         path: 'usersInvited usersJoined',
         select: 'firstName lastName fbid'

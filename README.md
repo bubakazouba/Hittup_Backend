@@ -20,8 +20,16 @@ npm start
 an error message of 404 for `/JoinHittup`, `/UnjoinHittup`, `/RemoveHittup` means the hittup doesn't exist.
 
 ## FriendAndEventHittups/GetAllHittups
+timeInterval's first element is time before hittup starts, second element is time after hittup ends.
+
 ### POST format:
-same as `/GetHittups`
+
+{ 
+    "uid": "<uid>",
+    "timeInterval": [<seconds>,<seconds>],
+}
+
+
 ### Response format:
 ```
 {"success":true, "hittups":[
@@ -227,12 +235,12 @@ gets all the hittups created by the user or by any of his friends
 ```
 
 ## EventHittups/GetAllHittups
-get all events starts within the next 24 hours
+timeInterval's first element is time before hittup starts, second element is time after hittup ends.
 ### POST format:
 
 ```
 { 
-    "uid": "<uid>"
+    "timeInterval": [<seconds>, <seconds>]
 }
 ```
 
