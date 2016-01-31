@@ -26,6 +26,10 @@ var getData = function(path, friends, firstName, lastName, callback) {
 
         result.on('end', function(){
             data = JSON.parse(buffer);
+            if (data.error) {
+                return callback(data.error);
+            }
+
             if(data.first_name) { //then it's the first time
                 firstName = data.first_name;
                 lastName = data.last_name;
