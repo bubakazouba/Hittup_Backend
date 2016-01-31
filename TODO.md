@@ -1,4 +1,6 @@
 breaking down a problem:
+
+
 problem: share images over the servers
 1-shared file system so every server can access them
 2-how would we be able to retrieve them using <the same url>/images/image

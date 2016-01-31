@@ -310,7 +310,7 @@ function getAllFriendHittups(req, callback) {
     var body = req.body;
     var uid = body.uid;
     var query = UsersSchema.findById(ObjectID(body.uid));
-    query.$where(Date.now()/1000 + ' <= this.dateStarts + this.duration');
+    
     query.populate({
         path: 'fbFriends',
         select: 'fbid'
@@ -329,6 +329,7 @@ function getAllFriendHittups(req, callback) {
             uids.push(ObjectID(foundUser.fbFriends[i].id));
         }
         var query = FriendHittupsSchema.find({"owner": {$in : uids} });
+        query.$where(Date.now()/1000 + ' <= this.dateStarts + this.duration');
         query.populate({
             path: 'owner usersInvited usersJoined',
             select: 'firstName lastName fbid'
