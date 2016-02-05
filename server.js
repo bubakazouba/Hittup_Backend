@@ -8,6 +8,7 @@ var Users = require('./routes/Users');
 var FriendHittups = require('./routes/FriendHittups');
 var EventHittups = require('./routes/EventHittups');
 var FriendAndEventHittups = require('./routes/FriendAndEventHittups');
+var server = require('./routes/server');
 
 // Connect to MongoDB
 var mongodb = require('./modules/db');
@@ -29,6 +30,7 @@ app.use('/Users', Users);
 app.use('/FriendHittups', FriendHittups);
 app.use('/EventHittups', EventHittups);
 app.use('/FriendAndEventHittups', FriendAndEventHittups);
+app.use('/server', server);
 
 PORT = 8080;
 var server = app.listen(PORT, function () {
