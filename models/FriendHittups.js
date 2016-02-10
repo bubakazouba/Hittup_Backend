@@ -3,7 +3,6 @@ var Schema  = mongoose.Schema;
     
 var HittupSchema = new Schema({
     title: String,
-    isPrivate: Boolean,
     duration: Number,
     dateCreated: Number, //dateCreated and dateStarts should be equal for all friend hittups
     dateStarts: Number,

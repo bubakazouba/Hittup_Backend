@@ -199,14 +199,14 @@ function join(HittupSchema, req, callback) {
 }
 
 function update(HittupSchema, req, callback) {
-    if(!Helpers.check(["uid","title","duration","isPrivate","coordinates"], req))
+    if(!Helpers.check(["uid"], req))
         return;
 
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
 
     var body = req.body;
     var uid = body.uid;
-    var updateFields = ["title", "duration", "isPrivate"];
+    var updateFields = ["title", "duration"];
     var hittupToUpdate = {};
     for(var prop in body) {
         if(updateFields.indexOf(prop) != -1) { //if we should update it

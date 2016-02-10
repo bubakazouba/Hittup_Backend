@@ -3,7 +3,6 @@ var Schema  = mongoose.Schema;
 
 var EventSchema = new Schema({
     title: String,
-    isPrivate: Boolean,
     duration: Number,
     dateCreated: Number,
     dateStarts: Number,
