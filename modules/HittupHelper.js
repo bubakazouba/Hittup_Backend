@@ -326,8 +326,8 @@ function getAllEventHittups(req, callback) {
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
 
     var body = req.body,
-        startsIn = body.timeInterval[0],
-        endsFrom = body.timeInterval[1];
+        endsFrom = body.timeInterval[0],
+        startsIn = body.timeInterval[1];
 
     var query = EventHittupsSchema.find({});
     
