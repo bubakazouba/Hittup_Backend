@@ -1,12 +1,13 @@
-breaking down a problem:
-
-
-problem: share images over the servers
-1-shared file system so every server can access them
-2-how would we be able to retrieve them using <the same url>/images/image
 --------now------------
-switch to google maps
+flip timeInterval
+friend hittups doesnt care about the interval
 
+dont check if they were your friends
+send emoji
+
+
+switch to google maps
+fix the maxDistance thing
 webhook:
     what happens when fb token expires for the webhook?
     check blocks
@@ -16,14 +17,6 @@ webhook:
     if other people get notifications when someone just signs up to the app, we would need to make an upsert because we 
 
 push notifications: handle errors: report to Logger when it doesn't work uing .on('error')
-
-with 2 servers:
-    load balancer
-    clustering of filesystem
-    clustering of mongodb
-
-push notificaitons:
-    nearby friend and hittups
 ==================
 Port Forwarding Instructions: http://www.lauradhamilton.com/how-to-set-up-a-nodejs-web-server-on-amazon-ec2
 

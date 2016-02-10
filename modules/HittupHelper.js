@@ -302,46 +302,20 @@ function getEventHittup(req, callback) {
 }
 
 function getAllFriendHittups(req, callback) {
-    if(!Helpers.check(["uid"], req))
-        return;
-
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
 
-    var body = req.body;
-    var uid = body.uid;
-    var query = UsersSchema.findById(ObjectID(body.uid));
-    
+    query.$where(Date.now()/1000 + ' <= this.dateStarts + this.duration');//Date.now < dateEnded
     query.populate({
-        path: 'fbFriends',
-        select: 'fbid'
+        path: 'owner usersInvited usersJoined',
+        select: 'firstName lastName fbid'
     });
-    query.exec(function (err, foundUser) {
-        if (err) {
-            callback({"success": false, "error": err.message});
-            return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
-        }
-        if(!foundUser) {
-            return callback({"success": false, "error": "user not found"});
-        }
-        //get only hittups created by myself or my friends
-        var uids = [ObjectID(foundUser.id)];
-        for (var i = foundUser.fbFriends.length - 1; i >= 0; i--) {
-            uids.push(ObjectID(foundUser.fbFriends[i].id));
-        }
-        var query = FriendHittupsSchema.find({"owner": {$in : uids} });
-        query.$where(Date.now()/1000 + ' <= this.dateStarts + this.duration');
-        query.populate({
-            path: 'owner usersInvited usersJoined',
-            select: 'firstName lastName fbid'
-        });
-        query.lean();
-        query.exec(function (err,results) {
-           if(err) {
-               callback({"success": false, "error": err.message});
-               return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
-           }
-           callback(getAvailableHittups(uid, results));
-        });
+    query.lean();
+    query.exec(function (err,results) {
+       if(err) {
+           callback({"success": false, "error": err.message});
+           return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+       }
+       callback(results);
     });
 }
 
@@ -355,7 +329,22 @@ function getAllEventHittups(req, callback) {
         startsIn = body.timeInterval[0],
         endsFrom = body.timeInterval[1];
 
-    var query = EventHittupsSchema.find({});
+    // if(body.hasOwnProperty("coordinates") && body.hasOwnProperty("maxDistance")) {
+    //     var longitude = body.coordinates[0],
+    //         latitude = body.coordinates[1],
+    //         maxDistance = body.maxDistance;
+            
+    //     var query = EventHittupsSchema.find({
+    //         loc: {
+    //             $nearSphere: [longitude, latitude],
+    //             $maxDistance: maxDistance //in kilometers
+    //         }
+    //     });
+    // }
+    // else {
+        var query = EventHittupsSchema.find({});
+    // }
+    
     query.where('dateStarts').lte(Date.now()/1000 + startsIn);//only show event hittups that are starting in less than <timeInterval> seconds
     query.$where(Date.now()/1000 - endsFrom + ' <= this.dateStarts + this.duration'); // hittups that are still active or ended 30 min ago
     query.populate({
@@ -467,17 +456,15 @@ function postFriendHittup(req, callback) {
 
 
 function postEventHittup(req, callback) {
-    if(!Helpers.check(["uid","title","isPrivate","duration","coordinates","image"], req))
+    if(!Helpers.check(["uid","title","duration","coordinates","image"], req))
         return;
 
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
-
     var body = req.body;
     getImageurls(body.image, function (HQImageurl, LQImageurl) {
         var hittup = new EventHittupsSchema({
             owner: ObjectID(body.uid),
             title: body.title,
-            isPrivate: body.isPrivate,
             duration: body.duration,
             dateStarts: body.dateStarts,
             description: body.description,

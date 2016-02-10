@@ -45,8 +45,7 @@ timeInterval's first element is time before hittup starts, second element is tim
 ### POST format:
 ```
 { 
-    "uid": "<uid>",
-    "timeInterval": [<seconds>,<seconds>],
+    "timeInterval": [<seconds>,<seconds>]
 }
 ```
 
@@ -245,7 +244,7 @@ gets all the hittups created by the user or by any of his friends
 
 ```
 { 
-    "uid": "<uid>"
+
 }
 ```
 
@@ -379,11 +378,11 @@ or
     "duration": <seconds>,
     "title": "<title>",
     "description": "<title>",
-    "image": "<base64encodedimage>"
+    "image": "<base64encodedimage>",
+    "emoji": <String>,
     "isPrivate": <boolean>,
     "uid": "<EventOrganizeruid>",
-    "dateStarts": <seconds>,
-    "image": "<base64encodedstring>"
+    "dateStarts": <seconds>
 }
 ```
 format of the image doesn't matter
