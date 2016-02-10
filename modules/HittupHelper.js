@@ -304,6 +304,7 @@ function getEventHittup(req, callback) {
 function getAllFriendHittups(req, callback) {
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
 
+    var query = FriendHittupsSchema.find();
     query.$where(Date.now()/1000 + ' <= this.dateStarts + this.duration');//Date.now < dateEnded
     query.populate({
         path: 'owner usersInvited usersJoined',

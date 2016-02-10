@@ -1,10 +1,8 @@
 --------now------------
-flip timeInterval
-friend hittups doesnt care about the interval
+change structure of events to have owneruid/ownername/ownerimageurl inside it
+    but then we will need to update owner's name and ownerimageurl every time it's updated
 
-dont check if they were your friends
-send emoji
-
+events:coordinates,duration,emoji,title,description,dateStarts,imageurl,ownerName,ownerImageurl
 
 switch to google maps
 fix the maxDistance thing
