@@ -349,6 +349,7 @@ POST format:
     "coordinates": [longitude, latitude],
     "duration": <seconds>,
     "title": "<title>",
+    "isPrivate": <boolean>,
     "image": "<base64encodedimage>"
     "isPrivate": <boolean>,
     "uid": "<useruid>",
@@ -380,7 +381,6 @@ or
     "description": "<title>",
     "image": "<base64encodedimage>",
     "emoji": <String>,
-    "isPrivate": <boolean>,
     "uid": "<EventOrganizeruid>",
     "dateStarts": <seconds>
 }

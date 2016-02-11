@@ -7,6 +7,7 @@ var HittupSchema = new Schema({
     dateCreated: Number, //dateCreated and dateStarts should be equal for all friend hittups
     dateStarts: Number,
     emoji: String,
+    isPrivate: Boolean,
     images: [{
           lowQualityImageurl: String,
           highQualityImageurl: String

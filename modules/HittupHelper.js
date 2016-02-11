@@ -37,11 +37,18 @@ function getAvailableHittups(uid,hittups) {
     var availableHittups = [];
     for (var i = hittups.length - 1; i >= 0; i--) {//TODO: include that in the query
         if(hittups[i].isPrivate === true && hittups[i].owner._id.toString() != uid) {
-            for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
-                if(uid == hittups[i].usersInvited[j]._id.toString()) {
+            //just make sure he's a friend
+            for (var j = hittups[i].owner.fbFriends.length - 1; j >= 0; j--) {
+                if(uid == hittups[i].owner.fbFriends[j]._id.toString()) { //then he is a friend
                     availableHittups.push(hittups[i]);
                 }
             }
+            //make sure he's invited
+            // for (var j = hittups[i].usersInvited.length - 1; j >= 0; j--) {
+            //     if(uid == hittups[i].usersInvited[j]._id.toString()) {
+            //         availableHittups.push(hittups[i]);
+            //     }
+            // }
         }
         else {
             availableHittups.push(hittups[i]);
@@ -206,7 +213,7 @@ function update(HittupSchema, req, callback) {
 
     var body = req.body;
     var uid = body.uid;
-    var updateFields = ["title", "duration"];
+    var updateFields = ["title", "duration", "isPrivate"];
     var hittupToUpdate = {};
     for(var prop in body) {
         if(updateFields.indexOf(prop) != -1) { //if we should update it
@@ -307,8 +314,12 @@ function getAllFriendHittups(req, callback) {
     var query = FriendHittupsSchema.find();
     query.$where(Date.now()/1000 + ' <= this.dateStarts + this.duration');//Date.now < dateEnded
     query.populate({
-        path: 'owner usersInvited usersJoined',
+        path: 'usersInvited usersJoined',
         select: 'firstName lastName fbid'
+    });
+    query.populate({
+        path: 'owner',
+        select: 'fbFriends firstName lastName fbid'
     });
     query.lean();
     query.exec(function (err,results) {
@@ -316,7 +327,7 @@ function getAllFriendHittups(req, callback) {
            callback({"success": false, "error": err.message});
            return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
        }
-       callback(results);
+       callback(getAvailableHittups(uid,results));
     });
 }
 
@@ -331,7 +342,17 @@ function getAllEventHittups(req, callback) {
         startsIn = body.timeInterval[1];
 
     var query = EventHittupsSchema.find({});
-    
+    // working search by distance code
+    // var query = HittupSchema.find({loc: {
+    //         $nearSphere: {
+    //            $geometry: {
+    //               type : "Point",
+    //               coordinates : [ longitude,latitude ]
+    //            },
+    //            $maxDistance: maxDistance //in meters
+    //         }
+    //      }
+    //    });
     query.where('dateStarts').lte(Date.now()/1000 + startsIn);//only show event hittups that are starting in less than <timeInterval> seconds
     query.$where(Date.now()/1000 - endsFrom + ' <= this.dateStarts + this.duration'); // hittups that are still active or ended 30 min ago
     query.populate({
@@ -392,7 +413,7 @@ function getImageurls(imageData, callback){
 }
 
 function postFriendHittup(req, callback) {
-    if(!Helpers.check(["ownerName","uid","title","duration","coordinates","image","emoji"], req))
+    if(!Helpers.check(["ownerName","uid","title","duration","coordinates","image","emoji","isPrivate"], req))
         return;
 
     if(!mongodb.db) {return callback({"success": "false", "error": "DB not connected"});}
@@ -405,6 +426,7 @@ function postFriendHittup(req, callback) {
             owner: ObjectID(body.uid),
             title: body.title,
             emoji: body.emoji,
+            isPrivate: body.isPrivate,
             duration: body.duration,
             images : [{
                 lowQualityImageurl: LQImageurl,
