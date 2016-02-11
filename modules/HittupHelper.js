@@ -39,7 +39,7 @@ function getAvailableHittups(uid,hittups) {
         if(hittups[i].isPrivate === true && hittups[i].owner._id.toString() != uid) {
             //just make sure he's a friend
             for (var j = hittups[i].owner.fbFriends.length - 1; j >= 0; j--) {
-                if(uid == hittups[i].owner.fbFriends[j]._id.toString()) { //then he is a friend
+                if(uid == hittups[i].owner.fbFriends[j].toString()) { //then he is a friend
                     availableHittups.push(hittups[i]);
                 }
             }
