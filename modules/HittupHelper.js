@@ -311,6 +311,8 @@ function getEventHittup(req, callback) {
 function getAllFriendHittups(req, callback) {
     if(!mongodb.db) {return callback({"success": false, "error": "DB not connected"});}
 
+    var uid = req.body.uid ? req.body.uid : "..."; //it's optional, if it's not provided that means he's not a friend of anyone
+
     var query = FriendHittupsSchema.find();
     query.$where(Date.now()/1000 + ' <= this.dateStarts + this.duration');//Date.now < dateEnded
     query.populate({

@@ -42,9 +42,11 @@ an error message of 404 for `/JoinHittup`, `/UnjoinHittup`, `/RemoveHittup` mean
 ## FriendAndEventHittups/GetAllHittups
 timeInterval's first element is time before hittup starts, second element is time after hittup ends.
 
+uid is optional, if it doesnt exist, it will only retrieve public hittups (i.e isPrivate==false)
 ### POST format:
 ```
 { 
+	"uid": "<uid>",
     "timeInterval": [<seconds>,<seconds>]
 }
 ```
@@ -241,10 +243,11 @@ the first image is the image posted by the host
 ## FriendHittups/GetAllHittups
 gets all the hittups created by the user or by any of his friends
 ### POST format:
+uid is optional, if it doesnt exist, it will only retrieve public hittups (i.e isPrivate==false)
 
 ```
 { 
-
+	"uid": "<uid>"
 }
 ```
 
