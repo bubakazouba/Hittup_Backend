@@ -1,5 +1,4 @@
-var http = require('http'),
-    express = require('express'),
+var express = require('express'),
     router = express.Router(),
     mongodb = require('../modules/db'),
     ObjectID = require('mongodb').ObjectID,
@@ -113,6 +112,15 @@ router.post('/AddUser', function (req, res, next) {
                             });
                             return Logger.log(err.message,req.connection.remoteAddress, null, "/AddUser");
                         }
+                        //update his friends with him
+                        User.update({fbid: { $in: fbids }}, {$push: {"fbFriends": insertedUser.id}}, {multi: true}, function(err, updatedFriends){
+                            if(err){
+                                res.send({"success": false, "error": err.message});
+                                return Logger.log(err.message,req.connection.remoteAddress, null, "/GetFriendsList updating user's friends with himself");
+                            }
+
+                        });
+
                         res.send({
                             "uid": user.id,
                             "userStatus": "new",
@@ -120,7 +128,7 @@ router.post('/AddUser', function (req, res, next) {
                             "success": "true"
                         });
                     });//save user
-                });
+                });//end get userFriends
                 
             });//end Facebook.getFbdata
     }//end if user == null

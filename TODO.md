@@ -1,30 +1,42 @@
 --------now------------
-change structure of events to have owneruid/ownername/ownerimageurl inside it
-    but then we will need to update owner's name and ownerimageurl every time it's updated
+fix the facebook module, in case a user doesn't haveany fbfriends, it will need the new code i added in the scraper, add it there and test if it works
 
-events:coordinates,duration,emoji,title,description,dateStarts,imageurl,ownerName,ownerImageurl
+scraper:
+    right now: scraper gets all events now with eventid
+    get all events from random_uncofirmed and random collections
+    compare all the eventids and see if anything needs to be updated or added new
+    
+    add emoji routs:
+        access the same server, get the list of events in random_unconfirmed, it has a route to convert the array to html which is text area of just the whole json then a small text field emoji and a submit button
 
-switch to google maps
-fix the maxDistance thing
+        the submit button will be another route:
+            1- remove form random_unconfirmed
+            2- add to random
+
+for getAllEventHittups I need 2 DB calls
+generate a random owner._id for random
+
+notify friends around
+
+
 webhook:
-    what happens when fb token expires for the webhook?
-    check blocks
-    check unfriending
-    check adding friends
-    check someone just signed up, do other people get notifications? does that person get notifications?
-    if other people get notifications when someone just signs up to the app, we would need to make an upsert because we 
+    * error handling: when the access token expires
+    * problem: when a new user is added, we can't know if it's the webhook that will come first  or if it's the /AddUser that will come first.
+        -> solution: delay everything by 20 seconds
+    * when a user gets deleted, make sure to remove him from database (how i'm gonna know if a user was deleted, token expired??)
+    * view all the "//log error" comments
+    * make it really efficient by
+        - gathering all requests in the last minute and searching through DB at once
+        - making one request to DB updating all users at once
+        - define the callback function one time instead of doing it in the for loop
+        - instad of finding the user, then finding his friends uids then updating him by another query, we can user the updatedUser to udpate again, i tihnk it'd be more efficient
+
 
 push notifications: handle errors: report to Logger when it doesn't work uing .on('error')
-==================
-Port Forwarding Instructions: http://www.lauradhamilton.com/how-to-set-up-a-nodejs-web-server-on-amazon-ec2
-
-problem: when a new user is added, we can't know if it's the webhook that will come first  or if it's the /AddUser that will come first, so both of them will need to check if the user was added already if not they will need to add him to the DB
-
-* I need to know if the user get all friends from the beginning in the FB_webhook. so would we need to add the friends or not?
-====================
 -----------------later------------------
 DO FIRST THE STUFF THAT DON'T REQUIRE CHANGING CLIENT SIDE
 
+switch to google maps
 hide coordinates of user whenever he is retrieved from DB in anyway, hide deviceTokens
 whenever we return uid of hittup to clientside, name it uid instead of _id
 log all requests node
