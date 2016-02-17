@@ -2,40 +2,22 @@
 fix the facebook module, in case a user doesn't haveany fbfriends, it will need the new code i added in the scraper, add it there and test if it works
 
 scraper:
-    right now: scraper gets all events now with eventid
-    get all events from random_uncofirmed and random collections
-    compare all the eventids and see if anything needs to be updated or added new
-    
-    add emoji routs:
-        access the same server, get the list of events in random_unconfirmed, it has a route to convert the array to html which is text area of just the whole json then a small text field emoji and a submit button
-
-        the submit button will be another route:
-            1- remove form random_unconfirmed
-            2- add to random
-
-for getAllEventHittups I need 2 DB calls
-generate a random owner._id for random
-
-notify friends around
-
+    test the code I have (didn't commit yet)
+    change them to be the same DB
+    http://localhost:3000/events?lat=40.710803&lng=-73.964040&distance=1000&access_token=1645233332355281|dUU_R1ksZlyDlpZtHXjVRbmSG8I
 
 webhook:
     * error handling: when the access token expires
-    * problem: when a new user is added, we can't know if it's the webhook that will come first  or if it's the /AddUser that will come first.
-        -> solution: delay everything by 20 seconds
-    * when a user gets deleted, make sure to remove him from database (how i'm gonna know if a user was deleted, token expired??)
     * view all the "//log error" comments
-    * make it really efficient by
-        - gathering all requests in the last minute and searching through DB at once
-        - making one request to DB updating all users at once
-        - define the callback function one time instead of doing it in the for loop
-        - instad of finding the user, then finding his friends uids then updating him by another query, we can user the updatedUser to udpate again, i tihnk it'd be more efficient
 
 
-push notifications: handle errors: report to Logger when it doesn't work uing .on('error')
+push notifications:
+    handle errors: report to Logger when it doesn't work uing .on('error')
+    notify friends around
 -----------------later------------------
 DO FIRST THE STUFF THAT DON'T REQUIRE CHANGING CLIENT SIDE
 
+right now I have 3 db.js and 2 facebook.js and some models in the 3 repos I have, webhook/scraper/hittup_backend, i need to fix that
 switch to google maps
 hide coordinates of user whenever he is retrieved from DB in anyway, hide deviceTokens
 whenever we return uid of hittup to clientside, name it uid instead of _id
@@ -50,6 +32,17 @@ don't make getAllHittups serial
 actually delete hittups when they're done using TTL, and automatically calculate statistics --> add all hittups marked as deleted for statistics and delete them
 
 write tests
+
+webhook:
+    * problem: when a new user is added, we can't know if it's the webhook that will come first  or if it's the /AddUser that will come first.
+        -> solution: delay everything by 20 seconds
+    * when a user gets deleted, make sure to remove him from database (how i'm gonna know if a user was deleted, token expired??)
+    * make it really efficient by
+        - gathering all requests in the last minute and searching through DB at once
+        - making one request to DB updating all users at once
+        - define the callback function one time instead of doing it in the for loop
+        - instad of finding the user, then finding his friends uids then updating him by another query, we can user the updatedUser to udpate again, i tihnk it'd be more efficient
+
 
 good design practices mongodb??
 

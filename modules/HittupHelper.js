@@ -11,7 +11,8 @@ var express = require('express'),
     EventHittupsSchema = require('../models/EventHittups'),
     UsersSchema = require('../models/Users'),
     apn = require('../modules/apn'),
-    Helpers = require('../modules/Helpers');
+    Helpers = require('../modules/Helpers'),
+    RandomSchema = require('../models/random');
 
 var IMG_DIR_PATH = "./images";
 
@@ -366,12 +367,29 @@ function getAllEventHittups(req, callback) {
         select: 'name imageurl'
     });
     query.lean();
-    query.exec(function (err,results) {
+    query.exec(function (err,foundEventHittups) {
        if(err) {
            callback({"success": false, "error": err.message});
-           return Logger.log(err.message,req.connection.remoteAddress, null, "function: get");
+           return Logger.log(err.message,req.connection.remoteAddress, null, "function: getAllEventHittups");
        }
-       callback(results);
+       var query = RandomSchema.find({});
+       query.where('dateStarts').lte(Date.now()/1000 + startsIn);//only show event hittups that are starting in less than <timeInterval> seconds
+       query.$where(Date.now()/1000 - endsFrom + ' <= this.dateStarts + this.duration'); // hittups that are still active or ended 30 min ago
+       query.populate({
+           path: 'usersInvited usersJoined',
+           select: 'firstName lastName fbid'
+       });
+       query.lean();
+       query.exec(function (err,foundRandom) {
+          if(err) {
+              callback({"success": false, "error": err.message});
+              return Logger.log(err.message,req.connection.remoteAddress, null, "function: getAllEventHittups");
+          }
+          var allEvents = foundEventHittups
+          for (var i = foundRandom.length - 1; i >= 0; i--) 
+              allEvents.push(foundRandom[i]);
+          callback(allEvents);
+        });
     });
 }
 
