@@ -372,7 +372,7 @@ function getAllEventHittups(req, callback) {
            callback({"success": false, "error": err.message});
            return Logger.log(err.message,req.connection.remoteAddress, null, "function: getAllEventHittups");
        }
-       var query = RandomSchema.find({});
+       var query = RandomSchema.find({confirmed: true});
        query.where('dateStarts').lte(Date.now()/1000 + startsIn);//only show event hittups that are starting in less than <timeInterval> seconds
        query.$where(Date.now()/1000 - endsFrom + ' <= this.dateStarts + this.duration'); // hittups that are still active or ended 30 min ago
        query.populate({

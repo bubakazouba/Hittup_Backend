@@ -33,7 +33,7 @@ var getData = function(path, friends, firstName, lastName, callback) {
             if(data.first_name) { //then it's the first time
                 firstName = data.first_name;
                 lastName = data.last_name;
-                if(data.friends.paging.next){
+                if(data.friends.hasOwnProperty("paging")&&data.friends.paging.next){
                     nextPath = url.parse(data.friends.paging.next).path;
                 } else {
                     nextPath = null;
